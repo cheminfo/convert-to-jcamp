@@ -49,8 +49,8 @@ export default function (data, options = {}) {
 ##FIRSTY=${firstY}
 ##LASTY=${lastY}\r\n`;
 
-    for (const [key, value] of Object.entries(info)) {
-        header += `##$${key}=${value}\r\n`;
+    for (const key of Object.keys(info)) {
+        header += `##$${key}=${info[key]}\r\n`;
     }
 
     header += `##NPOINTS=${points.length}
