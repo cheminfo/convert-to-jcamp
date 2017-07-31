@@ -19,7 +19,7 @@ export default function (data, options = {}) {
         if (lines[i].length > 1) {
             var x = Number(lines[i][0]);
             var y = Number(lines[i][1]);
-            if ((!firstX) || (firstX > x)) {
+            if ((!firstX) || ((firstX > x) && (x > 0))) {
                 firstX = x;
             }
             if ((!lastX) || (lastX < x)) {

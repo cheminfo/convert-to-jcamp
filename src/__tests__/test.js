@@ -1,7 +1,9 @@
 import convertToJcamp from '..';
 import {convert} from 'jcampconverter';
 
-const testData = `1 2
+describe('convertToJcamp', () => {
+    it('check valid with jcampconverter', () => {
+        const testData = `1 2
 2 3
 3 4
 4 5
@@ -9,9 +11,6 @@ const testData = `1 2
 6 7
 7 8
 8 9`;
-
-describe('convertToJcamp', () => {
-    it('check valid with jcampconverter', () => {
         var options = {
             title: 'test',
             owner: 'cheminfo',
@@ -53,5 +52,43 @@ describe('convertToJcamp', () => {
                 yUnit: 'relative abundance'
             }
         ]);
+    });
+
+    it('check with default values', () => {
+        const testData = `2 3
+1 2
+3 4
+-4 5
+5 16
+6 7
+7 8
+8 9`;
+
+        var jcamp = convertToJcamp(testData);
+        var jcampObject = convert(jcamp);
+
+        expect(jcampObject.spectra).toEqual([{
+            data: [[
+                2, 3,
+                1, 2,
+                3, 4,
+                5, 16,
+                6, 7,
+                7, 8,
+                8, 9
+            ]],
+            dataType: '',
+            firstX: 1,
+            firstY: 2,
+            isPeaktable: true,
+            lastX: 8,
+            lastY: 16,
+            nbPoints: 7,
+            title: '',
+            xFactor: 1,
+            xUnit: '',
+            yFactor: 1,
+            yUnit: ''
+        }]);
     });
 });
