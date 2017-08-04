@@ -4,6 +4,7 @@ import {parse as parseXY} from 'xy-parser';
  * Convert strings into JCAMP and add extra information
  * @param {string} data - values to add to the file, usually a csv or tsv values
  * @param {object} [options]
+ * @param {string} [options.newGCMS = false] - the resulting jcamp could be read using this option from jcampconverter
  * @param {string} [options.title = ''] - title of the file
  * @param {string} [options.owner = ''] - owner of the file
  * @param {string} [options.origin = ''] - origin of the file
@@ -16,6 +17,7 @@ import {parse as parseXY} from 'xy-parser';
  */
 export default function (data, options = {}) {
     const {
+        newGCMS = false,
         title = '',
         owner = '',
         origin = '',
@@ -49,7 +51,7 @@ export default function (data, options = {}) {
             }
         }
         if (x > 0) {
-            points.push(x + '\t' + y);
+            points.push([x, y]);
         }
     }
 
@@ -69,8 +71,34 @@ export default function (data, options = {}) {
         header += `##$${key}=${info[key]}\r\n`;
     }
 
+    if (newGCMS) {
+        return gcmsJcamp(points, header);
+    } else {
+        return regularJcamp(points, header);
+    }
+}
+
+function regularJcamp(points, header) {
     header += `##NPOINTS=${points.length}
 ##PEAK TABLE=(XY..XY)\r\n`;
 
-    return header.replace(/[^\t\r\n\x20-\x7F]/g, '') + points.join('\r\n') + '\r\n##END';
+    var table = '';
+    for (var i = 0; i < points.length; i++) {
+        table += points[i][0] + '\t' + points[i][1] + '\r\n';
+    }
+
+    return header.replace(/[^\t\r\n\x20-\x7F]/g, '') + table + '\r\n##END';
+}
+
+function gcmsJcamp(points, header) {
+    var table = '';
+    for (var i = 0; i < points.length; i++) {
+        table += `##SCAN_NUMBER=${i + 1}
+##RETENTION_TIME=${points[i][0]}
+##TIC=${points[i][1]}
+##NPOINTS=0
+##XYDATA=\r\n`;
+    }
+
+    return header.replace(/[^\t\r\n\x20-\x7F]/g, '') + table + '\r\n##END';
 }
