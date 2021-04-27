@@ -1,5 +1,12 @@
 # Changelog
 
+### [4.3.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.3.0...v4.3.1) (2021-04-27)
+
+
+### Bug Fixes
+
+* build and test covereage ([6a45ce0](https://www.github.com/cheminfo/convert-to-jcamp/commit/6a45ce06fa51f7961413d95f1798f26cd1aeeda9))
+
 ## [4.3.0](https://github.com/cheminfo-js/convert-to-jcamp/compare/v4.1.1...v4.3.0) (2021-04-27)
 
 
@@ -121,6 +128,3 @@ parameter `type` has been renamed to `dataType`
 ### Features
 
 * initial implementation ([#1](https://github.com/cheminfo-js/convert-to-jcamp/issues/1)) ([c4ac188](https://github.com/cheminfo-js/convert-to-jcamp/commit/c4ac188))
-
-
-
