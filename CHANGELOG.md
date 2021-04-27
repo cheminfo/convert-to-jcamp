@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.4.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.3.1...v4.4.0) (2021-04-27)
+
+
+### Features
+
+* update dependency and parse cheminfo meta property ([a6dc3b0](https://www.github.com/cheminfo/convert-to-jcamp/commit/a6dc3b030cf63a91ed267c179bd0f90bf6d24690))
+
 ### [4.3.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.3.0...v4.3.1) (2021-04-27)
 
 
