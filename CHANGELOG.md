@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.5.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.4.0...v4.5.0) (2021-05-05)
+
+
+### Features
+
+* any meta property of type 'object' is stringify ([2144966](https://www.github.com/cheminfo/convert-to-jcamp/commit/21449667827ed67c7fed7eac34ef80895b0a6e3a))
+
 ## [4.4.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.3.1...v4.4.0) (2021-04-27)
 
 
