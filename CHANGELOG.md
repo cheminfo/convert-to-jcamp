@@ -1,5 +1,13 @@
 # Changelog
 
+## [4.6.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.5.0...v4.6.0) (2021-07-24)
+
+
+### Features
+
+* add option to have dataxy encoding ([529e761](https://www.github.com/cheminfo/convert-to-jcamp/commit/529e76188cf53a84b9637a6aa6b2ddadd9885d99))
+* update dependencies ([4ba14ce](https://www.github.com/cheminfo/convert-to-jcamp/commit/4ba14ce4f86f1b50e60570ca2690a64fd95c8258))
+
 ## [4.5.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.4.0...v4.5.0) (2021-05-05)
 
 ### Features
