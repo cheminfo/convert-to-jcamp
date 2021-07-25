@@ -1,6 +1,6 @@
 {
   "name": "convert-to-jcamp",
-  "version": "4.6.0",
+  "version": "4.7.0",
   "description": "Convert strings into JCAMP",
   "main": "lib/index.js",
   "module": "src/index.js",

@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.7.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.6.0...v4.7.0) (2021-07-25)
+
+
+### Features
+
+* add xFactor and yFactor ([de58759](https://www.github.com/cheminfo/convert-to-jcamp/commit/de58759cb1b8436a22fa2251a5369779aef58415))
+
 ## [4.6.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.5.0...v4.6.0) (2021-07-24)
 
 
