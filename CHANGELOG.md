@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.8.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.7.0...v4.8.0) (2021-09-17)
+
+
+### Features
+
+* check variables.isDependent boolean for ntuples generation ([6003cd1](https://www.github.com/cheminfo/convert-to-jcamp/commit/6003cd1e2ee53fe81511187f506f404a824dc477))
+
 ## [4.7.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.6.0...v4.7.0) (2021-07-25)
 
 
