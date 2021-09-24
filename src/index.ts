@@ -1,6 +1,4 @@
 export * from './fromVariables';
-export * from './fromJSON';
-export * from './fromText';
 
 /**
  * @typedef {Object} Variable
