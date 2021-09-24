@@ -1,18 +1,54 @@
 import creatorNtuples from './creatorNtuples';
-import { fromJSON } from './fromJSON';
+
+interface SpectrumInfo {
+  /**
+   * title of the file
+   * @default ''
+   */
+  title?: string;
+  /**
+   * owner of the file
+   * @default ''
+   */
+  owner?: string;
+  /**
+   * origin of the file
+   * @default ''
+   */
+  origin?: string;
+  /**
+    * type of data
+    * @default ''
+    */
+  dataType?: string;
+
+  xUnits: number;
+  yUnits: number
+}
+
+interface JcampOptions {
+  /**
+   * metadata of the file
+   * @default {} 
+   */
+  info?: SpectrumInfo;
+  /**
+   * comments to add to the file
+   * @default {} 
+   */
+  meta?: Record<string, any>;
+  /**
+   * force the ntuples format even if there is only x and y variables
+   * @default false
+   */
+  forceNtuples?: boolean;
+}
 
 /**
  * Create a jcamp from variables
- * @param {Array<Variable} [variables={}] - object of variables
- * @param {string} [options.info={}] - metadata of the file
- * @param {string} [options.info.title = ''] - title of the file
- * @param {string} [options.info.owner = ''] - owner of the file
- * @param {string} [options.info.origin = ''] - origin of the file
- * @param {string} [options.info.dataType = ''] - type of data
- * @param {object} [options.meta = {}] - comments to add to the file
- * @param {object} [options.forceNtuples = false] - force the ntuples format even if there is only x and y variables
+ * @param {Array<Variable>} [variables={}] - object of variables
  */
-export function fromVariables(variables = {}, options = {}) {
+export function fromVariables(variables: Record<string, any> = {}, options: JcampOptions = {}) {
   const { info, meta, forceNtuples } = options;
 
   let jcampOptions = {
