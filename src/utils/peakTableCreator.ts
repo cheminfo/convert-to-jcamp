@@ -1,6 +1,24 @@
 import { getNumber } from './getNumber.js';
 
-export function peakTableCreator(data, options = {}) {
+interface TableCreatorOptions {
+  /**
+   * x factor
+   * @default 1
+   */
+  xFactor?: number;
+  /**
+   * y factor
+   * @default 1
+   */
+  yFactor?: number
+}
+
+interface Data {
+  x: Array<number>;
+  y: Array<number>   
+}
+
+export function peakTableCreator(data:Data, options: TableCreatorOptions = {}) {
   const { xFactor = 1, yFactor = 1 } = options;
   let firstX = Number.POSITIVE_INFINITY;
   let lastX = Number.NEGATIVE_INFINITY;
