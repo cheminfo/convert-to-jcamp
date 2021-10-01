@@ -1,13 +1,15 @@
+import { SpectrumVariables } from 'cheminfo-types';
+// @ts-expect-error
 import { convert } from 'jcampconverter';
 
 import { fromVariables } from '..';
 
 describe('fromVariables', () => {
   it('3 variables', () => {
-    const variables = {
-      x: { data: [1, 2, 3, 4], symbol: 'X', name: 'x value', units: 'x unit' },
-      y: { data: [2, 3, 4, 5], symbol: 'Y', name: 'y value', units: 'y unit' },
-      z: { data: [3, 4, 5, 6], symbol: 'T', name: 't value', units: 't unit' },
+    const variables: SpectrumVariables = {
+      x: { data: [1, 2, 3, 4], symbol: 'X', label: 'x value', units: 'x unit' },
+      y: { data: [2, 3, 4, 5], symbol: 'Y', label: 'y value', units: 'y unit' },
+      z: { data: [3, 4, 5, 6], symbol: 'T', label: 't value', units: 't unit' },
     };
 
     const jcamp = fromVariables(variables, {
@@ -62,25 +64,25 @@ describe('fromVariables', () => {
   });
 
   it('3 variables with isDependent', () => {
-    const variables = {
+    const variables: SpectrumVariables = {
       x: {
         data: [1, 2, 3, 4],
         symbol: 'X',
-        name: 'x value',
+        label: 'x value',
         units: 'x unit',
         isDependent: true,
       },
       y: {
         data: [2, 3, 4, 5],
         symbol: 'Y',
-        name: 'y value',
+        label: 'y value',
         units: 'y unit',
         isDependent: false,
       },
       z: {
         data: [3, 4, 5, 6],
         symbol: 'T',
-        name: 't value',
+        label: 't value',
         units: 't unit',
         isDependent: true,
       },
@@ -138,27 +140,27 @@ describe('fromVariables', () => {
   });
 
   it('3 variables width specific independent / dependent', () => {
-    const variables = {
+    const variables: SpectrumVariables = {
       x: {
         data: [1, 2, 3, 4],
         symbol: 'X',
-        name: 'x value',
+        label: 'x value',
         units: 'x unit',
-        type: 'dependent',
+        isDependent: true,
       },
       y: {
         data: [2, 3, 4, 5],
         symbol: 'Y',
-        name: 'y value',
+        label: 'y value',
         units: 'y unit',
-        type: 'independent',
+        isDependent: false,
       },
       z: {
         data: [3, 4, 5, 6],
         symbol: 'T',
-        name: 't value',
+        label: 't value',
         units: 't unit',
-        type: 'dependent',
+        isDependent: true,
       },
     };
 
@@ -197,7 +199,7 @@ describe('fromVariables', () => {
   });
 
   it('3 variables with label', () => {
-    const variables = {
+    const variables: SpectrumVariables = {
       x: { data: [1, 2, 3, 4], symbol: 'X', label: 'x value [x unit]' },
       y: { data: [2, 3, 4, 5], symbol: 'Y', label: 'y value [y unit]' },
       z: { data: [3, 4, 5, 6], symbol: 'T', label: 't value [t unit]' },
@@ -249,9 +251,9 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables no force', () => {
-    const variables = {
-      x: { data: [1, 2, 3, 4], name: 'x value', units: 'x unit' },
-      y: { data: [2, 3, 4, 5], name: 'y value', units: 'y unit' },
+    const variables: SpectrumVariables = {
+      x: { data: [1, 2, 3, 4], label: 'x value', units: 'x unit' },
+      y: { data: [2, 3, 4, 5], label: 'y value', units: 'y unit' },
     };
 
     const jcamp = fromVariables(variables, {
@@ -287,9 +289,9 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables, forceNtuples', () => {
-    const variables = {
-      x: { data: [1, 2, 3, 4], name: 'x value', units: 'x unit' },
-      y: { data: [2, 3, 4, 5], name: 'y value', units: 'y unit' },
+    const variables: SpectrumVariables = {
+      x: { data: [1, 2, 3, 4], label: 'x value', units: 'x unit' },
+      y: { data: [2, 3, 4, 5], label: 'y value', units: 'y unit' },
     };
 
     const jcamp = fromVariables(variables, {
@@ -344,18 +346,18 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables, forceNtuples and type', () => {
-    const variables = {
+    const variables: SpectrumVariables = {
       x: {
         data: [1, 2, 3, 4],
-        name: 'x value',
+        label: 'x value',
         units: 'x unit',
-        type: 'dependent',
+        isDependent: true,
       },
       y: {
         data: [2, 3, 4, 5],
-        name: 'y value',
+        label: 'y value',
         units: 'y unit',
-        type: 'independent',
+        isDependent: false,
       },
     };
 
