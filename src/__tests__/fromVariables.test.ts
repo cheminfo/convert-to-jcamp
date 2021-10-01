@@ -1,4 +1,4 @@
-import { SpectrumVariables } from 'cheminfo-types';
+import { MeasurementXYVariables } from 'cheminfo-types';
 // @ts-expect-error
 import { convert } from 'jcampconverter';
 
@@ -6,7 +6,7 @@ import { fromVariables } from '..';
 
 describe('fromVariables', () => {
   it('3 variables', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: { data: [1, 2, 3, 4], symbol: 'X', label: 'x value', units: 'x unit' },
       y: { data: [2, 3, 4, 5], symbol: 'Y', label: 'y value', units: 'y unit' },
       z: { data: [3, 4, 5, 6], symbol: 'T', label: 't value', units: 't unit' },
@@ -64,7 +64,7 @@ describe('fromVariables', () => {
   });
 
   it('3 variables with isDependent', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: {
         data: [1, 2, 3, 4],
         symbol: 'X',
@@ -140,7 +140,7 @@ describe('fromVariables', () => {
   });
 
   it('3 variables width specific independent / dependent', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: {
         data: [1, 2, 3, 4],
         symbol: 'X',
@@ -199,7 +199,7 @@ describe('fromVariables', () => {
   });
 
   it('3 variables with label', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: { data: [1, 2, 3, 4], symbol: 'X', label: 'x value [x unit]' },
       y: { data: [2, 3, 4, 5], symbol: 'Y', label: 'y value [y unit]' },
       z: { data: [3, 4, 5, 6], symbol: 'T', label: 't value [t unit]' },
@@ -251,7 +251,7 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables no force', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: { data: [1, 2, 3, 4], label: 'x value', units: 'x unit' },
       y: { data: [2, 3, 4, 5], label: 'y value', units: 'y unit' },
     };
@@ -289,7 +289,7 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables, forceNtuples', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: { data: [1, 2, 3, 4], label: 'x value', units: 'x unit' },
       y: { data: [2, 3, 4, 5], label: 'y value', units: 'y unit' },
     };
@@ -346,7 +346,7 @@ describe('fromVariables', () => {
   });
 
   it('x / y variables, forceNtuples and type', () => {
-    const variables: SpectrumVariables = {
+    const variables: MeasurementXYVariables = {
       x: {
         data: [1, 2, 3, 4],
         label: 'x value',

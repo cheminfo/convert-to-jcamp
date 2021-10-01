@@ -1,4 +1,4 @@
-import { SpectrumVariables } from 'cheminfo-types';
+import { MeasurementXYVariables } from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
 import creatorNtuples from './creatorNtuples';
@@ -10,7 +10,7 @@ import fromJSON from './fromJSON';
  * @return {string} JCAMP of the input
  */
 export function fromVariables(
-  variables: SpectrumVariables,
+  variables: MeasurementXYVariables,
   options: JcampOptions = {},
 ): string {
   const { info = {}, meta = {}, forceNtuples = false } = options;

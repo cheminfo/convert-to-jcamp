@@ -1,8 +1,4 @@
-import type {
-  OneLowerCase,
-  SpectrumVariables,
-  SpectrumVariable,
-} from 'cheminfo-types';
+import type { OneLowerCase, MeasurementXYVariables } from 'cheminfo-types';
 import maxFct from 'ml-array-max';
 import minFct from 'ml-array-min';
 
@@ -15,7 +11,7 @@ import { JcampOptions } from './JcampOptions';
  * @return {string} JCAMP of the input
  */
 export default function creatorNtuples(
-  variables: SpectrumVariables,
+  variables: MeasurementXYVariables,
   options: JcampOptions,
 ): string {
   const { meta = {}, info = {} } = options;
@@ -37,7 +33,8 @@ export default function creatorNtuples(
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    let variable = variables[key] as SpectrumVariable;
+    let variable = variables[key];
+    if (!variable) continue;
 
     let name = variable?.label.replace(/ *\[.*/, '');
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
@@ -92,7 +89,8 @@ export default function creatorNtuples(
   for (let i = 0; i < variables.x.data.length; i++) {
     let point = [];
     for (let key of keys) {
-      let variable = variables[key] as SpectrumVariable;
+      let variable = variables[key];
+      if (!variable) continue;
       point.push(variable.data[i]);
     }
     header += `${point.join('\t')}\n`;
