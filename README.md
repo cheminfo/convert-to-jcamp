@@ -18,7 +18,6 @@ Convert strings into JCAMP.
 [![npm download][download-image]][download-url]
 [![DOI](https://www.zenodo.org/badge/98869235.svg)](https://www.zenodo.org/badge/latestdoi/98869235)
 
-
 </h3>
 
 ## Installation
@@ -27,59 +26,17 @@ Convert strings into JCAMP.
 
 ## Usage
 
-### From text file
-
-```js
-import { fromText } from 'convert-to-jcamp';
-
-const testData = `1 2
-2 3
-3 4
-4 5
-5 6
-6 7
-7 8
-8 9`;
-const options = {
-  info: {
-    title: 'test',
-    owner: 'cheminfo',
-    origin: 'manually',
-    type: 'MASS SPECTRUM',
-    xUnits: 'M/Z',
-    yUnits: 'relative abundance',
-  },
-  meta: {
-    info1: 'value1',
-    info2: 'value2',
-  },
-};
-const jcamp = fromText(testData, options);
-```
-
-### From Json
-
-```js
-import { fromJSON } from '..';
-
-const data = {
-  x: [1, 2],
-  y: [2, 3],
-};
-const jcamp = fromJSON(data, {});
-```
-
 ### From Variables
 
 ```js
 const variables = {
   x: {
     data: [1, 2, 3, 4],
-    name: 'x value',
+    label: 'x value',
     units: 'x unit',
-    type: 'INDEPENDENT',
+    isDependent: false,
   },
-  y: { data: [2, 3, 4, 5], name: 'y value', units: 'y unit' },
+  y: { data: [2, 3, 4, 5], label: 'y value', units: 'y unit' },
 };
 
 const jcamp = fromVariables(variables, {
@@ -91,7 +48,7 @@ const jcamp = fromVariables(variables, {
   info: {
     title: 'Hello world',
     dataType: 'TEST',
-  }
+  },
 });
 ```
 
