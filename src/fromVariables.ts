@@ -1,7 +1,8 @@
 import { SpectrumVariables } from 'cheminfo-types';
+
+import { JcampOptions } from './JcampOptions';
 import creatorNtuples from './creatorNtuples';
 import fromJSON from './fromJSON';
-import { JcampOptions } from './JcampOptions';
 
 /**
  * Create a jcamp from variables
@@ -29,18 +30,29 @@ export function fromVariables(
     let x = variables.x;
     let xLabel = x.label || 'x';
 
-    jcampOptions.info.xUnits =
-      variables.x.units && xLabel.includes(variables.x.units)
-        ? xLabel
-        : `${xLabel} [${variables.x.units}]`;
+    if (variables.x.units) {
+      if (xLabel.includes(variables.x.units)) {
+        jcampOptions.info.xUnits = xLabel;
+      } else {
+        jcampOptions.info.xUnits = `${xLabel} (${variables.x.units})`;
+      }
+    } else {
+      jcampOptions.info.xUnits = xLabel;
+    }
 
     let y = variables.y;
     let yLabel = y.label || 'y';
 
-    jcampOptions.info.yUnits =
-      variables.y.units && yLabel.includes(variables.y.units)
-        ? yLabel
-        : `${yLabel} [${variables.y.units}]`;
+    if (variables.y.units) {
+      if (yLabel.includes(variables.y.units)) {
+        jcampOptions.info.xUnits = yLabel;
+      } else {
+        jcampOptions.info.yUnits = `${yLabel} (${variables.y.units})`;
+      }
+    } else {
+      jcampOptions.info.yUnits = yLabel;
+    }
+
     return fromJSON({ x: variables.x.data, y: variables.y.data }, jcampOptions);
   } else {
     return creatorNtuples(variables, options);

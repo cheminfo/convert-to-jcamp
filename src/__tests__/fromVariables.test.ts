@@ -274,8 +274,8 @@ describe('fromVariables', () => {
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
     expect(converted.spectra[0]).toStrictEqual({
-      xUnits: 'x value [x unit]',
-      yUnits: 'y value [y unit]',
+      xUnits: 'x value (x unit)',
+      yUnits: 'y value (y unit)',
       firstX: 1,
       lastX: 4,
       firstY: 2,

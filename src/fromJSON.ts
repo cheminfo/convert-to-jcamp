@@ -1,7 +1,8 @@
+import { DataXY } from 'cheminfo-types';
+
+import { JcampOptions } from './JcampOptions';
 import { peakTableCreator } from './utils/peakTableCreator';
 import { xyDataCreator } from './utils/xyDataCreator';
-import { JcampOptions } from './JcampOptions';
-import { DoubleArray, DataXY } from 'cheminfo-types';
 
 /**
  * Create a jcamp

@@ -1,6 +1,8 @@
-import { getNumber } from './getNumber';
-import { JcampOptions } from '../JcampOptions';
 import { DataXY } from 'cheminfo-types';
+
+import { JcampOptions } from '../JcampOptions';
+
+import { getNumber } from './getNumber';
 
 export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
   const { xFactor = 1, yFactor = 1 } = options.info || {};

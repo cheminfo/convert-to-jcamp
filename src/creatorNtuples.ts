@@ -1,11 +1,12 @@
-import maxFct from 'ml-array-max';
-import minFct from 'ml-array-min';
-import { JcampOptions } from './JcampOptions';
-import {
+import type {
   OneLowerCase,
   SpectrumVariables,
   SpectrumVariable,
 } from 'cheminfo-types';
+import maxFct from 'ml-array-max';
+import minFct from 'ml-array-min';
+
+import { JcampOptions } from './JcampOptions';
 
 /**
  * Parse from a xyxy data array
@@ -38,8 +39,8 @@ export default function creatorNtuples(
     const key = keys[i];
     let variable = variables[key] as SpectrumVariable;
 
-    let name = variable.label && variable.label.replace(/ *\[.*/, '');
-    let unit = variable.label && variable.label.replace(/.*\[(.*)\].*/, '$1');
+    let name = variable?.label.replace(/ *\[.*/, '');
+    let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     symbol.push(variable.symbol || key);
     varName.push(name || key);
