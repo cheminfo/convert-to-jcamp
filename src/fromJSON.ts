@@ -1,25 +1,18 @@
-import { peakTableCreator } from './utils/peakTableCreator';
-import { xyDataCreator } from './utils/xyDataCreator';
-import JcampOptions  from "./JcampOptions";
+import { peakTableCreator } from './utils/peakTableCreator.js';
+import { xyDataCreator } from './utils/xyDataCreator.js';
+import JcampOptions from './JcampOptions.js';
+import { DoubleArray, DataXY } from 'cheminfo-types';
 
 /**
  * Create a jcamp
- * @param {object} data object of array
- * @param {object} [options={}] metadata object
- * @param {string} [options.info={}] metadata of the file
- * @param {string} [options.info.title=''] title of the file
- * @param {string} [options.info.owner=''] owner of the file
- * @param {string} [options.info.origin=''] origin of the file
- * @param {string} [options.info.dataType=''] type of data
- * @param {string} [options.info.xUnits=''] units for the x axis for variables===undefined
- * @param {string} [options.info.yUnits=''] units for the y axis for variables===undefined
- * @param {number} [options.info.xFactor=1] factor to multiply X values
- * @param {number} [options.info.yFactor=1] factor to multiply Y values
- * @param {object} [options.meta={}] comments to add to the file
- * @param {boolean} [options.xydata=false] Use XYDATA format. Will use first / last X and equidistant Xs values if true
- * @return {string} JCAMP of the input
+ * @param data - object of array
+ * @param options - metadata object
+ * @return - JCAMP of the input
  */
-export default function fromJSON(data, options:JcampOptions = {}):string {   
+export default function fromJSON(
+  data: DataXY,
+  options: JcampOptions = {},
+): string {
   const { meta = {}, info = {}, xydata = false } = options;
 
   const {
@@ -54,8 +47,8 @@ export default function fromJSON(data, options:JcampOptions = {}):string {
 
   return `${header}##NPOINTS=${data.x.length}
 ${(xydata
-  ? xyDataCreator(data, { xFactor, yFactor })
-  : peakTableCreator(data, { xFactor, yFactor })
+  ? xyDataCreator(data, { info: { xFactor, yFactor } })
+  : peakTableCreator(data, { info: { xFactor, yFactor } })
 ).join('\n')}
 ##END`;
 }
