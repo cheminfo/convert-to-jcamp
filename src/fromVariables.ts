@@ -1,55 +1,15 @@
+import { SpectrumVariables } from 'cheminfo-types';
 import creatorNtuples from './creatorNtuples';
-
-interface SpectrumInfo {
-  /**
-   * title of the file
-   * @default ''
-   */
-  title?: string;
-  /**
-   * owner of the file
-   * @default ''
-   */
-  owner?: string;
-  /**
-   * origin of the file
-   * @default ''
-   */
-  origin?: string;
-  /**
-    * type of data
-    * @default ''
-    */
-  dataType?: string;
-
-  xUnits: number;
-  yUnits: number
-}
-
-interface JcampOptions {
-  /**
-   * metadata of the file
-   * @default {} 
-   */
-  info?: SpectrumInfo;
-  /**
-   * comments to add to the file
-   * @default {} 
-   */
-  meta?: Record<string, any>;
-  /**
-   * force the ntuples format even if there is only x and y variables
-   * @default false
-   */
-  forceNtuples?: boolean;
-}
+import fromJSON from './fromJSON';
+import  JcampOptions  from './JcampOptions';
 
 /**
  * Create a jcamp from variables
  * @param {Array<Variable>} [variables={}] - object of variables
+ * @return {string} JCAMP of the input
  */
-export function fromVariables(variables: Record<string, any> = {}, options: JcampOptions = {}) {
-  const { info, meta, forceNtuples } = options;
+export function fromVariables(variables:SpectrumVariables, options: JcampOptions = {})  :string {  
+  const { info={}, meta={}, forceNtuples=false } = options;
 
   let jcampOptions = {
     info,
@@ -64,16 +24,16 @@ export function fromVariables(variables: Record<string, any> = {}, options: Jcam
     !forceNtuples
   ) {
     let x = variables.x;
-    let xLabel = x.label || x.name || 'x';
+    let xLabel = x.label  || 'x';
 
-    jcampOptions.info.xUnits = xLabel.includes(variables.x.units)
+    jcampOptions.info.xUnits = variables.x.units && xLabel.includes(variables.x.units)
       ? xLabel
       : `${xLabel} [${variables.x.units}]`;
 
     let y = variables.y;
-    let yLabel = y.label || y.name || 'y';
+    let yLabel = y.label || 'y';
 
-    jcampOptions.info.yUnits = yLabel.includes(variables.y.units)
+    jcampOptions.info.yUnits = variables.y.units && yLabel.includes(variables.y.units)
       ? yLabel
       : `${yLabel} [${variables.y.units}]`;
     return fromJSON({ x: variables.x.data, y: variables.y.data }, jcampOptions);
