@@ -1,7 +1,9 @@
 import { getNumber } from './getNumber.js';
+import JcampOptions from '../JcampOptions.js';
+import { DataXY } from 'cheminfo-types';
 
-export function xyDataCreator(data, options = {}) {
-  const { xFactor = 1, yFactor = 1 } = options;
+export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
+  const { xFactor = 1, yFactor = 1 } = options.info || {};
   let firstX = data.x[0];
   let lastX = data.x[data.x.length - 1];
   let firstY = data.y[0];
@@ -20,13 +22,13 @@ export function xyDataCreator(data, options = {}) {
   lines.push(`##DELTAX=${xFactor}`);
   lines.push('##XYDATA=(X++(Y..Y))');
 
-  let line = data.x[0];
+  let line = String(data.x[0]);
   for (let i = 0; i < data.x.length; i++) {
     line += ` ${getNumber(data.y[i], yFactor)}`;
     if (line.length > 70) {
       lines.push(line);
       if (i < data.x.length - 1) {
-        line = getNumber(data.x[0] + i * deltaX, xFactor);
+        line = String(getNumber(data.x[0] + i * deltaX, xFactor));
       } else {
         line = '';
       }

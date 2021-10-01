@@ -1,9 +1,9 @@
 import { getNumber } from './getNumber.js';
-import { Data } from '../fromJSON.js';
+import { DataXY } from 'cheminfo-types';
 import JcampOptions from '../JcampOptions.js';
 
-export function peakTableCreator(data: Data, options: JcampOptions = {}) {
-  const { xFactor = 1, yFactor = 1 } = options.info;
+export function peakTableCreator(data: DataXY, options: JcampOptions = {}) {
+  const { xFactor = 1, yFactor = 1 } = options.info || {};
   let firstX = Number.POSITIVE_INFINITY;
   let lastX = Number.NEGATIVE_INFINITY;
   let firstY = Number.POSITIVE_INFINITY;
