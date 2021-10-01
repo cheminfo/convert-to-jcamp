@@ -1,25 +1,9 @@
 import { getNumber } from './getNumber.js';
+import { Data } from '../fromJSON.js';
+import JcampOptions from '../JcampOptions.js';
 
-interface TableCreatorOptions {
-  /**
-   * x factor
-   * @default 1
-   */
-  xFactor?: number;
-  /**
-   * y factor
-   * @default 1
-   */
-  yFactor?: number
-}
-
-interface Data {
-  x: Array<number>;
-  y: Array<number>   
-}
-
-export function peakTableCreator(data:Data, options: TableCreatorOptions = {}) {
-  const { xFactor = 1, yFactor = 1 } = options;
+export function peakTableCreator(data: Data, options: JcampOptions = {}) {
+  const { xFactor = 1, yFactor = 1 } = options.info;
   let firstX = Number.POSITIVE_INFINITY;
   let lastX = Number.NEGATIVE_INFINITY;
   let firstY = Number.POSITIVE_INFINITY;
