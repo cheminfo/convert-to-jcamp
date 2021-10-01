@@ -1,4 +1,4 @@
-export interface SpectrumInfo {
+interface SpectrumInfo {
   /**
    * title of the file
    * @default ''
@@ -15,33 +15,33 @@ export interface SpectrumInfo {
    */
   origin?: string;
   /**
-    * type of data
-    * @default ''
-    */
+   * type of data
+   * @default ''
+   */
   dataType?: string;
   /**
    * units for the x axis for variables===undefined
    * @default ''
-  */
+   */
   xUnits?: string;
   /**
    * units for the y axis for variables===undefined
    * @default ''
-  */
+   */
   yUnits?: string;
   /**
-  * factor to multiply X value
-  * @default 1
- */
+   * factor to multiply X value
+   * @default 1
+   */
   xFactor?: number;
   /**
    * factor to multiply X value
    * @default 1
-  */
+   */
   yFactor?: number;
 }
 
-export default interface JcampOptions {
+export interface JcampOptions {
   /**
    * metadata of the file
    * @default {}

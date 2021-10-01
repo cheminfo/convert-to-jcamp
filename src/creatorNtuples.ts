@@ -1,7 +1,11 @@
 import maxFct from 'ml-array-max';
 import minFct from 'ml-array-min';
-import JcampOptions  from "./JcampOptions";
-import {OneLowerCase, SpectrumVariables, SpectrumVariable} from 'cheminfo-types';
+import { JcampOptions } from './JcampOptions';
+import {
+  OneLowerCase,
+  SpectrumVariables,
+  SpectrumVariable,
+} from 'cheminfo-types';
 
 /**
  * Parse from a xyxy data array
@@ -9,7 +13,10 @@ import {OneLowerCase, SpectrumVariables, SpectrumVariable} from 'cheminfo-types'
  * @param {object} [meta] - same metadata object format that the fromText
  * @return {string} JCAMP of the input
  */
-export default function creatorNtuples(variables:SpectrumVariables, options:JcampOptions) : string{
+export default function creatorNtuples(
+  variables: SpectrumVariables,
+  options: JcampOptions,
+): string {
   const { meta = {}, info = {} } = options;
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
@@ -26,7 +33,7 @@ export default function creatorNtuples(variables:SpectrumVariables, options:Jcam
   const factor = [];
 
   const keys = Object.keys(variables) as OneLowerCase[];
-  
+
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     let variable = variables[key] as SpectrumVariable;
@@ -42,8 +49,8 @@ export default function creatorNtuples(variables:SpectrumVariables, options:Jcam
       varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
     } else {
       varType.push(
-        variable.isDependent!==undefined
-          ? ! variable.isDependent
+        variable.isDependent !== undefined
+          ? !variable.isDependent
           : i === 0
           ? 'INDEPENDENT'
           : 'DEPENDENT',
@@ -84,7 +91,7 @@ export default function creatorNtuples(variables:SpectrumVariables, options:Jcam
   for (let i = 0; i < variables.x.data.length; i++) {
     let point = [];
     for (let key of keys) {
-let variable = variables[key] as SpectrumVariable;
+      let variable = variables[key] as SpectrumVariable;
       point.push(variable.data[i]);
     }
     header += `${point.join('\t')}\n`;

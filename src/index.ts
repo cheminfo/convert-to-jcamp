@@ -1,3 +1,3 @@
 export * from './fromVariables';
-
-export {SpectrumVariable,SpectrumVariables} from 'cheminfo-types'
+export { JcampOptions } from './JcampOptions';
+export { SpectrumVariable, SpectrumVariables } from 'cheminfo-types';

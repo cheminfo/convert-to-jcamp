@@ -1,5 +1,5 @@
 import { getNumber } from './getNumber';
-import JcampOptions from '../JcampOptions';
+import { JcampOptions } from '../JcampOptions';
 import { DataXY } from 'cheminfo-types';
 
 export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
