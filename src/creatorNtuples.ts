@@ -1,5 +1,7 @@
 import maxFct from 'ml-array-max';
 import minFct from 'ml-array-min';
+import JcampOptions  from "./JcampOptions";
+import {OneLowerCase, SpectrumVariables, SpectrumVariable} from 'cheminfo-types';
 
 /**
  * Parse from a xyxy data array
@@ -7,7 +9,7 @@ import minFct from 'ml-array-min';
  * @param {object} [meta] - same metadata object format that the fromText
  * @return {string} JCAMP of the input
  */
-export default function creatorNtuples(variables, options) {
+export default function creatorNtuples(variables:SpectrumVariables, options:JcampOptions) : string{
   const { meta = {}, info = {} } = options;
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
@@ -23,24 +25,25 @@ export default function creatorNtuples(variables, options) {
   const max = [];
   const factor = [];
 
-  const keys = Object.keys(variables);
+  const keys = Object.keys(variables) as OneLowerCase[];
+  
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    let variable = variables[key];
+    let variable = variables[key] as SpectrumVariable;
 
     let name = variable.label && variable.label.replace(/ *\[.*/, '');
     let unit = variable.label && variable.label.replace(/.*\[(.*)\].*/, '$1');
 
     symbol.push(variable.symbol || key);
-    varName.push(variable.name || name || key);
-    varDim.push(variables[key].data.length);
+    varName.push(name || key);
+    varDim.push(variable.data.length);
 
     if (variable.isDependent !== undefined) {
       varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
     } else {
       varType.push(
-        variable.type
-          ? variable.type.toUpperCase()
+        variable.isDependent!==undefined
+          ? ! variable.isDependent
           : i === 0
           ? 'INDEPENDENT'
           : 'DEPENDENT',
@@ -48,10 +51,10 @@ export default function creatorNtuples(variables, options) {
     }
 
     units.push(variable.units || unit || '');
-    first.push(variables[key][0]);
-    last.push(variables[key][variables[key].length - 1]);
-    min.push(minFct(variables[key].data));
-    max.push(maxFct(variables[key].data));
+    first.push(variable.data[0]);
+    last.push(variable.data[variable.data.length - 1]);
+    min.push(minFct(variable.data));
+    max.push(maxFct(variable.data));
     factor.push(1);
   }
 
@@ -78,10 +81,11 @@ export default function creatorNtuples(variables, options) {
 
   header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;
 
-  for (let i = 0; i < variables[keys[0]].data.length; i++) {
+  for (let i = 0; i < variables.x.data.length; i++) {
     let point = [];
     for (let key of keys) {
-      point.push(variables[key].data[i]);
+let variable = variables[key] as SpectrumVariable;
+      point.push(variable.data[i]);
     }
     header += `${point.join('\t')}\n`;
   }
