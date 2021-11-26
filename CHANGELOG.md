@@ -1,5 +1,36 @@
 # Changelog
 
+## [5.0.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.8.0...v5.0.0) (2021-11-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* delete fromJson and fromText
+
+### Features
+
+* add data encoder ([#29](https://www.github.com/cheminfo/convert-to-jcamp/issues/29)) ([c389c68](https://www.github.com/cheminfo/convert-to-jcamp/commit/c389c68b8958f0ca9cb377c3aafbafd9e0747cd8))
+* add type for XYEncoding ([664801d](https://www.github.com/cheminfo/convert-to-jcamp/commit/664801ddaa0445c40f10932683292bfc02b300c7))
+* delete fromJson and fromText ([db87364](https://www.github.com/cheminfo/convert-to-jcamp/commit/db873644d1a56395e9e59cb5f038015d414b67a2))
+
+
+### Bug Fixes
+
+* adapt demo to ts ([26fe5c0](https://www.github.com/cheminfo/convert-to-jcamp/commit/26fe5c04b07dea83b85f90336a2be5b88092d5a8))
+* adapt getNumber to ts ([f45ecea](https://www.github.com/cheminfo/convert-to-jcamp/commit/f45ecea493b83becd42b11ddfdfc2b89c2b51360))
+* adapt test to ts ([09b50aa](https://www.github.com/cheminfo/convert-to-jcamp/commit/09b50aa0eb326bd1380523959294eeb921985a61))
+* add fromJSON from branch master ([dc08099](https://www.github.com/cheminfo/convert-to-jcamp/commit/dc08099d61b99bee0843768aa8186c110e39926f))
+* add interfaces ([4100ed4](https://www.github.com/cheminfo/convert-to-jcamp/commit/4100ed479b26815bb0407b10fd7c81b6eb9eadc9))
+* data types ([4124114](https://www.github.com/cheminfo/convert-to-jcamp/commit/4124114c3b186ed534012a9a267af4b927d590a5))
+* data types ([8adfefb](https://www.github.com/cheminfo/convert-to-jcamp/commit/8adfefb14bc7e78aa2258807b820b2514298f26e))
+* fix some eslint errors ([266245f](https://www.github.com/cheminfo/convert-to-jcamp/commit/266245f1c5fd93bd4c9a73c3857982577dfc7526))
+* remove fromJSON and fromText ([49846a9](https://www.github.com/cheminfo/convert-to-jcamp/commit/49846a929433c64e2fab4404fbbc1d4f7bf62a0d))
+* remove useless interfaces ([1eef7ca](https://www.github.com/cheminfo/convert-to-jcamp/commit/1eef7ca170ca62534052780acfc416514081cd5e))
+* rename interface SpectrumInfo to JcampInfo ([dfa5dc0](https://www.github.com/cheminfo/convert-to-jcamp/commit/dfa5dc0853907a1d6aa830db1984d5fbe4c72276))
+* start adding interface ([f2e96ff](https://www.github.com/cheminfo/convert-to-jcamp/commit/f2e96ffaa0e89b3b3bcb659ecaa85e61cfda9633))
+* type issues ([2dba24f](https://www.github.com/cheminfo/convert-to-jcamp/commit/2dba24fa02390bffa0649981ab29b77e160120fc))
+* xyDataCreator ([#27](https://www.github.com/cheminfo/convert-to-jcamp/issues/27)) ([b9f0627](https://www.github.com/cheminfo/convert-to-jcamp/commit/b9f0627a53bf5d437322814f9b1975cdd8d7263c))
+
 ## [4.8.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.7.0...v4.8.0) (2021-09-17)
 
 
