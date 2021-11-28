@@ -1,5 +1,12 @@
 # Changelog
 
+### [5.0.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.0...v5.0.1) (2021-11-28)
+
+
+### Bug Fixes
+
+* compression algorithm was ignored ([9d2ff74](https://www.github.com/cheminfo/convert-to-jcamp/commit/9d2ff74dc582135cee226bce49f52ec52700217c))
+
 ## [5.0.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.8.0...v5.0.0) (2021-11-26)
 
 
