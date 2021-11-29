@@ -1,5 +1,12 @@
 # Changelog
 
+### [5.0.2](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.1...v5.0.2) (2021-11-29)
+
+
+### Bug Fixes
+
+* present issues after refactor ([#38](https://www.github.com/cheminfo/convert-to-jcamp/issues/38)) ([a876e08](https://www.github.com/cheminfo/convert-to-jcamp/commit/a876e080bd3c580d8a8c5685fe360dc040c925bc)), closes [#33](https://www.github.com/cheminfo/convert-to-jcamp/issues/33) [#34](https://www.github.com/cheminfo/convert-to-jcamp/issues/34)
+
 ### [5.0.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.0...v5.0.1) (2021-11-28)
 
 
