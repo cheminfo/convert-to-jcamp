@@ -1,5 +1,18 @@
 # Changelog
 
+## [5.1.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.1...v5.1.0) (2021-11-30)
+
+
+### Features
+
+* add ensureInteger ([080b236](https://www.github.com/cheminfo/convert-to-jcamp/commit/080b236a9d1de6f8fba39fad0da0298dc9a967d2))
+* ensure xyData are integers ([1565927](https://www.github.com/cheminfo/convert-to-jcamp/commit/15659277c2cab5748fee43fa913df9c27487d325))
+
+
+### Bug Fixes
+
+* present issues after refactor ([#38](https://www.github.com/cheminfo/convert-to-jcamp/issues/38)) ([a876e08](https://www.github.com/cheminfo/convert-to-jcamp/commit/a876e080bd3c580d8a8c5685fe360dc040c925bc)), closes [#33](https://www.github.com/cheminfo/convert-to-jcamp/issues/33) [#34](https://www.github.com/cheminfo/convert-to-jcamp/issues/34)
+
 ### [5.0.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.0...v5.0.1) (2021-11-28)
 
 
