@@ -1,5 +1,12 @@
 # Changelog
 
+### [5.1.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.1.0...v5.1.1) (2021-12-15)
+
+
+### Bug Fixes
+
+* update dependencies to use typescript definition from jcampconverter ([94eaa54](https://www.github.com/cheminfo/convert-to-jcamp/commit/94eaa543e8654d158caca5e8de5256d03d808a0c))
+
 ## [5.1.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.1...v5.1.0) (2021-11-30)
 
 
