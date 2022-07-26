@@ -111,9 +111,6 @@ export default function creatorNtuples(
         header += `${xData[point]}, ${yData[point]}\n`;
       }
     } else if (options.isXYData) {
-      const firstX = xData[0];
-      const lastX = xData[xData.length - 1];
-      const deltaX = (lastX - firstX) / xData.length;
       for (const key of ['r', 'i'] as Array<'r' | 'i'>) {
         const variable = variables[key];
         if (variable) {
@@ -124,8 +121,8 @@ export default function creatorNtuples(
           })), XYDATA\n`;
           header += vectorEncoder(
             rescaleAndEnsureInteger(variable.data, factors[key]),
-            firstX / factors.x,
-            deltaX / factors.x,
+            0,
+            1,
             xyEncoding,
           );
           header += '\n';

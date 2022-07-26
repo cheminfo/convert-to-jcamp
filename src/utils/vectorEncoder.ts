@@ -206,13 +206,13 @@ export function differenceDuplicateEncoding(
           mult = 0;
           index--;
         } else {
-          // Mirar si cabe, en caso contrario iniciar una nueva linea
+          // Check if it fits, otherwise start a new line
           encodedNumber = differenceDigit(diffData[index].toString());
           if (encodedNumber.length + charCount < maxLinelength) {
             encodedData += encodedNumber;
             charCount += encodedNumber.length;
           } else {
-            // Iniciar nueva linea
+            // start a new line
             encodedData += newLine;
             temp =
               Math.ceil(firstX + index * intervalX) +
