@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.2.0...v5.3.0) (2022-07-26)
+
+
+### Features
+
+* **creatorNtuples:** use factors from options ([#45](https://github.com/cheminfo/convert-to-jcamp/issues/45)) ([64e07dd](https://github.com/cheminfo/convert-to-jcamp/commit/64e07dd54dd68e28698850f67d459dbd6e22d614))
+
 ## [5.2.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.1.1...v5.2.0) (2022-03-04)
 
 
