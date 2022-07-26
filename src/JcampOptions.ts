@@ -72,4 +72,5 @@ export interface JcampOptions {
   isXYData?: boolean;
   is2D?: boolean;
   isPeakData?: boolean;
+  factors?: Record<string, number>;
 }

@@ -1,10 +1,11 @@
 import type { OneLowerCase, MeasurementXYVariables } from 'cheminfo-types';
-import { xDivide } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
+import { getBestFactor } from './utils/getBestFactor';
 import { getExtremeValues } from './utils/getExtremeValues';
+import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
 import { vectorEncoder } from './utils/vectorEncoder';
 
 /**
@@ -17,16 +18,9 @@ export default function creatorNtuples(
   variables: MeasurementXYVariables,
   options: JcampOptions,
 ): string {
-  const { meta = {}, info = {}, xyEncoding = '' } = options;
+  const { meta = {}, info = {}, xyEncoding = '', factors = {} } = options;
 
-  const {
-    title = '',
-    owner = '',
-    origin = '',
-    dataType = '',
-    xFactor = 1,
-    yFactor = 1,
-  } = info;
+  const { title = '', owner = '', origin = '', dataType = '' } = info;
 
   const symbol = [];
   const varName = [];
@@ -37,6 +31,7 @@ export default function creatorNtuples(
   const last = [];
   const min = [];
   const max = [];
+  const factorArray = [];
 
   const keys = Object.keys(variables) as OneLowerCase[];
 
@@ -49,6 +44,13 @@ export default function creatorNtuples(
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
+    factors[key] = getBestFactor(variable.data, {
+      factor: factors[key],
+      minMax,
+    });
+
+    const currentFactor = factors[key];
+    factorArray.push(currentFactor);
     symbol.push(variable.symbol || key);
     varName.push(name || key);
     varDim.push(variable.data.length);
@@ -80,7 +82,8 @@ export default function creatorNtuples(
 ##OWNER=${owner}\n`;
 
   const infoKeys = Object.keys(info).filter(
-    (e) => !['title', 'owner', 'origin', 'dataType'].includes(e),
+    (e) =>
+      !['title', 'owner', 'origin', 'datatype'].includes(e.toLocaleLowerCase()),
   );
   header += addInfoData(info, infoKeys, '##');
   header += addInfoData(meta);
@@ -91,6 +94,7 @@ export default function creatorNtuples(
 ##VAR_TYPE=  ${varType.join()}
 ##VAR_DIM=   ${varDim.join()}
 ##UNITS=     ${units.join()}
+##FACTOR=    ${factorArray.join()}
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
 ##MIN=       ${min.join()}
@@ -98,10 +102,10 @@ export default function creatorNtuples(
 
   if (options.isNMR) {
     let xData = variables.x.data;
-    let yData = variables.y.data;
     checkNumberOrArray(xData);
-    checkNumberOrArray(yData);
     if (options.isPeakData) {
+      let yData = variables.y.data;
+      checkNumberOrArray(yData);
       header += `##DATA TABLE= (XY..XY), PEAKS\n`;
       for (let point = 0; point < varDim[0]; point++) {
         header += `${xData[point]}, ${yData[point]}\n`;
@@ -114,16 +118,17 @@ export default function creatorNtuples(
         const variable = variables[key];
         if (variable) {
           checkNumberOrArray(variable.data);
-          header += `##PAGE= ${key === 'r' ? 1 : 2}\n`;
+          header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
           header += `##DATA TABLE= (X++(${
             key === 'r' ? 'R..R' : 'I..I'
           })), XYDATA\n`;
           header += vectorEncoder(
-            xDivide(variable.data, yFactor, { output: variable.data }),
-            firstX / xFactor,
-            deltaX / xFactor,
+            rescaleAndEnsureInteger(variable.data, factors[key]),
+            firstX / factors.x,
+            deltaX / factors.x,
             xyEncoding,
           );
+          header += '\n';
         }
       }
     }
@@ -141,7 +146,7 @@ export default function creatorNtuples(
     }
   }
 
-  header += `##NTUPLES= ${dataType}\n`;
-  header += '##END=';
+  header += `##END NTUPLES= ${dataType}\n`;
+  header += '##END=\n##END=';
   return header;
 }

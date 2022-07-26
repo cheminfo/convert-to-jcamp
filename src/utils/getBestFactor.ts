@@ -10,7 +10,8 @@ export function getBestFactor(
     factor?: number;
     /**
      * The maximum absolute value
-     */ maxValue?: number;
+     */
+    maxValue?: number;
     minMax?: MinMax;
   } = {},
 ): number {
