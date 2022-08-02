@@ -1,7 +1,12 @@
-import type { OneLowerCase, MeasurementXYVariables } from 'cheminfo-types';
+import type { OneLowerCase } from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
+import {
+  assertVariablesHasX,
+  assertVariablesHasY,
+  PartialMeasurementXYVariables,
+} from './utils/assert';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
 import { getExtremeValues } from './utils/getExtremeValues';
@@ -15,9 +20,10 @@ import { vectorEncoder } from './utils/vectorEncoder';
  * @return JCAMP-DX text file corresponding to the variables
  */
 export default function creatorNtuples(
-  variables: MeasurementXYVariables,
+  variables: PartialMeasurementXYVariables,
   options: JcampOptions,
 ): string {
+  assertVariablesHasX(variables);
   const { meta = {}, info = {}, xyEncoding = '', factors = {} } = options;
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
@@ -104,6 +110,7 @@ export default function creatorNtuples(
     let xData = variables.x.data;
     checkNumberOrArray(xData);
     if (options.isPeakData) {
+      assertVariablesHasY(variables);
       let yData = variables.y.data;
       checkNumberOrArray(yData);
       header += `##DATA TABLE= (XY..XY), PEAKS\n`;
@@ -111,9 +118,6 @@ export default function creatorNtuples(
         header += `${xData[point]}, ${yData[point]}\n`;
       }
     } else if (options.isXYData) {
-      const firstX = xData[0];
-      const lastX = xData[xData.length - 1];
-      const deltaX = (lastX - firstX) / xData.length;
       for (const key of ['r', 'i'] as Array<'r' | 'i'>) {
         const variable = variables[key];
         if (variable) {
@@ -124,8 +128,8 @@ export default function creatorNtuples(
           })), XYDATA\n`;
           header += vectorEncoder(
             rescaleAndEnsureInteger(variable.data, factors[key]),
-            firstX / factors.x,
-            deltaX / factors.x,
+            0,
+            1,
             xyEncoding,
           );
           header += '\n';
