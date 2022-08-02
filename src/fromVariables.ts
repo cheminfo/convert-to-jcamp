@@ -10,7 +10,7 @@ import { checkNumberOrArray } from './utils/checkNumberOrArray';
  */
 export function fromVariables(
   /** object of variables */
-  variables: MeasurementXYVariables,
+  variables: Partial<MeasurementXYVariables>,
   options: JcampOptions = {},
 ): string {
   const { info = {}, meta = {}, forceNtuples = false } = options;
