@@ -20,7 +20,7 @@ const converterOptions = {
   const brukerFileList = getCoffee(); //Or you can generate a fileList of a bruker folder using `filelist-utils`
   const spectra = await convertFileList(brukerFileList, converterOptions);
   writeJcamps(spectra);
-})()
+})();
 
 // If the folder is soo big, you can process expno by expno like:
 /*
@@ -59,25 +59,22 @@ function writeJcamps(spectra) {
       const variables = {
         x: {
           data: xMultiply(data.x, observeFrequency),
-          label: 'Hz',
-          name: 'frequencies',
+          label: 'Frequencies',
           units: 'Hz',
           symbol: 'X',
           isDependent: false,
         },
         r: {
           data: data.re,
-          label: 'real',
+          label: 'real data',
           units: 'arbitratry units',
-          name: 'real data',
           symbol: 'R',
           isDependent: true,
         },
         i: {
           data: data.im,
-          label: 'imaginary',
+          label: 'imaginary data',
           units: 'arbitratry units',
-          name: 'imaginary data',
           symbol: 'I',
           isDependent: true,
         },
