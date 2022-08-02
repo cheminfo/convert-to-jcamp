@@ -28,9 +28,7 @@ describe('convert bruker to jcamp', () => {
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
     const converted = parse(
-      stringify(
-        convert(jcamp, { keepRecordsRegExp: /^\$.*/ })
-      )
+      stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
     ).flatten[0];
 
     expect(converted.meta).toStrictEqual(spectra[0].meta);
