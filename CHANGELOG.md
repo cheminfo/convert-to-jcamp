@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.3.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.0...v5.3.1) (2022-08-02)
+
+
+### Bug Fixes
+
+* **ntuples:** x data from 0 - nbPoints ([#49](https://github.com/cheminfo/convert-to-jcamp/issues/49)) ([31213b0](https://github.com/cheminfo/convert-to-jcamp/commit/31213b02be924111d36d7a19a89f2540c8f718be))
+
 ## [5.3.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.2.0...v5.3.0) (2022-07-26)
 
 
