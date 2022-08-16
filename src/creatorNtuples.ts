@@ -1,17 +1,8 @@
-import type { OneLowerCase } from 'cheminfo-types';
+import type { MeasurementXYVariables, OneLowerCase } from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
-import {
-  assertVariablesHasX,
-  assertVariablesHasY,
-  PartialMeasurementXYVariables,
-} from './utils/assert';
-import { checkNumberOrArray } from './utils/checkNumberOrArray';
-import { getBestFactor } from './utils/getBestFactor';
 import { getExtremeValues } from './utils/getExtremeValues';
-import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
-import { vectorEncoder } from './utils/vectorEncoder';
 
 /**
  * Parse from a xyxy data array
@@ -20,11 +11,10 @@ import { vectorEncoder } from './utils/vectorEncoder';
  * @return JCAMP-DX text file corresponding to the variables
  */
 export default function creatorNtuples(
-  variables: PartialMeasurementXYVariables,
+  variables: MeasurementXYVariables,
   options: JcampOptions,
 ): string {
-  assertVariablesHasX(variables);
-  const { meta = {}, info = {}, xyEncoding = '', factors = {} } = options;
+  const { meta = {}, info = {} } = options;
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
 
@@ -37,7 +27,6 @@ export default function creatorNtuples(
   const last = [];
   const min = [];
   const max = [];
-  const factorArray = [];
 
   const keys = Object.keys(variables) as OneLowerCase[];
 
@@ -50,13 +39,7 @@ export default function creatorNtuples(
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
-    factors[key] = getBestFactor(variable.data, {
-      factor: factors[key],
-      minMax,
-    });
 
-    const currentFactor = factors[key];
-    factorArray.push(currentFactor);
     symbol.push(variable.symbol || key);
     varName.push(name || key);
     varDim.push(variable.data.length);
@@ -100,54 +83,21 @@ export default function creatorNtuples(
 ##VAR_TYPE=  ${varType.join()}
 ##VAR_DIM=   ${varDim.join()}
 ##UNITS=     ${units.join()}
-##FACTOR=    ${factorArray.join()}
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
 ##MIN=       ${min.join()}
-##MAX=       ${max.join()}\n`;
+##MAX=       ${max.join()}
+##PAGE= N=1\n`;
 
-  if (options.isNMR) {
-    let xData = variables.x.data;
-    checkNumberOrArray(xData);
-    if (options.isPeakData) {
-      assertVariablesHasY(variables);
-      let yData = variables.y.data;
-      checkNumberOrArray(yData);
-      header += `##DATA TABLE= (XY..XY), PEAKS\n`;
-      for (let point = 0; point < varDim[0]; point++) {
-        header += `${xData[point]}, ${yData[point]}\n`;
-      }
-    } else if (options.isXYData) {
-      for (const key of ['r', 'i'] as Array<'r' | 'i'>) {
-        const variable = variables[key];
-        if (variable) {
-          checkNumberOrArray(variable.data);
-          header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
-          header += `##DATA TABLE= (X++(${
-            key === 'r' ? 'R..R' : 'I..I'
-          })), XYDATA\n`;
-          header += vectorEncoder(
-            rescaleAndEnsureInteger(variable.data, factors[key]),
-            0,
-            1,
-            xyEncoding,
-          );
-          header += '\n';
-        }
-      }
+  header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;
+  for (let i = 0; i < variables.x.data.length; i++) {
+    let point = [];
+    for (let key of keys) {
+      let variable = variables[key];
+      if (!variable) continue;
+      point.push(variable.data[i]);
     }
-  } else {
-    header += `##PAGE= N=1\n`;
-    header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;
-    for (let i = 0; i < variables.x.data.length; i++) {
-      let point = [];
-      for (let key of keys) {
-        let variable = variables[key];
-        if (!variable) continue;
-        point.push(variable.data[i]);
-      }
-      header += `${point.join('\t')}\n`;
-    }
+    header += `${point.join('\t')}\n`;
   }
 
   header += `##END NTUPLES= ${dataType}\n`;
