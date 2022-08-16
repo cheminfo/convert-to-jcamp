@@ -17,6 +17,7 @@ export interface PeakData {
 }
 
 export interface NtuplesData {
+  x: MeasurementVariable;
   r: MeasurementVariable;
   i: MeasurementVariable;
 }
@@ -39,7 +40,7 @@ function isNTuplesData(
  * @param [options={}] - options that allows to add meta data in the jcamp
  * @return JCAMP-DX text file corresponding to the variables
  */
-export default function creatorNtuples(
+export default function from1DNMRVariables(
   variables: Partial<MeasurementXYVariables>,
   options: JcampOptions,
 ): string {
@@ -60,7 +61,7 @@ export default function creatorNtuples(
 
   const keys = isPeakData(variables)
     ? (['x', 'y'] as const)
-    : (['r', 'i'] as const);
+    : (['x', 'r', 'i'] as const);
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
