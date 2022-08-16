@@ -1,17 +1,37 @@
-import type { OneLowerCase } from 'cheminfo-types';
+import type {
+  MeasurementVariable,
+  MeasurementXYVariables,
+} from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
-import {
-  assertVariablesHasX,
-  assertVariablesHasY,
-  PartialMeasurementXYVariables,
-} from './utils/assert';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
 import { getExtremeValues } from './utils/getExtremeValues';
 import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
 import { vectorEncoder } from './utils/vectorEncoder';
+
+export interface PeakData {
+  x: MeasurementVariable;
+  y: MeasurementVariable;
+}
+
+export interface NtuplesData {
+  r: MeasurementVariable;
+  i: MeasurementVariable;
+}
+
+function isPeakData(
+  variables: Partial<MeasurementXYVariables>,
+): variables is PeakData {
+  return 'y' in variables && 'x' in variables;
+}
+
+function isNTuplesData(
+  variables: Partial<MeasurementXYVariables>,
+): variables is NtuplesData {
+  return 'r' in variables && 'i' in variables;
+}
 
 /**
  * Parse from a xyxy data array
@@ -20,10 +40,9 @@ import { vectorEncoder } from './utils/vectorEncoder';
  * @return JCAMP-DX text file corresponding to the variables
  */
 export default function creatorNtuples(
-  variables: PartialMeasurementXYVariables,
+  variables: Partial<MeasurementXYVariables>,
   options: JcampOptions,
 ): string {
-  assertVariablesHasX(variables);
   const { meta = {}, info = {}, xyEncoding = '', factors = {} } = options;
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
@@ -39,12 +58,21 @@ export default function creatorNtuples(
   const max = [];
   const factorArray = [];
 
-  const keys = Object.keys(variables) as OneLowerCase[];
+  const keys = isPeakData(variables)
+    ? (['x', 'y'] as const)
+    : (['r', 'i'] as const);
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
     let variable = variables[key];
-    if (!variable) continue;
+
+    if (!variable) {
+      throw new Error(
+        `variable ${key} is mandatory in ${
+          isPeakData(variables) ? 'peak' : 'real/imaginary'
+        } data`,
+      );
+    }
 
     let name = variable?.label.replace(/ *\[.*/, '');
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
@@ -100,53 +128,35 @@ export default function creatorNtuples(
 ##VAR_TYPE=  ${varType.join()}
 ##VAR_DIM=   ${varDim.join()}
 ##UNITS=     ${units.join()}
-##FACTOR=    ${factorArray.join()}
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
 ##MIN=       ${min.join()}
 ##MAX=       ${max.join()}\n`;
 
-  if (options.isNMR) {
+  if (isPeakData(variables)) {
     let xData = variables.x.data;
-    checkNumberOrArray(xData);
-    if (options.isPeakData) {
-      assertVariablesHasY(variables);
-      let yData = variables.y.data;
-      checkNumberOrArray(yData);
-      header += `##DATA TABLE= (XY..XY), PEAKS\n`;
-      for (let point = 0; point < varDim[0]; point++) {
-        header += `${xData[point]}, ${yData[point]}\n`;
-      }
-    } else if (options.isXYData) {
-      for (const key of ['r', 'i'] as Array<'r' | 'i'>) {
-        const variable = variables[key];
-        if (variable) {
-          checkNumberOrArray(variable.data);
-          header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
-          header += `##DATA TABLE= (X++(${
-            key === 'r' ? 'R..R' : 'I..I'
-          })), XYDATA\n`;
-          header += vectorEncoder(
-            rescaleAndEnsureInteger(variable.data, factors[key]),
-            0,
-            1,
-            xyEncoding,
-          );
-          header += '\n';
-        }
-      }
+    let yData = variables.y.data;
+    checkNumberOrArray(yData);
+    header += `##DATA TABLE= (XY..XY), PEAKS\n`;
+    for (let point = 0; point < varDim[0]; point++) {
+      header += `${xData[point]}, ${yData[point]}\n`;
     }
-  } else {
-    header += `##PAGE= N=1\n`;
-    header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;
-    for (let i = 0; i < variables.x.data.length; i++) {
-      let point = [];
-      for (let key of keys) {
-        let variable = variables[key];
-        if (!variable) continue;
-        point.push(variable.data[i]);
-      }
-      header += `${point.join('\t')}\n`;
+  } else if (isNTuplesData(variables)) {
+    for (const key of ['r', 'i'] as const) {
+      const variable = variables[key];
+      checkNumberOrArray(variable.data);
+      header += `##FACTOR=    ${factorArray.join()}\n`;
+      header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
+      header += `##DATA TABLE= (X++(${
+        key === 'r' ? 'R..R' : 'I..I'
+      })), XYDATA\n`;
+      header += vectorEncoder(
+        rescaleAndEnsureInteger(variable.data, factors[key]),
+        0,
+        1,
+        xyEncoding,
+      );
+      header += '\n';
     }
   }
 
