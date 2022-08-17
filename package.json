@@ -43,7 +43,7 @@
   "devDependencies": {
     "@types/jest": "^27.4.1",
     "bruker-data-test": "^0.2.1",
-    "brukerconverter": "^4.1.5",
+    "brukerconverter": "^4.1.6",
     "eslint": "^8.10.0",
     "eslint-config-cheminfo-typescript": "^10.3.0",
     "esm": "^3.2.25",
