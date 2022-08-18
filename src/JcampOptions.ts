@@ -1,3 +1,5 @@
+import { OneLowerCase } from 'cheminfo-types';
+
 export type XYEncoding = '' | 'FIX' | 'SQZ' | 'DIF' | 'DIFDUP' | 'PAC' | 'CSV';
 
 export interface JcampInfo extends Record<string, any> {
@@ -64,13 +66,6 @@ export interface JcampOptions {
    * @default ''
    */
   xyEncoding?: XYEncoding;
-  /**
-   * defines if the data type is focus on nuclear magnetic resonance
-   * @default false
-   */
-  isNMR?: boolean;
-  isXYData?: boolean;
-  is2D?: boolean;
-  isPeakData?: boolean;
-  factors?: Record<string, number>;
+
+  factor?: Record<OneLowerCase, number>;
 }
