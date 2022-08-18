@@ -3,7 +3,6 @@ import { MeasurementXYVariables } from 'cheminfo-types';
 import { JcampOptions } from './JcampOptions';
 import creatorNtuples from './creatorNtuples';
 import { fromJSON } from './fromJSON';
-import { variablesHasXY } from './utils/assert';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 
 /**
@@ -22,7 +21,7 @@ export function fromVariables(
   };
 
   let keys = Object.keys(variables).map((key) => key.toLowerCase());
-  if (!forceNtuples && keys.length === 2 && variablesHasXY(variables)) {
+  if (!forceNtuples && keys.length === 2) {
     let x = variables.x;
     let xLabel = x.label || 'x';
 
