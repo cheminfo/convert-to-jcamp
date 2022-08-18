@@ -4,7 +4,8 @@ import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { xMultiply } from 'ml-spectra-processing';
 
-import { fromVariables, JcampOptions } from '..';
+import { JcampOptions } from '..';
+import from1DNMRVariables from '../from1DNMRVariables';
 
 const converterOptions = {
   converter: { xy: true },
@@ -80,6 +81,6 @@ function getJcamp(spectrum: any) {
       },
     } as MeasurementXYVariables;
 
-    return fromVariables(variables, options);
+    return from1DNMRVariables(variables, options);
   }
 }

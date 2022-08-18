@@ -18,7 +18,7 @@ import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
 import { vectorEncoder } from './utils/vectorEncoder';
 
 /**
- * Create a jcamp from variables
+ * Create a jcamp of 2D NMR data by variables x, r, i
  */
 export function from2DNMRVariables(
   /** object of variables */

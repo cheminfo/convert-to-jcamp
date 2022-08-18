@@ -11,7 +11,7 @@ import { checkNumberOrArray } from './utils/checkNumberOrArray';
  */
 export function fromVariables(
   /** object of variables */
-  variables: Partial<MeasurementXYVariables>,
+  variables: MeasurementXYVariables,
   options: JcampOptions = {},
 ): string {
   const { info = {}, meta = {}, forceNtuples = false } = options;

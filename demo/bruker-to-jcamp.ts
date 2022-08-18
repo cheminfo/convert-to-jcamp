@@ -2,7 +2,7 @@ import { groupByExperiments, convertFileList } from 'brukerconverter';
 import { getCoffee } from 'bruker-data-test';
 import { join } from 'path';
 import { writeFileSync } from 'fs';
-import { fromVariables } from 'convert-to-jcamp';
+import { from1DNMRVariables } from 'convert-to-jcamp';
 import { xMultiply } from 'ml-spectra-processing';
 
 const pathToWrite = join(__dirname, 'jcampGenerated');
@@ -80,7 +80,7 @@ function writeJcamps(spectra) {
         },
       };
 
-      const jcamp = fromVariables(variables, options);
+      const jcamp = from1DNMRVariables(variables, options);
       writeFileSync(
         join(pathToWrite, `${source.name}_${source.expno}.jdx`),
         jcamp,
