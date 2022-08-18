@@ -33,9 +33,6 @@ describe('from2DNMRVariables', () => {
     //@ts-expect-error ignoring some types
     const jcamp = from2DNMRVariables(variables, {
       xyEncoding: 'DIFDUP',
-      is2D: true,
-      isNMR: true,
-      isXYData: true,
       meta: { SFO2: 100, SFO1: 400, NUC1: '1H', NUC2: '13C' },
       info: {
         dataType: 'nD NMR SPECTRUM',

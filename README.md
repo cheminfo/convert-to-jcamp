@@ -53,6 +53,91 @@ const jcamp = fromVariables(variables, {
 });
 ```
 
+There are two functions for NMR. `from1DNMRVariables`
+and `from2DNMRVariables` generates a nmr jcamp file from variables. 
+
+```js
+const { from2DNMRVariables } = require('convert-to-jcamp');
+
+const variables = {
+  y: {
+    data: [1, 2],
+    symbol: 'F1',
+    label: 'y',
+    units: 'Hz a',
+    isDependent: false,
+  },
+  x: {
+    data: [0, 1, 2, 3, 4],
+    symbol: 'F2',
+    label: 'x',
+    units: 'Hz',
+    isDependent: false,
+  },
+  z: {
+    data: [
+      [2, 3, 4, 5, 7],
+      [1, 2, 3, 4, 5],
+    ],
+    symbol: 'Y',
+    label: 'z',
+    units: 'arbitrary',
+    isDependent: true,
+  },
+};
+const jcamp = from2DNMRVariables(variables, {
+  xyEncoding: 'DIFDUP',
+  meta: { SFO2: 100, SFO1: 400, NUC1: '1H', NUC2: '13C' },
+  info: {
+    dataType: 'nD NMR SPECTRUM',
+    '.OBSERVE NUCLEUS': '1H',
+    '.OBSERVER FREQUENCY': 400,
+  },
+});
+```
+
+```js
+const { from1DNMRVariables } = require('convert-to-jcamp');
+
+const variables = {
+  x: {
+    data: xMultiply(data.x, observeFrequency),
+    label: 'Frequencies',
+    units: 'Hz',
+    symbol: 'X',
+    isDependent: false,
+  },
+  r: {
+    data: data.re,
+    label: 'real data',
+    units: 'arbitratry units',
+    symbol: 'R',
+    isDependent: true,
+  },
+  i: {
+    data: data.im,
+    label: 'imaginary data',
+    units: 'arbitratry units',
+    symbol: 'I',
+    isDependent: true,
+  },
+};
+
+const jcamp = from1DNMRVariables(variables, {
+  xyEncoding: 'DIFDUP',
+  info: {
+    title: 'jcamp 1D',
+    owner: 'cheminfo',
+    dataType: 'NMR Spectrum',
+    '.OBSERVE FREQUENCY': 600,
+    '.OBSERVE NUCLEUS': '1H',
+  },
+  meta: { SFO1: 400, NUC1: '1H' },
+});
+```
+
+An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-jcamp/tree/master/demo/bruker-to-jcamp.ts) conversion is in the [demo folder](https://github.com/cheminfo/convert-to-jcamp/tree/master/demo)
+
 ## [API Documentation](https://cheminfo.github.io/convert-to-jcamp/)
 
 ## License

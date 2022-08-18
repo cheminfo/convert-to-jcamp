@@ -81,7 +81,7 @@ export function fixEncoding(
   while (j < dataLength - 7) {
     outputData += Math.ceil(firstX + j * intervalX);
     for (let i = 0; i < 8; i++) {
-      outputData += separator + data[j++];
+      outputData += `${separator}${data[j++]}`;
     }
     outputData += newLine;
   }
@@ -89,7 +89,7 @@ export function fixEncoding(
     // We add last numbers
     outputData += Math.ceil(firstX + j * intervalX);
     for (let i = j; i < dataLength; i++) {
-      outputData += separator + data[i];
+      outputData += `${separator}${data[i]}`;
     }
   }
   return outputData;
@@ -186,42 +186,36 @@ export function differenceDuplicateEncoding(
   while (index < numDiff) {
     if (charCount === 0) {
       // Start line
-      encodedNumber =
-        Math.ceil(firstX + index * intervalX) +
-        squeezedDigit(data[index].toString()) +
-        differenceDigit(diffData[index].toString());
+      encodedNumber = `${Math.ceil(firstX + index * intervalX)}${squeezedDigit(
+        data[index].toString(),
+      )}${differenceDigit(diffData[index].toString())}`;
       encodedData += encodedNumber;
       charCount += encodedNumber.length;
-    } else {
+    } else if (diffData[index - 1] === diffData[index]) {
       // Try to insert next difference
-      if (diffData[index - 1] === diffData[index]) {
-        mult++;
+      mult++;
+    } else if (mult > 0) {
+      // Now we know that it can be in line
+      mult++;
+      encodedNumber = duplicateDigit(mult.toString());
+      encodedData += encodedNumber;
+      charCount += encodedNumber.length;
+      mult = 0;
+      index--;
+    } else {
+      // Check if it fits, otherwise start a new line
+      encodedNumber = differenceDigit(diffData[index].toString());
+      if (encodedNumber.length + charCount < maxLinelength) {
+        encodedData += encodedNumber;
+        charCount += encodedNumber.length;
       } else {
-        if (mult > 0) {
-          // Now we know that it can be in line
-          mult++;
-          encodedNumber = duplicateDigit(mult.toString());
-          encodedData += encodedNumber;
-          charCount += encodedNumber.length;
-          mult = 0;
-          index--;
-        } else {
-          // Check if it fits, otherwise start a new line
-          encodedNumber = differenceDigit(diffData[index].toString());
-          if (encodedNumber.length + charCount < maxLinelength) {
-            encodedData += encodedNumber;
-            charCount += encodedNumber.length;
-          } else {
-            // start a new line
-            encodedData += newLine;
-            temp =
-              Math.ceil(firstX + index * intervalX) +
-              squeezedDigit(data[index].toString()) +
-              encodedNumber;
-            encodedData += temp; // Each line start with first index number.
-            charCount = temp.length;
-          }
-        }
+        // start a new line
+        encodedData += newLine;
+        temp = `${Math.ceil(firstX + index * intervalX)}${squeezedDigit(
+          data[index].toString(),
+        )}${encodedNumber}`;
+        encodedData += temp; // Each line start with first index number.
+        charCount = temp.length;
       }
     }
     index++;
@@ -231,10 +225,9 @@ export function differenceDuplicateEncoding(
   }
   // We insert the last data from fid. It is done to control of data
   // The last line start with the number of datas in the fid.
-  encodedData +=
-    newLine +
-    Math.ceil(firstX + index * intervalX) +
-    squeezedDigit(data[index].toString());
+  encodedData += `${newLine}${Math.ceil(
+    firstX + index * intervalX,
+  )}${squeezedDigit(data[index].toString())}`;
 
   return encodedData;
 }
@@ -266,10 +259,9 @@ export function differenceEncoding(
   while (index < numDiff) {
     if (charCount === 0) {
       // We convert the first number.
-      encodedNumber =
-        Math.ceil(firstX + index * intervalX) +
-        squeezedDigit(data[index].toString()) +
-        differenceDigit(diffData[index].toString());
+      encodedNumber = `${Math.ceil(firstX + index * intervalX)}${squeezedDigit(
+        data[index].toString(),
+      )}${differenceDigit(diffData[index].toString())}`;
       encodedData += encodedNumber;
       charCount += encodedNumber.length;
     } else {
@@ -279,10 +271,9 @@ export function differenceEncoding(
         charCount += encodedNumber.length;
       } else {
         encodedData += newLine;
-        temp =
-          Math.ceil(firstX + index * intervalX) +
-          squeezedDigit(data[index].toString()) +
-          encodedNumber;
+        temp = `${Math.ceil(firstX + index * intervalX)}${squeezedDigit(
+          data[index].toString(),
+        )}${encodedNumber}`;
         encodedData += temp; // Each line start with first index number.
         charCount = temp.length;
       }
@@ -290,10 +281,9 @@ export function differenceEncoding(
     index++;
   }
   // We insert the last number from data. It is done to control of data
-  encodedData +=
-    newLine +
-    Math.ceil(firstX + index * intervalX) +
-    squeezedDigit(data[index].toString());
+  encodedData += `${newLine}${Math.ceil(
+    firstX + index * intervalX,
+  )}${squeezedDigit(data[index].toString())}`;
 
   return encodedData;
 }

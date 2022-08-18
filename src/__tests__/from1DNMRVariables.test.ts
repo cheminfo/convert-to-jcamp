@@ -52,8 +52,6 @@ function getJcamp(spectrum: any) {
         '.OBSERVE NUCLEUS': nucleus[0],
       },
       meta,
-      isXYData: true,
-      isNMR: true,
     } as JcampOptions;
 
     // the order of variables in the object is important
