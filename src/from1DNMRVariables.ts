@@ -35,7 +35,7 @@ function isNTuplesData(
 }
 
 /**
- * Parse from a xyxy data array
+ * Create a jcamp of 1D NMR data by variables x and y or x, r, i
  * @param variables - Variables to convert to jcamp
  * @param [options={}] - options that allows to add meta data in the jcamp
  * @return JCAMP-DX text file corresponding to the variables
