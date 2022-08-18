@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.1...v5.4.0) (2022-08-18)
+
+
+### Features
+
+* add from1DNMRVariables function ([#53](https://github.com/cheminfo/convert-to-jcamp/issues/53)) ([d72f34f](https://github.com/cheminfo/convert-to-jcamp/commit/d72f34f230819510ca7b26c2f5e86997a2ee4907))
+
 ## [5.3.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.0...v5.3.1) (2022-08-02)
 
 
