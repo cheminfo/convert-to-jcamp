@@ -17,15 +17,24 @@ import { MinMax } from './utils/minMax';
 import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
 import { vectorEncoder } from './utils/vectorEncoder';
 
+export type NMR2DVariables = Required<
+  Pick<MeasurementXYVariables, 'x' | 'y' | 'z'>
+>;
 /**
- * Create a jcamp of 2D NMR data by variables x, r, i
+ * Create a jcamp of 2D NMR data by variables. Currently only the convertion of processed data
+ * is supported. The variables x and y are the direct (F2 in Bruker) and indirect (F1 in bruker),
+ * data should be in ppm scale, the z variable is the intensity (dependent)
  */
 export function from2DNMRVariables(
-  /** object of variables */
-  variables: MeasurementXYVariables,
+  variables: NMR2DVariables,
   options: JcampOptions = {},
 ): string {
   const { info = {}, meta = {}, xyEncoding = 'DIFDUP' } = options;
+
+  const factor =
+    'factor' in options
+      ? { ...options.factor }
+      : ({} as Record<OneLowerCase, number>);
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
 
@@ -38,9 +47,9 @@ export function from2DNMRVariables(
   const last = [];
   const min = [];
   const max = [];
-  const factor = [];
+  const factors = [];
 
-  const keys = ['y', 'x', 'z'] as OneLowerCase[];
+  const keys = ['y', 'x', 'z'] as Array<keyof NMR2DVariables>;
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -51,6 +60,8 @@ export function from2DNMRVariables(
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
+    if (!(key in factor)) factor[key] = calculateFactor(variable.data, minMax);
+
     symbol.push(variable.symbol || key);
     varName.push(name || key);
     varDim.push(variable.data.length);
@@ -58,8 +69,7 @@ export function from2DNMRVariables(
     last.push(firstLast.last);
     max.push(minMax.max);
     min.push(minMax.min);
-    //@ts-expect-error it will be included
-    factor.push(variable.factor || calculateFactor(variable.data, minMax));
+    factors.push(factor[key]);
 
     if (variable.isDependent !== undefined) {
       varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
@@ -121,7 +131,7 @@ export function from2DNMRVariables(
 ##VAR_DIM=   ${varDim.join()}
 ##.NUCLEUS=  ${nucleus.join()}
 ##UNITS=     ${units.join()}
-##FACTOR=    ${factor.join()}
+##FACTOR=    ${factors.join()}
 ##FIRST=     ${scaleAndJoin(first, optionsScaleAndJoin)}
 ##LAST=      ${scaleAndJoin(last, optionsScaleAndJoin)}
 ##MIN=       ${scaleAndJoin(min, optionsScaleAndJoin)}
@@ -146,9 +156,9 @@ export function from2DNMRVariables(
   firstData[direct] = firstX * sfo1;
   firstData[indirect] = firstY;
 
-  const yFactor = factor[indirect];
-  const xFactor = factor[direct];
-  const zFactor = factor[dependent];
+  const yFactor = factor.y || 1;
+  const xFactor = factor.x || 1;
+  const zFactor = factor.z || 1;
 
   for (let index = 0; index < zData.length; index++) {
     firstData[dependent] = zData[index][0];

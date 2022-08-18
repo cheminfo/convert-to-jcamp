@@ -1,6 +1,8 @@
 import type {
+  DoubleArray,
   MeasurementVariable,
   MeasurementXYVariables,
+  OneLowerCase,
 } from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
@@ -11,16 +13,17 @@ import { getExtremeValues } from './utils/getExtremeValues';
 import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
 import { vectorEncoder } from './utils/vectorEncoder';
 
-export interface PeakData {
-  x: MeasurementVariable;
-  y: MeasurementVariable;
-}
+type NtuplesData<DataType extends DoubleArray = DoubleArray> = Record<
+  'x' | 'r' | 'i',
+  MeasurementVariable<DataType>
+>;
+type PeakData<DataType extends DoubleArray = DoubleArray> = Record<
+  'x' | 'y',
+  MeasurementVariable<DataType>
+>;
 
-export interface NtuplesData {
-  x: MeasurementVariable;
-  r: MeasurementVariable;
-  i: MeasurementVariable;
-}
+const peakDataKeys = ['x', 'y'] as Array<keyof PeakData>;
+const ntuplesKeys = ['x', 'r', 'i'] as Array<keyof NtuplesData>;
 
 function isPeakData(
   variables: Partial<MeasurementXYVariables>,
@@ -34,6 +37,9 @@ function isNTuplesData(
   return 'r' in variables && 'i' in variables;
 }
 
+export type NMR1DVariables = Partial<
+  Pick<MeasurementXYVariables, 'x' | 'y' | 'r' | 'i'>
+>;
 /**
  * Create a jcamp of 1D NMR data by variables x and y or x, r, i
  * @param variables - Variables to convert to jcamp
@@ -41,10 +47,15 @@ function isNTuplesData(
  * @return JCAMP-DX text file corresponding to the variables
  */
 export default function from1DNMRVariables(
-  variables: Partial<MeasurementXYVariables>,
+  variables: NMR1DVariables,
   options: JcampOptions,
 ): string {
-  const { meta = {}, info = {}, xyEncoding = '', factors = {} } = options;
+  const { meta = {}, info = {}, xyEncoding = '' } = options;
+
+  const factor =
+    'factor' in options
+      ? { ...options.factor }
+      : ({} as Record<OneLowerCase, number>);
 
   const { title = '', owner = '', origin = '', dataType = '' } = info;
 
@@ -59,9 +70,7 @@ export default function from1DNMRVariables(
   const max = [];
   const factorArray = [];
 
-  const keys = isPeakData(variables)
-    ? (['x', 'y'] as const)
-    : (['x', 'r', 'i'] as const);
+  const keys = isPeakData(variables) ? peakDataKeys : ntuplesKeys;
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
@@ -79,12 +88,12 @@ export default function from1DNMRVariables(
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
-    factors[key] = getBestFactor(variable.data, {
-      factor: factors[key],
+    factor[key] = getBestFactor(variable.data, {
+      factor: factor[key],
       minMax,
     });
 
-    const currentFactor = factors[key];
+    const currentFactor = factor[key];
     factorArray.push(currentFactor);
     symbol.push(variable.symbol || key);
     varName.push(name || key);
@@ -152,7 +161,7 @@ export default function from1DNMRVariables(
         key === 'r' ? 'R..R' : 'I..I'
       })), XYDATA\n`;
       header += vectorEncoder(
-        rescaleAndEnsureInteger(variable.data, factors[key]),
+        rescaleAndEnsureInteger(variable.data, factor[key]),
         0,
         1,
         xyEncoding,
