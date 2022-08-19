@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.0...v5.4.1) (2022-08-18)
+
+
+### Bug Fixes
+
+* small refactor to nmr related function. ([#55](https://github.com/cheminfo/convert-to-jcamp/issues/55)) ([af7a7af](https://github.com/cheminfo/convert-to-jcamp/commit/af7a7afbdb07748cee56b53b9659a52a8a007e6c))
+
 ## [5.4.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.1...v5.4.0) (2022-08-18)
 
 
