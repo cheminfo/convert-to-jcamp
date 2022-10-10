@@ -20,11 +20,9 @@ const { parse, stringify } = JSON;
 
 describe('convert bruker to jcamp', () => {
   it('FFT bruker expno', async () => {
-    const fileList = getCoffee();
-    const oneExpno = fileList.filter((file) =>
-      file.webkitRelativePath.includes(
-        'UV1009_M1-1003-1002_6268712_73uEjPg4XR/20',
-      ),
+    const fileCollection = await getCoffee();
+    const oneExpno = fileCollection.files.filter((file) =>
+      file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
