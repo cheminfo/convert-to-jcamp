@@ -5,7 +5,7 @@ import { convert } from 'jcampconverter';
 import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from '..';
-import from1DNMRVariables from '../from1DNMRVariables';
+import { from1DNMRVariables } from '../from1DNMRVariables';
 
 const converterOptions = {
   converter: { xy: true },
