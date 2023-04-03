@@ -36,7 +36,12 @@ export function from2DNMRVariables(
       ? { ...options.factor }
       : ({} as Record<OneLowerCase, number>);
 
-  const { title = '', owner = '', origin = '', dataType = 'NMR SPECTRUM' } = info;
+  const {
+    title = '',
+    owner = '',
+    origin = '',
+    dataType = 'NMR SPECTRUM',
+  } = info;
 
   const symbol = [];
   const varName = [];
