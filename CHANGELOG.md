@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.2](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.1...v5.4.2) (2023-04-03)
+
+
+### Bug Fixes
+
+* default dataType for nmr jcamp ([#62](https://github.com/cheminfo/convert-to-jcamp/issues/62)) ([9f0dbba](https://github.com/cheminfo/convert-to-jcamp/commit/9f0dbbafafe77c9fe63e82ea8072735505ffc9b5))
+
 ## [5.4.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.0...v5.4.1) (2022-08-18)
 
 
