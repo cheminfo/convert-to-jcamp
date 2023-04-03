@@ -46,7 +46,7 @@ export type NMR1DVariables = Partial<
  * @param [options={}] - options that allows to add meta data in the jcamp
  * @return JCAMP-DX text file corresponding to the variables
  */
-export default function from1DNMRVariables(
+export function from1DNMRVariables(
   variables: NMR1DVariables,
   options: JcampOptions,
 ): string {
@@ -57,7 +57,7 @@ export default function from1DNMRVariables(
       ? { ...options.factor }
       : ({} as Record<OneLowerCase, number>);
 
-  const { title = '', owner = '', origin = '', dataType = '' } = info;
+  const { title = '', owner = '', origin = '', dataType = 'NMR SPECTRUM' } = info;
 
   const symbol = [];
   const varName = [];
@@ -77,11 +77,14 @@ export default function from1DNMRVariables(
     let variable = variables[key];
 
     if (!variable) {
-      throw new Error(
-        `variable ${key} is mandatory in ${
-          isPeakData(variables) ? 'peak' : 'real/imaginary'
-        } data`,
-      );
+      if (key !== 'i') {
+        throw new Error(
+          `variable ${key} is mandatory in ${
+            isPeakData(variables) ? 'peak' : 'real/imaginary'
+          } data`,
+        );
+      }
+      continue;
     }
 
     let name = variable?.label.replace(/ *\[.*/, '');
@@ -154,6 +157,9 @@ export default function from1DNMRVariables(
   } else if (isNTuplesData(variables)) {
     for (const key of ['r', 'i'] as const) {
       const variable = variables[key];
+
+      if (!variable) continue;
+
       checkNumberOrArray(variable.data);
       header += `##FACTOR=    ${factorArray.join()}\n`;
       header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
@@ -171,6 +177,6 @@ export default function from1DNMRVariables(
   }
 
   header += `##END NTUPLES= ${dataType}\n`;
-  header += '##END=\n##END=';
+  header += '##END=';
   return header;
 }
