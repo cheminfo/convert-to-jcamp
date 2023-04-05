@@ -73,7 +73,7 @@ export function from1DNMRVariables(
     title = '',
     owner = '',
     origin = '',
-    dataType = 'NMR SPECTRUM',
+    dataType = '',
     nucleus = info['.OBSERVE NUCLEUS'],
     originFrequency = info['.OBSERVE FREQUENCY'],
   } = info;
@@ -101,22 +101,27 @@ export function from1DNMRVariables(
   const xVariable = newVariables.x as MeasurementVariable<DoubleArray>;
 
   let xData = xVariable.data;
-  if (xVariable.units?.toLowerCase() !== 'hz') {
+  if (xVariable.units?.toLowerCase() === 'ppm') {
     xData = xMultiply(xData, originFrequency);
+    xVariable.units = 'Hz';
   }
 
+  const isFid = xVariable.units?.toLowerCase() === 'time';
+
   const nbPoints = xData.length;
-  const spectralWidth = xData[0] - xData[nbPoints - 1];
+  const firstPoint = isFid ? xData[0] : xData[0] - xData[nbPoints - 1];
   const symbol = ['X'];
   const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
   const varType = ['INDEPENDENT'];
-  const varDim = [xData.length];
-  const units = ['Hz'];
-  const first = [spectralWidth];
-  const last = [0];
-  const min = [0];
-  const max = [spectralWidth];
-  const factorArray = [xData.length / spectralWidth];
+  const varDim = [nbPoints];
+  const units = [xVariable.units];
+  const first = [firstPoint];
+  const last = [isFid ? xData[nbPoints - 1] : 0];
+  const min = [isFid ? xData[nbPoints - 1] : 0];
+  const max = [firstPoint];
+  const factorArray = [nbPoints / firstPoint];
+
+  meta.OFFSET = xData[0] / originFrequency;
 
   const keys = isPeakData(newVariables) ? peakDataKeys : ntuplesKeys;
 
@@ -219,12 +224,13 @@ export function from1DNMRVariables(
 
 function checkDescending(variables: NMR1DVariables) {
   const xVariable = variables.x as MeasurementVariable<DoubleArray>;
-  const reverse = xVariable.data[0] < xVariable.data[1];
+  const reverse =
+    xVariable.units !== 'time' && xVariable.data[0] < xVariable.data[1];
 
   if (!reverse) return variables;
 
   const newVariables = JSON.parse(
-    JSON.stringify(variables, (key, value) =>
+    JSON.stringify(variables, (_, value) =>
       ArrayBuffer.isView(value) ? Array.from(value as any) : value,
     ),
   );
