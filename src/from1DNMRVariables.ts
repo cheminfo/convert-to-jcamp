@@ -4,8 +4,10 @@ import type {
   MeasurementXYVariables,
   OneLowerCase,
 } from 'cheminfo-types';
+import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
+import { fromJSON } from './fromJSON';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
@@ -17,13 +19,17 @@ type NtuplesData<DataType extends DoubleArray = DoubleArray> = Record<
   'x' | 'r' | 'i',
   MeasurementVariable<DataType>
 >;
+type RealData<DataType extends DoubleArray = DoubleArray> = Record<
+  'x' | 'r',
+  MeasurementVariable<DataType>
+>;
 type PeakData<DataType extends DoubleArray = DoubleArray> = Record<
   'x' | 'y',
   MeasurementVariable<DataType>
 >;
 
 const peakDataKeys = ['x', 'y'] as Array<keyof PeakData>;
-const ntuplesKeys = ['x', 'r', 'i'] as Array<keyof NtuplesData>;
+const ntuplesKeys = ['r', 'i'] as Array<keyof NtuplesData>;
 
 function isPeakData(
   variables: Partial<MeasurementXYVariables>,
@@ -35,6 +41,12 @@ function isNTuplesData(
   variables: Partial<MeasurementXYVariables>,
 ): variables is NtuplesData {
   return 'r' in variables && 'i' in variables;
+}
+
+function isRealData(
+  variables: Partial<MeasurementXYVariables>,
+): variables is RealData {
+  return 'r' in variables && !('i' in variables);
 }
 
 export type NMR1DVariables = Partial<
@@ -62,23 +74,52 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = 'NMR SPECTRUM',
+    nucleus = info['.OBSERVE NUCLEUS'],
+    observeFrequency = info['.OBSERVE FREQUENCY'],
   } = info;
 
-  const symbol = [];
-  const varName = [];
-  const varType = [];
-  const varDim = [];
-  const units = [];
-  const first = [];
-  const last = [];
-  const min = [];
-  const max = [];
-  const factorArray = [];
+  if (isRealData(variables)) {
+    return fromJSON(
+      { x: variables.x.data, y: variables.r.data },
+      { ...options, info: { ...options.info, dataType } },
+    );
+  }
+
+  if (!observeFrequency) {
+    throw new Error(
+      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
+    );
+  }
+
+  if (!info['.OBSERVE FREQUENCY']) {
+    info['.OBSERVE FREQUENCY'] = observeFrequency;
+  }
+  if (!info['.OBSERVE NUCLEUS']) info['.OBSERVE NUCLEUS'] = nucleus;
+
+  const xVariable = variables.x as MeasurementVariable<DoubleArray>;
+  const reverse = xVariable.data[0] < xVariable.data[1];
+
+  if (reverse) xVariable.data.reverse();
+  if (variables.x?.units?.toLowerCase() !== 'hz') {
+    xVariable.data = xMultiply(xVariable.data, observeFrequency);
+  }
+
+  const nbPoints = xVariable.data.length;
+  const spectralWidth = xVariable.data[0] - xVariable.data[nbPoints - 1];
+  const symbol = ['X'];
+  const varName = [variables.x?.label.replace(/ *\[.*/, '') || 'X'];
+  const varType = ['INDEPENDENT'];
+  const varDim = [xVariable.data.length];
+  const units = ['Hz'];
+  const first = [spectralWidth];
+  const last = [0];
+  const min = [0];
+  const max = [spectralWidth];
+  const factorArray = [xVariable.data.length / spectralWidth];
 
   const keys = isPeakData(variables) ? peakDataKeys : ntuplesKeys;
 
-  for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+  for (const key of keys) {
     let variable = variables[key];
 
     if (!variable) {
@@ -92,6 +133,8 @@ export function from1DNMRVariables(
       continue;
     }
 
+    if (reverse) variable.data.reverse();
+
     let name = variable?.label.replace(/ *\[.*/, '');
     let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
@@ -102,7 +145,7 @@ export function from1DNMRVariables(
     });
 
     const currentFactor = factor[key];
-    factorArray.push(currentFactor);
+    factorArray.push(currentFactor || 1);
     symbol.push(variable.symbol || key);
     varName.push(name || key);
     varDim.push(variable.data.length);
@@ -110,18 +153,7 @@ export function from1DNMRVariables(
     last.push(firstLast.last);
     max.push(minMax.max);
     min.push(minMax.min);
-
-    if (variable.isDependent !== undefined) {
-      varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
-    } else {
-      varType.push(
-        variable.isDependent !== undefined
-          ? !variable.isDependent
-          : i === 0
-          ? 'INDEPENDENT'
-          : 'DEPENDENT',
-      );
-    }
+    varType.push('DEPENDENT');
 
     units.push(variable.units || unit || '');
   }
@@ -148,8 +180,8 @@ export function from1DNMRVariables(
 ##UNITS=     ${units.join()}
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
-##MIN=       ${min.join()}
-##MAX=       ${max.join()}\n`;
+##MAX=       ${max.join()}
+##MIN=       ${min.join()}\n`;
 
   if (isPeakData(variables)) {
     let xData = variables.x.data;
@@ -173,8 +205,8 @@ export function from1DNMRVariables(
       })), XYDATA\n`;
       header += vectorEncoder(
         rescaleAndEnsureInteger(variable.data, factor[key]),
-        0,
-        1,
+        xVariable.data.length - 1,
+        -1,
         xyEncoding,
       );
       header += '\n';

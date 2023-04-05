@@ -55,7 +55,6 @@ function writeJcamps(spectra) {
         isNMR: true,
       };
 
-      // the order of variables in the object is important
       const variables = {
         x: {
           data: xMultiply(data.x, observeFrequency),
