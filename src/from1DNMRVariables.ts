@@ -7,7 +7,6 @@ import type {
 import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
-import { fromJSON } from './fromJSON';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
@@ -23,19 +22,8 @@ type RealData<DataType extends DoubleArray = DoubleArray> = Record<
   'x' | 'r',
   MeasurementVariable<DataType>
 >;
-type PeakData<DataType extends DoubleArray = DoubleArray> = Record<
-  'x' | 'y',
-  MeasurementVariable<DataType>
->;
 
-const peakDataKeys = ['x', 'y'] as Array<keyof PeakData>;
 const ntuplesKeys = ['r', 'i'] as Array<keyof NtuplesData>;
-
-function isPeakData(
-  variables: Partial<MeasurementXYVariables>,
-): variables is PeakData {
-  return 'y' in variables && 'x' in variables;
-}
 
 function isNTuplesData(
   variables: Partial<MeasurementXYVariables>,
@@ -50,8 +38,9 @@ function isRealData(
 }
 
 export type NMR1DVariables = Partial<
-  Pick<MeasurementXYVariables, 'x' | 'y' | 'r' | 'i'>
+  Pick<MeasurementXYVariables, 'x' | 'r' | 'i'>
 >;
+
 /**
  * Create a jcamp of 1D NMR data by variables x and y or x, r, i
  * @param variables - Variables to convert to jcamp
@@ -74,67 +63,73 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
-    nucleus = info['.OBSERVE NUCLEUS'],
+    nucleus = info.nucleus,
     originFrequency = info['.OBSERVE FREQUENCY'],
   } = info;
-
-  if (isRealData(variables)) {
-    return fromJSON(
-      { x: variables.x.data, y: variables.r.data },
-      { ...options, info: { ...options.info, dataType } },
-    );
-  }
 
   if (!originFrequency) {
     throw new Error(
       '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
     );
   }
-
   const newInfo = {
     '.OBSERVE FREQUENCY': originFrequency,
     '.OBSERVE NUCLEUS': nucleus,
     ...info,
   };
 
-  const newVariables = checkDescending(variables);
-  const xVariable = newVariables.x as MeasurementVariable<DoubleArray>;
+  const xVariable = variables.x as MeasurementVariable<DoubleArray>;
 
-  let xData = xVariable.data;
+  let xData = xVariable.data.slice();
   if (xVariable.units?.toLowerCase() === 'ppm') {
     xData = xMultiply(xData, originFrequency);
     xVariable.units = 'Hz';
   }
 
+  meta.OFFSET = xData[0] / originFrequency;
   const isFid = xVariable.units?.toLowerCase() === 'time';
 
+  let header = `##TITLE=${title}
+##JCAMP-DX=6.00
+##DATA TYPE= ${dataType}
+##DATA CLASS= NTUPLES
+##ORIGIN=${origin}
+##OWNER=${owner}
+##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${
+    xData[xData.length - 1] / originFrequency
+  }\n`; //TOPSPIN use this LDR to generate x axis.
+
+  const infoKeys = Object.keys(newInfo).filter(
+    (e) =>
+      !['title', 'owner', 'origin', 'datatype'].includes(e.toLocaleLowerCase()),
+  );
+  header += addInfoData(newInfo, infoKeys, '##');
+  header += addInfoData(meta);
+
   const nbPoints = xData.length;
-  const firstPoint = isFid ? xData[0] : xData[0] - xData[nbPoints - 1];
+  const spectralWidth = xData[nbPoints - 1] - xData[0];
+  const firstPoint = spectralWidth > 0 ? 0 : -spectralWidth;
+  const lastPoint = spectralWidth > 0 ? spectralWidth : 0;
+
   const symbol = ['X'];
-  const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
-  const varType = ['INDEPENDENT'];
   const varDim = [nbPoints];
   const units = [xVariable.units];
+  const varType = ['INDEPENDENT'];
+  const factorArray = [spectralWidth / (nbPoints + 1)];
+  const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
+
   const first = [firstPoint];
-  const last = [isFid ? xData[nbPoints - 1] : 0];
-  const min = [isFid ? xData[nbPoints - 1] : 0];
+  const last = [lastPoint];
+
   const max = [firstPoint];
-  const factorArray = [nbPoints / firstPoint];
+  const min = [isFid ? xData[nbPoints - 1] : 0];
 
-  meta.OFFSET = xData[0] / originFrequency;
-
-  const keys = isPeakData(newVariables) ? peakDataKeys : ntuplesKeys;
-
-  for (const key of keys) {
-    let variable = newVariables[key];
+  for (const key of ntuplesKeys) {
+    let variable = variables[key];
 
     if (!variable) {
       if (key !== 'i') {
-        throw new Error(
-          `variable ${key} is mandatory in ${
-            isPeakData(newVariables) ? 'peak' : 'real/imaginary'
-          } data`,
-        );
+        throw new Error(`variable ${key} is mandatory in real/imaginary data`);
       }
       continue;
     }
@@ -162,19 +157,70 @@ export function from1DNMRVariables(
     units.push(variable.units || unit || '');
   }
 
-  let header = `##TITLE=${title}
-##JCAMP-DX=6.00
-##DATA TYPE=${dataType}
-##DATA CLASS= NTUPLES
-##ORIGIN=${origin}
-##OWNER=${owner}\n`;
+  return isNTuplesData(variables)
+    ? addNtuplesHeader(
+        header,
+        variables,
+        {
+          symbol,
+          varName,
+          varDim,
+          first,
+          last,
+          min,
+          max,
+          units,
+          factor,
+          varType,
+          factorArray,
+        },
+        newInfo,
+      )
+    : isRealData(variables)
+    ? addRealData(header, {
+        xData,
+        yData: variables.r.data,
+        xyEncoding,
+        info: {
+          XUNITS: 'HZ',
+          YUNITS: units[1],
+          XFACTOR: factorArray[0],
+          YFACTOR: factorArray[1],
+          DELTAX: (xData[0] - xData[nbPoints - 1]) / (nbPoints + 1),
+          FIRSTX: first[0],
+          FIRSTY: first[1],
+          LASTX: last[0],
+          MAXY: max[1],
+          MINY: min[1],
+          NPOINTS: xData.length,
+          XYDATA: '(X++(Y..Y))',
+        },
+      })
+    : header;
+}
 
-  const infoKeys = Object.keys(newInfo).filter(
-    (e) =>
-      !['title', 'owner', 'origin', 'datatype'].includes(e.toLocaleLowerCase()),
-  );
-  header += addInfoData(newInfo, infoKeys, '##');
-  header += addInfoData(meta);
+function addNtuplesHeader(
+  header: string,
+  variables: NMR1DVariables,
+  inputs: Record<string, any>,
+  info: Record<string, any>,
+) {
+  const { dataType = '' } = info;
+
+  const {
+    symbol,
+    varName,
+    varDim,
+    first,
+    last,
+    min,
+    max,
+    units,
+    varType,
+    factorArray,
+    xyEncoding,
+    factor,
+  } = inputs;
 
   header += `##NTUPLES= ${dataType}
 ##VAR_NAME=  ${varName.join()}
@@ -187,34 +233,22 @@ export function from1DNMRVariables(
 ##MAX=       ${max.join()}
 ##MIN=       ${min.join()}\n`;
 
-  if (isPeakData(newVariables)) {
-    let xData = newVariables.x.data;
-    let yData = newVariables.y.data;
-    checkNumberOrArray(yData);
-    header += `##DATA TABLE= (XY..XY), PEAKS\n`;
-    for (let point = 0; point < varDim[0]; point++) {
-      header += `${xData[point]}, ${yData[point]}\n`;
-    }
-  } else if (isNTuplesData(newVariables)) {
-    for (const key of ['r', 'i'] as const) {
-      const variable = newVariables[key];
+  for (const key of ['r', 'i'] as const) {
+    const variable = variables[key];
 
-      if (!variable) continue;
+    if (!variable) continue;
 
-      checkNumberOrArray(variable.data);
-      header += `##FACTOR=    ${factorArray.join()}\n`;
-      header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
-      header += `##DATA TABLE= (X++(${
-        key === 'r' ? 'R..R' : 'I..I'
-      })), XYDATA\n`;
-      header += vectorEncoder(
-        rescaleAndEnsureInteger(variable.data, factor[key]),
-        xData.length - 1,
-        -1,
-        xyEncoding,
-      );
-      header += '\n';
-    }
+    checkNumberOrArray(variable.data);
+    header += `##FACTOR=    ${factorArray.join()}\n`;
+    header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
+    header += `##DATA TABLE= (X++(${key === 'r' ? 'R..R' : 'I..I'})), XYDATA\n`;
+    header += vectorEncoder(
+      rescaleAndEnsureInteger(variable.data, factor[key]),
+      0,
+      1,
+      xyEncoding,
+    );
+    header += '\n';
   }
 
   header += `##END NTUPLES= ${dataType}\n`;
@@ -222,20 +256,15 @@ export function from1DNMRVariables(
   return header;
 }
 
-function checkDescending(variables: NMR1DVariables) {
-  const xVariable = variables.x as MeasurementVariable<DoubleArray>;
-  const reverse =
-    xVariable.units !== 'time' && xVariable.data[0] < xVariable.data[1];
-
-  if (!reverse) return variables;
-
-  const newVariables = JSON.parse(
-    JSON.stringify(variables, (_, value) =>
-      ArrayBuffer.isView(value) ? Array.from(value as any) : value,
-    ),
-  );
-  for (const key of ['x', 'r', 'i'] as Array<keyof NtuplesData>) {
-    newVariables[key]?.data.reverse();
-  }
-  return newVariables;
+function addRealData(header: string, options: any) {
+  const { xData, yData, info, xyEncoding } = options;
+  header += addInfoData(info, undefined, '##');
+  return `${header}
+${vectorEncoder(
+  rescaleAndEnsureInteger(yData, info.YFACTOR),
+  xData.length - 1,
+  -1,
+  xyEncoding,
+)}
+##END=`;
 }
