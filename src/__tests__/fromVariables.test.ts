@@ -22,9 +22,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -110,9 +108,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -189,9 +185,7 @@ describe('fromVariables', () => {
 
     const jcamp = fromVariables(variables);
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.spectra[0].variables).toStrictEqual({
       x: {
@@ -251,9 +245,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -316,9 +308,7 @@ describe('fromVariables', () => {
       xyEncoding: 'DIFDUP',
     });
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
     expect(converted.spectra[0]).toStrictEqual({
@@ -354,9 +344,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -433,9 +421,7 @@ describe('fromVariables', () => {
         dataType: 'TEST',
       },
     });
-    let converted = JSON.parse(
-      JSON.stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     expect(converted.meta).toStrictEqual({
       meta1: 'value1',
       meta2: 'value2',

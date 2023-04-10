@@ -16,8 +16,6 @@ const converterOptions = {
   },
 };
 
-const { parse, stringify } = JSON;
-
 describe('convert bruker to jcamp', () => {
   it('FFT bruker expno', async () => {
     const fileList = getCoffee();
@@ -28,9 +26,7 @@ describe('convert bruker to jcamp', () => {
     );
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
-    const converted = parse(
-      stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual(spectra[0].meta);
   });
