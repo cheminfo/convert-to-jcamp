@@ -37,6 +37,10 @@ describe('convert bruker to jcamp', () => {
       spectra[0].spectra[0].data.x[0],
       3,
     );
+    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.re[0],
+      3,
+    );
     expect(converted.spectra).toHaveLength(2);
   });
   it('FFT bruker expno only real', async () => {
@@ -55,6 +59,10 @@ describe('convert bruker to jcamp', () => {
     expect(converted.meta).toStrictEqual(spectra[0].meta);
     expect(converted.spectra[0].data.x[0]).toBeCloseTo(
       spectra[0].spectra[0].data.x[0],
+      3,
+    );
+    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.re[0],
       3,
     );
     expect(converted.spectra).toHaveLength(1);

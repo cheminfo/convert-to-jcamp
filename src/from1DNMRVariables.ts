@@ -87,7 +87,6 @@ export function from1DNMRVariables(
   }
 
   meta.OFFSET = xData[0] / originFrequency;
-  const isFid = xVariable.units?.toLowerCase() === 'time';
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
@@ -100,8 +99,10 @@ export function from1DNMRVariables(
   }\n`; //TOPSPIN use this LDR to generate x axis.
 
   const infoKeys = Object.keys(newInfo).filter(
-    (e) =>
-      !['title', 'owner', 'origin', 'datatype'].includes(e.toLocaleLowerCase()),
+    (key) =>
+      !['title', 'owner', 'origin', 'datatype'].includes(
+        key.toLocaleLowerCase(),
+      ),
   );
   header += addInfoData(newInfo, infoKeys, '##');
   header += addInfoData(meta);
@@ -121,8 +122,8 @@ export function from1DNMRVariables(
   const first = [firstPoint];
   const last = [lastPoint];
 
-  const max = [firstPoint];
-  const min = [isFid ? xData[nbPoints - 1] : 0];
+  const max = [Math.max(lastPoint, firstPoint)];
+  const min = [Math.min(lastPoint, firstPoint)];
 
   for (const key of ntuplesKeys) {
     let variable = variables[key];
