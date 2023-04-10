@@ -33,10 +33,43 @@ describe('convert bruker to jcamp', () => {
     ).flatten[0];
 
     expect(converted.meta).toStrictEqual(spectra[0].meta);
+    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.x[0],
+      3,
+    );
+    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.re[0],
+      3,
+    );
+    expect(converted.spectra).toHaveLength(2);
+  });
+  it('FFT bruker expno only real', async () => {
+    const fileList = getCoffee();
+    const oneExpno = fileList.filter((file) =>
+      file.webkitRelativePath.includes(
+        'UV1009_M1-1003-1002_6268712_73uEjPg4XR/20',
+      ),
+    );
+    const spectra = await convertFileList(oneExpno, converterOptions);
+    const jcamp = getJcamp(spectra[0], 'real') || '';
+    const converted = parse(
+      stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
+    ).flatten[0];
+
+    expect(converted.meta).toStrictEqual(spectra[0].meta);
+    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.x[0],
+      3,
+    );
+    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
+      spectra[0].spectra[0].data.re[0],
+      3,
+    );
+    expect(converted.spectra).toHaveLength(1);
   });
 });
 
-function getJcamp(spectrum: any) {
+function getJcamp(spectrum: any, selection = 'complex') {
   const { source } = spectrum;
   if (source.is1D && !source.isFID) {
     const { info, meta, spectra } = spectrum;
@@ -70,14 +103,17 @@ function getJcamp(spectrum: any) {
         symbol: 'R',
         isDependent: true,
       },
-      i: {
+    } as MeasurementXYVariables;
+
+    if (selection === 'complex') {
+      variables.i = {
         data: data.im,
         label: 'imaginary data',
         units: 'arbitratry units',
         symbol: 'I',
         isDependent: true,
-      },
-    } as MeasurementXYVariables;
+      };
+    }
 
     return from1DNMRVariables(variables, options);
   }
