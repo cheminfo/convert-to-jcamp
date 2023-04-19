@@ -86,7 +86,10 @@ export function from1DNMRVariables(
     xVariable.units = 'Hz';
   }
 
-  meta.OFFSET = xData[0] / originFrequency;
+  const newMeta = {
+    ...meta,
+    OFFSET: xData[0] / originFrequency,
+  }
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
@@ -105,7 +108,7 @@ export function from1DNMRVariables(
       ),
   );
   header += addInfoData(newInfo, infoKeys, '##');
-  header += addInfoData(meta);
+  header += addInfoData(newMeta);
 
   const nbPoints = xData.length;
   const spectralWidth = xData[nbPoints - 1] - xData[0];
