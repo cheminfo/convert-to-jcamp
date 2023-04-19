@@ -89,7 +89,7 @@ export function from1DNMRVariables(
   const newMeta = {
     ...meta,
     OFFSET: xData[0] / originFrequency,
-  }
+  };
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
