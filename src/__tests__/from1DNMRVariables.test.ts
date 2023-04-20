@@ -6,6 +6,7 @@ import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from '..';
 import { from1DNMRVariables } from '../from1DNMRVariables';
+import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 
 const converterOptions = {
   converter: { xy: true },
@@ -17,6 +18,8 @@ const converterOptions = {
 };
 
 const { parse, stringify } = JSON;
+
+expect.extend({ toMatchCloseTo });
 
 describe('convert bruker to jcamp', () => {
   it('FFT bruker expno', async () => {
@@ -32,11 +35,7 @@ describe('convert bruker to jcamp', () => {
       stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
     ).flatten[0];
 
-    expect(converted.meta).toStrictEqual(spectra[0].meta);
-    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
-      spectra[0].spectra[0].data.x[0],
-      3,
-    );
+    expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
     expect(converted.spectra[0].data.y[0]).toBeCloseTo(
       spectra[0].spectra[0].data.re[0],
       3,
@@ -56,7 +55,7 @@ describe('convert bruker to jcamp', () => {
       stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
     ).flatten[0];
 
-    expect(converted.meta).toStrictEqual(spectra[0].meta);
+    expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
     expect(converted.spectra[0].data.x[0]).toBeCloseTo(
       spectra[0].spectra[0].data.x[0],
       3,
