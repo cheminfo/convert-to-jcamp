@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.4](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.3...v5.4.4) (2023-04-20)
+
+
+### Bug Fixes
+
+* **from1DNMR:** do not modify meta object ([6ea1338](https://github.com/cheminfo/convert-to-jcamp/commit/6ea1338a9f160745b91828cadde6a0506261687e))
+
 ## [5.4.3](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.2...v5.4.3) (2023-04-10)
 
 
