@@ -89,7 +89,10 @@ export function from1DNMRVariables(
   const newMeta = {
     ...meta,
     OFFSET: xData[0] / originFrequency,
+    XDIM: xData.length,
   };
+
+  const { shiftReference = xData[xData.length - 1] / originFrequency } = info;
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
@@ -97,9 +100,7 @@ export function from1DNMRVariables(
 ##DATA CLASS= NTUPLES
 ##ORIGIN=${origin}
 ##OWNER=${owner}
-##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${
-    xData[xData.length - 1] / originFrequency
-  }\n`; //TOPSPIN use this LDR to generate x axis.
+##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${shiftReference}\n`;
 
   const infoKeys = Object.keys(newInfo).filter(
     (key) =>
@@ -235,7 +236,8 @@ function addNtuplesHeader(
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
 ##MAX=       ${max.join()}
-##MIN=       ${min.join()}\n`;
+##MIN=       ${min.join()}
+##FACTOR=    ${factorArray.join()}\n`;
 
   for (const key of ['r', 'i'] as const) {
     const variable = variables[key];
@@ -243,7 +245,6 @@ function addNtuplesHeader(
     if (!variable) continue;
 
     checkNumberOrArray(variable.data);
-    header += `##FACTOR=    ${factorArray.join()}\n`;
     header += `##PAGE= N=${key === 'r' ? 1 : 2}\n`;
     header += `##DATA TABLE= (X++(${key === 'r' ? 'R..R' : 'I..I'})), XYDATA\n`;
     header += vectorEncoder(
