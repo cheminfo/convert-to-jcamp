@@ -69,7 +69,7 @@ export function from1DNMRVariables(
 
   if (!originFrequency) {
     throw new Error(
-      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
+      'originFrequency is mandatory into the info object for nmr data',
     );
   }
   const newInfo = {
@@ -89,7 +89,6 @@ export function from1DNMRVariables(
   const newMeta = {
     ...meta,
     OFFSET: xData[0] / originFrequency,
-    XDIM: xData.length,
   };
 
   const { shiftReference = xData[xData.length - 1] / originFrequency } = info;
