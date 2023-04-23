@@ -1,5 +1,19 @@
 # Changelog
 
+## [5.4.4](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.3...v5.4.4) (2023-04-20)
+
+
+### Bug Fixes
+
+* **from1DNMR:** do not modify meta object ([6ea1338](https://github.com/cheminfo/convert-to-jcamp/commit/6ea1338a9f160745b91828cadde6a0506261687e))
+
+## [5.4.3](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.2...v5.4.3) (2023-04-10)
+
+
+### Bug Fixes
+
+* use spectral width for x data in nmr jcamp generation ([#65](https://github.com/cheminfo/convert-to-jcamp/issues/65)) ([4f7aa10](https://github.com/cheminfo/convert-to-jcamp/commit/4f7aa10541eb237b38aec85fbca28c8c2769473a))
+
 ## [5.4.2](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.1...v5.4.2) (2023-04-03)
 
 
