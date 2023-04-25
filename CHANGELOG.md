@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.5](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.4...v5.4.5) (2023-04-25)
+
+
+### Bug Fixes
+
+* jcamp generation of a FID ([#70](https://github.com/cheminfo/convert-to-jcamp/issues/70)) ([7083505](https://github.com/cheminfo/convert-to-jcamp/commit/70835057a1f06019c0025e55920c7b0c5d13889c))
+
 ## [5.4.4](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.3...v5.4.4) (2023-04-20)
 
 
