@@ -1,5 +1,5 @@
 import { getCoffee } from 'bruker-data-test';
-import { convertFileList } from 'brukerconverter';
+import { convertFileCollection } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
@@ -21,13 +21,11 @@ expect.extend({ toMatchCloseTo });
 
 describe('convert bruker to jcamp', () => {
   it('FFT bruker expno', async () => {
-    const fileList = getCoffee();
-    const oneExpno = fileList.filter((file) =>
-      file.webkitRelativePath.includes(
-        'UV1009_M1-1003-1002_6268712_73uEjPg4XR/20',
-      ),
+    const fileCollection = await getCoffee();
+    const oneExpno = fileCollection.filter((file) =>
+      file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
-    const spectra = await convertFileList(oneExpno, converterOptions);
+    const spectra = await convertFileCollection(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
@@ -38,13 +36,11 @@ describe('convert bruker to jcamp', () => {
     expect(converted.spectra).toHaveLength(2);
   });
   it('FFT bruker expno only real', async () => {
-    const fileList = getCoffee();
-    const oneExpno = fileList.filter((file) =>
-      file.webkitRelativePath.includes(
-        'UV1009_M1-1003-1002_6268712_73uEjPg4XR/20',
-      ),
+    const fileCollection = await getCoffee();
+    const oneExpno = fileCollection.filter((file) =>
+      file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
-    const spectra = await convertFileList(oneExpno, converterOptions);
+    const spectra = await convertFileCollection(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0], 'real') || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
