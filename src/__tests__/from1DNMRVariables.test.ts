@@ -2,11 +2,11 @@ import { getCoffee } from 'bruker-data-test';
 import { convertFileList } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
+import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from '..';
 import { from1DNMRVariables } from '../from1DNMRVariables';
-import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 
 const converterOptions = {
   converter: { xy: true },
