@@ -17,8 +17,6 @@ const converterOptions = {
   },
 };
 
-const { parse, stringify } = JSON;
-
 expect.extend({ toMatchCloseTo });
 
 describe('convert bruker to jcamp', () => {
@@ -31,9 +29,7 @@ describe('convert bruker to jcamp', () => {
     );
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
-    const converted = parse(
-      stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
     expect(converted.spectra[0].data.y[0]).toBeCloseTo(
@@ -51,9 +47,7 @@ describe('convert bruker to jcamp', () => {
     );
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0], 'real') || '';
-    const converted = parse(
-      stringify(convert(jcamp, { keepRecordsRegExp: /^\$.*/ })),
-    ).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
     expect(converted.spectra[0].data.x[0]).toBeCloseTo(
