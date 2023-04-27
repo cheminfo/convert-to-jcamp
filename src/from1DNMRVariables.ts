@@ -4,7 +4,6 @@ import type {
   MeasurementXYVariables,
   OneLowerCase,
 } from 'cheminfo-types';
-import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
@@ -77,16 +76,7 @@ export function from1DNMRVariables(
 
   const xVariable = variables.x as MeasurementVariable<DoubleArray>;
 
-  let xData = xVariable.data.slice();
-  if (xVariable.units?.toLowerCase() === 'ppm') {
-    xData = xMultiply(xData, originFrequency);
-    xVariable.units = 'Hz';
-  }
-
-  const newMeta = {
-    ...meta,
-    OFFSET: xData[0] / originFrequency,
-  };
+  const xData = xVariable.data.slice();
 
   const newInfo = {
     '.OBSERVE FREQUENCY': originFrequency,
@@ -104,14 +94,8 @@ export function from1DNMRVariables(
     shiftReference ?? xData[xData.length - 1] / originFrequency
   }\n`;
 
-  header += addInfoData(
-    newInfo,
-    Object.keys(newInfo).filter((key) =>
-      key.startsWith(key[0].toLocaleUpperCase()),
-    ),
-    '##',
-  );
-  header += addInfoData(newMeta);
+  header += addInfoData(newInfo, { prefix: '##' });
+  header += addInfoData(meta);
 
   const nbPoints = xData.length;
   const spectralWidth = xData[nbPoints - 1] - xData[0];
@@ -265,13 +249,12 @@ function addNtuplesHeader(
 
 function addRealData(header: string, options: any) {
   const { xData, yData, info, xyEncoding } = options;
-  header += addInfoData(info, undefined, '##');
-  return `${header}
-${vectorEncoder(
-  rescaleAndEnsureInteger(yData, info.YFACTOR),
-  xData.length - 1,
-  -1,
-  xyEncoding,
-)}
+  header += addInfoData(info, { prefix: '##' });
+  return `${header}${vectorEncoder(
+    rescaleAndEnsureInteger(yData, info.YFACTOR),
+    xData.length - 1,
+    -1,
+    xyEncoding,
+  )}
 ##END=`;
 }

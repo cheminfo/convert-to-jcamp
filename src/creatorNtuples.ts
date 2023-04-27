@@ -16,7 +16,13 @@ export default function creatorNtuples(
 ): string {
   const { meta = {}, info = {} } = options;
 
-  const { title = '', owner = '', origin = '', dataType = '' } = info;
+  const {
+    title = '',
+    owner = '',
+    origin = '',
+    dataType = '',
+    ...resInfo
+  } = info;
 
   const symbol = [];
   const varName = [];
@@ -70,11 +76,7 @@ export default function creatorNtuples(
 ##ORIGIN=${origin}
 ##OWNER=${owner}\n`;
 
-  const infoKeys = Object.keys(info).filter(
-    (e) =>
-      !['title', 'owner', 'origin', 'datatype'].includes(e.toLocaleLowerCase()),
-  );
-  header += addInfoData(info, infoKeys, '##');
+  header += addInfoData(resInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   header += `##NTUPLES= ${dataType}
