@@ -63,8 +63,10 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
+    shiftReference,
     nucleus = info.nucleus,
     originFrequency = info['.OBSERVE FREQUENCY'],
+    ...resInfo
   } = info;
 
   if (!originFrequency) {
@@ -72,11 +74,6 @@ export function from1DNMRVariables(
       'originFrequency is mandatory into the info object for nmr data',
     );
   }
-  const newInfo = {
-    '.OBSERVE FREQUENCY': originFrequency,
-    '.OBSERVE NUCLEUS': nucleus,
-    ...info,
-  };
 
   const xVariable = variables.x as MeasurementVariable<DoubleArray>;
 
@@ -91,7 +88,11 @@ export function from1DNMRVariables(
     OFFSET: xData[0] / originFrequency,
   };
 
-  const { shiftReference = xData[xData.length - 1] / originFrequency } = info;
+  const newInfo = {
+    '.OBSERVE FREQUENCY': originFrequency,
+    '.OBSERVE NUCLEUS': nucleus,
+    ...resInfo,
+  };
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
@@ -99,15 +100,17 @@ export function from1DNMRVariables(
 ##DATA CLASS= NTUPLES
 ##ORIGIN=${origin}
 ##OWNER=${owner}
-##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${shiftReference}\n`;
+##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${
+    shiftReference ?? xData[xData.length - 1] / originFrequency
+  }\n`;
 
-  const infoKeys = Object.keys(newInfo).filter(
-    (key) =>
-      !['title', 'owner', 'origin', 'datatype'].includes(
-        key.toLocaleLowerCase(),
-      ),
+  header += addInfoData(
+    newInfo,
+    Object.keys(newInfo).filter((key) =>
+      key.startsWith(key[0].toLocaleUpperCase()),
+    ),
+    '##',
   );
-  header += addInfoData(newInfo, infoKeys, '##');
   header += addInfoData(newMeta);
 
   const nbPoints = xData.length;
