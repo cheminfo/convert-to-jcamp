@@ -62,6 +62,7 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
+    dataClass = '',
     shiftReference,
     nucleus = info.nucleus,
     originFrequency = info['.OBSERVE FREQUENCY'],
@@ -81,13 +82,14 @@ export function from1DNMRVariables(
   const newInfo = {
     '.OBSERVE FREQUENCY': originFrequency,
     '.OBSERVE NUCLEUS': nucleus,
+    NPOINTS: xData.length,
     ...resInfo,
   };
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
 ##DATA TYPE= ${dataType}
-##DATA CLASS= NTUPLES
+##DATA CLASS= ${dataClass}
 ##ORIGIN=${origin}
 ##OWNER=${owner}
 ##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${
@@ -98,15 +100,15 @@ export function from1DNMRVariables(
   header += addInfoData(meta);
 
   const nbPoints = xData.length;
-  const spectralWidth = xData[nbPoints - 1] - xData[0];
-  const firstPoint = spectralWidth > 0 ? 0 : -spectralWidth;
-  const lastPoint = spectralWidth > 0 ? spectralWidth : 0;
+  const spectralWidth = Math.abs(xData[nbPoints - 1] - xData[0]);
+  const firstPoint = xData[0] > xData[1] ? spectralWidth : 0;
+  const lastPoint = xData[0] > xData[1] ? 0 : spectralWidth;
 
   const symbol = ['X'];
   const varDim = [nbPoints];
   const units = [xVariable.units];
   const varType = ['INDEPENDENT'];
-  const factorArray = [spectralWidth / (nbPoints + 1)];
+  const factorArray = [spectralWidth / (nbPoints - 1)];
   const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
 
   const first = [firstPoint];
@@ -235,8 +237,8 @@ function addNtuplesHeader(
     header += `##DATA TABLE= (X++(${key === 'r' ? 'R..R' : 'I..I'})), XYDATA\n`;
     header += vectorEncoder(
       rescaleAndEnsureInteger(variable.data, factor[key]),
-      0,
-      1,
+      first[0] > last[0] ? varDim[0] : 0,
+      first[0] > last[0] ? -1 : 1,
       xyEncoding,
     );
     header += '\n';
