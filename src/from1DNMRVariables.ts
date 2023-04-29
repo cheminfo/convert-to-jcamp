@@ -92,7 +92,7 @@ export function from1DNMRVariables(
 ##DATA CLASS= ${dataClass}
 ##ORIGIN=${origin}
 ##OWNER=${owner}
-##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${
+##.SHIFT REFERENCE= INTERNAL, ${info['.SOLVENT']}, 1, ${
     shiftReference ?? xData[xData.length - 1] / originFrequency
   }\n`;
 
