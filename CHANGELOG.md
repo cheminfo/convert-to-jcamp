@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.6](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.5...v5.4.6) (2023-04-30)
+
+
+### Bug Fixes
+
+* do not filter info nor meta ([#72](https://github.com/cheminfo/convert-to-jcamp/issues/72)) ([40f7ca0](https://github.com/cheminfo/convert-to-jcamp/commit/40f7ca0cada6b12c9a7f539410834ff60d5a5f0b))
+
 ## [5.4.5](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.4...v5.4.5) (2023-04-25)
 
 
