@@ -6,16 +6,6 @@ import { getBestFactor } from './utils/getBestFactor';
 import { peakTableCreator } from './utils/peakTableCreator';
 import { xyDataCreator } from './utils/xyDataCreator';
 
-const infoDefaultKeys = [
-  'title',
-  'owner',
-  'origin',
-  'dataType',
-  'xUnits',
-  'yUnits',
-  'xFactor',
-  'yFactor',
-];
 /**
  * Create a jcamp
  * @param data object of array
@@ -34,6 +24,7 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
     yUnits = '',
     xFactor,
     yFactor,
+    ...resInfo
   } = info;
 
   data = { x: data.x, y: data.y };
@@ -45,10 +36,8 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
 ##OWNER=${owner}
 ##XUNITS=${xUnits}
 ##YUNITS=${yUnits}\n`;
-  const infoKeys = Object.keys(info).filter(
-    (keys) => !infoDefaultKeys.includes(keys),
-  );
-  header += addInfoData(info, infoKeys, '##');
+
+  header += addInfoData(resInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   // we leave the header and utf8 fonts ${header.replace(/[^\t\n\x20-\x7F]/g, '')

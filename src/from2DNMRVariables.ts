@@ -41,6 +41,7 @@ export function from2DNMRVariables(
     owner = '',
     origin = '',
     dataType = 'NMR SPECTRUM',
+    ...resInfo
   } = info;
 
   const symbol = [];
@@ -98,10 +99,7 @@ export function from2DNMRVariables(
 ##ORIGIN=${origin}
 ##OWNER=${owner}\n`;
 
-  const infoKeys = Object.keys(info).filter(
-    (e) => !['title', 'owner', 'origin', 'dataType'].includes(e),
-  );
-  header += addInfoData(info, infoKeys, '##');
+  header += addInfoData(resInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   let xData = variables.x.data;

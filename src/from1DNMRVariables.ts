@@ -4,7 +4,6 @@ import type {
   MeasurementXYVariables,
   OneLowerCase,
 } from 'cheminfo-types';
-import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
 import { addInfoData } from './utils/addInfoData';
@@ -63,63 +62,40 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
-    nucleus = info.nucleus,
-    originFrequency = info['.OBSERVE FREQUENCY'],
+    dataClass = '',
+    ...resInfo
   } = info;
 
-  if (!originFrequency) {
+  if (!('.OBSERVE FREQUENCY' in info)) {
     throw new Error(
-      'originFrequency is mandatory into the info object for nmr data',
+      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
     );
   }
-  const newInfo = {
-    '.OBSERVE FREQUENCY': originFrequency,
-    '.OBSERVE NUCLEUS': nucleus,
-    ...info,
-  };
 
   const xVariable = variables.x as MeasurementVariable<DoubleArray>;
 
-  let xData = xVariable.data.slice();
-  if (xVariable.units?.toLowerCase() === 'ppm') {
-    xData = xMultiply(xData, originFrequency);
-    xVariable.units = 'Hz';
-  }
-
-  const newMeta = {
-    ...meta,
-    OFFSET: xData[0] / originFrequency,
-  };
-
-  const { shiftReference = xData[xData.length - 1] / originFrequency } = info;
+  const xData = xVariable.data.slice();
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
 ##DATA TYPE= ${dataType}
-##DATA CLASS= NTUPLES
+##DATA CLASS= ${dataClass}
 ##ORIGIN=${origin}
-##OWNER=${owner}
-##.SHIFT REFERENCE= INTERNAL, CDCl3, 1, ${shiftReference}\n`;
+##OWNER=${owner}\n`;
 
-  const infoKeys = Object.keys(newInfo).filter(
-    (key) =>
-      !['title', 'owner', 'origin', 'datatype'].includes(
-        key.toLocaleLowerCase(),
-      ),
-  );
-  header += addInfoData(newInfo, infoKeys, '##');
-  header += addInfoData(newMeta);
+  header += addInfoData(resInfo, { prefix: '##' });
+  header += addInfoData(meta);
 
   const nbPoints = xData.length;
-  const spectralWidth = xData[nbPoints - 1] - xData[0];
-  const firstPoint = spectralWidth > 0 ? 0 : -spectralWidth;
-  const lastPoint = spectralWidth > 0 ? spectralWidth : 0;
+  const spectralWidth = Math.abs(xData[nbPoints - 1] - xData[0]);
+  const firstPoint = xData[0] > xData[1] ? spectralWidth : 0;
+  const lastPoint = xData[0] > xData[1] ? 0 : spectralWidth;
 
   const symbol = ['X'];
   const varDim = [nbPoints];
   const units = [xVariable.units];
   const varType = ['INDEPENDENT'];
-  const factorArray = [spectralWidth / (nbPoints + 1)];
+  const factorArray = [spectralWidth / (nbPoints - 1)];
   const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
 
   const first = [firstPoint];
@@ -178,7 +154,7 @@ export function from1DNMRVariables(
           varType,
           factorArray,
         },
-        newInfo,
+        resInfo,
       )
     : isRealData(variables)
     ? addRealData(header, {
@@ -248,8 +224,8 @@ function addNtuplesHeader(
     header += `##DATA TABLE= (X++(${key === 'r' ? 'R..R' : 'I..I'})), XYDATA\n`;
     header += vectorEncoder(
       rescaleAndEnsureInteger(variable.data, factor[key]),
-      0,
-      1,
+      first[0] > last[0] ? varDim[0] : 0,
+      first[0] > last[0] ? -1 : 1,
       xyEncoding,
     );
     header += '\n';
@@ -262,13 +238,12 @@ function addNtuplesHeader(
 
 function addRealData(header: string, options: any) {
   const { xData, yData, info, xyEncoding } = options;
-  header += addInfoData(info, undefined, '##');
-  return `${header}
-${vectorEncoder(
-  rescaleAndEnsureInteger(yData, info.YFACTOR),
-  xData.length - 1,
-  -1,
-  xyEncoding,
-)}
+  header += addInfoData(info, { prefix: '##' });
+  return `${header}${vectorEncoder(
+    rescaleAndEnsureInteger(yData, info.YFACTOR),
+    xData.length - 1,
+    -1,
+    xyEncoding,
+  )}
 ##END=`;
 }
