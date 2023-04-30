@@ -30,7 +30,6 @@ describe('convert bruker to jcamp', () => {
     const spectra = await convertFileList(oneExpno, converterOptions);
     const jcamp = getJcamp(spectra[0]) || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-
     expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
     expect(converted.spectra[0].data.y[0]).toBeCloseTo(
       spectra[0].spectra[0].data.re[0],
@@ -74,8 +73,13 @@ function getJcamp(spectrum: any, selection = 'complex') {
         owner: info.OWNER,
         origin: info.ORIGIN,
         dataType: meta.DATATYPE,
+        dataClass: meta.DATACLASS,
+        NPOINTS: data.x.length,
         '.OBSERVE FREQUENCY': observeFrequency,
         '.OBSERVE NUCLEUS': nucleus[0],
+        '.SHIFT REFERENCE': `INTERNAL, undefined, 1, ${
+          data.x[data.x.length - 1]
+        }`,
       },
       meta,
     } as JcampOptions;

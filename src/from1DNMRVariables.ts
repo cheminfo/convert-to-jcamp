@@ -63,15 +63,12 @@ export function from1DNMRVariables(
     origin = '',
     dataType = '',
     dataClass = '',
-    shiftReference,
-    nucleus = info.nucleus,
-    originFrequency = info['.OBSERVE FREQUENCY'],
     ...resInfo
   } = info;
 
-  if (!originFrequency) {
+  if (!('.OBSERVE FREQUENCY' in info)) {
     throw new Error(
-      'originFrequency is mandatory into the info object for nmr data',
+      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
     );
   }
 
@@ -79,24 +76,14 @@ export function from1DNMRVariables(
 
   const xData = xVariable.data.slice();
 
-  const newInfo = {
-    '.OBSERVE FREQUENCY': originFrequency,
-    '.OBSERVE NUCLEUS': nucleus,
-    NPOINTS: xData.length,
-    ...resInfo,
-  };
-
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
 ##DATA TYPE= ${dataType}
 ##DATA CLASS= ${dataClass}
 ##ORIGIN=${origin}
-##OWNER=${owner}
-##.SHIFT REFERENCE= INTERNAL, ${info['.SOLVENT']}, 1, ${
-    shiftReference ?? xData[xData.length - 1] / originFrequency
-  }\n`;
+##OWNER=${owner}\n`;
 
-  header += addInfoData(newInfo, { prefix: '##' });
+  header += addInfoData(resInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   const nbPoints = xData.length;
@@ -167,7 +154,7 @@ export function from1DNMRVariables(
           varType,
           factorArray,
         },
-        newInfo,
+        resInfo,
       )
     : isRealData(variables)
     ? addRealData(header, {
