@@ -44,10 +44,10 @@
     "@types/jest": "^29.5.1",
     "bruker-data-test": "^0.5.0",
     "brukerconverter": "^6.1.2",
-    "eslint": "^8.39.0",
+    "eslint": "^8.40.0",
     "eslint-config-cheminfo-typescript": "^11.3.1",
     "esm": "^3.2.25",
-    "jcampconverter": "^9.1.0",
+    "jcampconverter": "^9.1.1",
     "jest": "^29.5.0",
     "jest-matcher-deep-close-to": "^3.0.2",
     "prettier": "^2.8.8",
@@ -56,11 +56,11 @@
     "typescript": "^5.0.4"
   },
   "dependencies": {
-    "cheminfo-types": "^1.6.0",
-    "is-any-array": "^2.0.0",
+    "cheminfo-types": "^1.7.1",
+    "is-any-array": "^2.0.1",
     "ml-array-max": "^1.2.4",
     "ml-array-min": "^1.2.3",
     "ml-matrix": "^6.10.4",
-    "ml-spectra-processing": "^12.2.0"
+    "ml-spectra-processing": "^12.4.0"
   }
 }
