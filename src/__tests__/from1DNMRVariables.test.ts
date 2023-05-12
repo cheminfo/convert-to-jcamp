@@ -1,5 +1,5 @@
 import { getCoffee } from 'bruker-data-test';
-import { convertFileCollection } from 'brukerconverter';
+import { convertFileCollection, SpectraData1D } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
@@ -26,11 +26,17 @@ describe('convert bruker to jcamp', () => {
       file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileCollection(oneExpno, converterOptions);
-    const jcamp = getJcamp(spectra[0]) || '';
+    const spectrum = spectra.filter((spectrum) => {
+      const {
+        source: { is1D, isFID },
+      } = spectrum as SpectraData1D;
+      return is1D && !isFID;
+    });
+    const jcamp = getJcamp(spectrum[0]) || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
+    expect(converted.meta).toMatchCloseTo(spectrum[0].meta, 5);
     expect(converted.spectra[0].data.y[0]).toBeCloseTo(
-      spectra[0].spectra[0].data.re[0],
+      spectrum[0].spectra[0].data.re[0],
       3,
     );
     expect(converted.spectra).toHaveLength(2);
@@ -41,16 +47,22 @@ describe('convert bruker to jcamp', () => {
       file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileCollection(oneExpno, converterOptions);
-    const jcamp = getJcamp(spectra[0], 'real') || '';
+    const spectrum = spectra.filter((spectrum) => {
+      const {
+        source: { is1D, isFID },
+      } = spectrum as SpectraData1D;
+      return is1D && !isFID;
+    });
+    const jcamp = getJcamp(spectrum[0], 'real') || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
-    expect(converted.meta).toMatchCloseTo(spectra[0].meta, 5);
+    expect(converted.meta).toMatchCloseTo(spectrum[0].meta, 5);
     expect(converted.spectra[0].data.x[0]).toBeCloseTo(
-      spectra[0].spectra[0].data.x[0],
+      spectrum[0].spectra[0].data.x[0],
       3,
     );
     expect(converted.spectra[0].data.y[0]).toBeCloseTo(
-      spectra[0].spectra[0].data.re[0],
+      spectrum[0].spectra[0].data.re[0],
       3,
     );
     expect(converted.spectra).toHaveLength(1);
