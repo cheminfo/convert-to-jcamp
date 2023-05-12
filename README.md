@@ -54,7 +54,7 @@ const jcamp = fromVariables(variables, {
 ```
 
 There are two functions for NMR. `from1DNMRVariables`
-and `from2DNMRVariables` generates a nmr jcamp file from variables. 
+and `from2DNMRVariables` generates a nmr jcamp file from variables.
 
 ```js
 const { from2DNMRVariables } = require('convert-to-jcamp');
@@ -136,7 +136,7 @@ const jcamp = from1DNMRVariables(variables, {
 });
 ```
 
-An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-jcamp/tree/master/demo/bruker-to-jcamp.ts) conversion is in the [demo folder](https://github.com/cheminfo/convert-to-jcamp/tree/master/demo)
+An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo/bruker-to-jcamp.ts) conversion is in the [demo folder](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo)
 
 ## [API Documentation](https://cheminfo.github.io/convert-to-jcamp/)
 
@@ -146,7 +146,7 @@ An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-j
 
 [npm-image]: https://img.shields.io/npm/v/convert-to-jcamp.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/convert-to-jcamp
-[travis-image]: https://img.shields.io/travis/cheminfo/convert-to-jcamp/master.svg?style=flat-square
+[travis-image]: https://img.shields.io/travis/cheminfo/convert-to-jcamp/main.svg?style=flat-square
 [travis-url]: https://travis-ci.org/cheminfo/convert-to-jcamp
 [codecov-image]: https://img.shields.io/codecov/c/github/cheminfo/convert-to-jcamp.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/cheminfo/convert-to-jcamp
