@@ -67,6 +67,40 @@ describe('convert bruker to jcamp', () => {
     );
     expect(converted.spectra).toHaveLength(1);
   });
+  it('FFT bruker expno only real without customInfo', async () => {
+    const fileCollection = await getCoffee();
+    const oneExpno = fileCollection.filter((file) =>
+      file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
+    );
+    const spectra = await convertFileCollection(oneExpno, converterOptions);
+    const spectrum = spectra.filter((spectrum) => {
+      const {
+        source: { is1D, isFID },
+      } = spectrum as SpectraData1D;
+      return is1D && !isFID;
+    });
+    spectrum[0].meta = {
+      OFFSET: spectrum[0].spectra[0].data.x[0],
+    };
+    const jcamp = getJcamp(spectrum[0], 'real') || '';
+    const matchResult = jcamp
+      .slice(400, 650)
+      .match(/##DELTAX=(?<delta>[+-]?\d+(\.\d+)?)\s*.*/);
+    const deltaXInJcamp = matchResult && matchResult.groups?.delta;
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const { lastX, firstX, deltaX } = converted.spectra[0];
+    expect(Number(deltaXInJcamp) < 0).toBe(lastX - firstX < 0);
+    expect(lastX - firstX < 0).toBe(deltaX < 0);
+    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
+      spectrum[0].spectra[0].data.x[0],
+      3,
+    );
+    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
+      spectrum[0].spectra[0].data.re[0],
+      3,
+    );
+    expect(converted.spectra).toHaveLength(1);
+  });
 });
 
 function getJcamp(spectrum: any, selection = 'complex') {
@@ -85,9 +119,6 @@ function getJcamp(spectrum: any, selection = 'complex') {
         NPOINTS: data.x.length,
         '.OBSERVE FREQUENCY': observeFrequency,
         '.OBSERVE NUCLEUS': nucleus[0],
-        '.SHIFT REFERENCE': `INTERNAL, undefined, 1, ${
-          data.x[data.x.length - 1]
-        }`,
       },
       meta,
     } as JcampOptions;
