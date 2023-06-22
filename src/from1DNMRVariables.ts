@@ -166,7 +166,7 @@ export function from1DNMRVariables(
           YUNITS: units[1],
           XFACTOR: factorArray[0],
           YFACTOR: factorArray[1],
-          DELTAX: (xData[0] - xData[nbPoints - 1]) / (nbPoints + 1),
+          DELTAX: xData[1] - xData[0],
           FIRSTX: first[0],
           FIRSTY: first[1],
           LASTX: last[0],
