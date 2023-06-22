@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.7](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.6...v5.4.7) (2023-06-22)
+
+
+### Bug Fixes
+
+* deltax for only real nmr data ([#75](https://github.com/cheminfo/convert-to-jcamp/issues/75)) ([4e74e1a](https://github.com/cheminfo/convert-to-jcamp/commit/4e74e1a34b4c8acd1f18045009f5c26b53bedd28))
+
 ## [5.4.6](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.5...v5.4.6) (2023-04-30)
 
 
