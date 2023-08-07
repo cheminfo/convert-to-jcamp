@@ -77,7 +77,7 @@ export function fixEncoding(
 ) {
   let outputData = '';
   let j = 0;
-  let dataLength = data.length;
+  const dataLength = data.length;
   while (j < dataLength - 7) {
     outputData += Math.ceil(firstX + j * intervalX);
     for (let i = 0; i < 8; i++) {
@@ -106,7 +106,7 @@ export function packedEncoding(
 ) {
   let outputData = '';
   let j = 0;
-  let dataLength = data.length;
+  const dataLength = data.length;
 
   while (j < dataLength - 7) {
     outputData += Math.ceil(firstX + j * intervalX);
@@ -139,7 +139,7 @@ export function squeezedEncoding(
   let outputData = '';
   // String outputData = new String();
   let j = 0;
-  let dataLength = data.length;
+  const dataLength = data.length;
   while (j < dataLength - 10) {
     outputData += Math.ceil(firstX + j * intervalX);
     for (let i = 0; i < 10; i++) {
@@ -176,13 +176,13 @@ export function differenceDuplicateEncoding(
   let temp = '';
 
   // We calculate the differences vector
-  let diffData = new Array(data.length - 1);
+  const diffData = new Array(data.length - 1);
   for (let i = 0; i < diffData.length; i++) {
     diffData[i] = data[i + 1] - data[i];
   }
 
   // We simulate a line carry
-  let numDiff = diffData.length;
+  const numDiff = diffData.length;
   while (index < numDiff) {
     if (charCount === 0) {
       // Start line
@@ -250,12 +250,12 @@ export function differenceEncoding(
   let temp = '';
 
   // We calculate the differences vector
-  let diffData = new Array(data.length - 1);
+  const diffData = new Array(data.length - 1);
   for (i = 0; i < diffData.length; i++) {
     diffData[i] = data[i + 1] - data[i];
   }
 
-  let numDiff = diffData.length;
+  const numDiff = diffData.length;
   while (index < numDiff) {
     if (charCount === 0) {
       // We convert the first number.

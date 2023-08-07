@@ -11,11 +11,11 @@ export function peakTableCreator(data: DataXY, options: JcampOptions = {}) {
   let firstY = Number.POSITIVE_INFINITY;
   let lastY = Number.NEGATIVE_INFINITY;
 
-  let lines = [];
+  const lines = [];
 
   for (let i = 0; i < data.x.length; i++) {
-    let x = data.x[i];
-    let y = data.y[i];
+    const x = data.x[i];
+    const y = data.y[i];
     if (firstX > x) {
       firstX = x;
     }

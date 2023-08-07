@@ -22,7 +22,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -108,7 +108,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -185,7 +185,7 @@ describe('fromVariables', () => {
 
     const jcamp = fromVariables(variables);
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.spectra[0].variables).toStrictEqual({
       x: {
@@ -245,7 +245,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -308,7 +308,7 @@ describe('fromVariables', () => {
       xyEncoding: 'DIFDUP',
     });
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
     expect(converted.spectra[0]).toStrictEqual({
@@ -344,7 +344,7 @@ describe('fromVariables', () => {
       },
     });
 
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted.meta).toStrictEqual({ meta1: 'value1', meta2: 'value2' });
 
@@ -421,7 +421,7 @@ describe('fromVariables', () => {
         dataType: 'TEST',
       },
     });
-    let converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     expect(converted.meta).toStrictEqual({
       meta1: 'value1',
       meta2: 'value2',

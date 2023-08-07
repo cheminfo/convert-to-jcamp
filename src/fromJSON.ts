@@ -15,16 +15,19 @@ import { xyDataCreator } from './utils/xyDataCreator';
 export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
   const { meta = {}, info = {}, xyEncoding } = options;
 
-  let {
+  const {
     title = '',
     owner = '',
     origin = '',
     dataType = '',
     xUnits = '',
     yUnits = '',
+    ...resInfo
+  } = info;
+
+  let {
     xFactor,
     yFactor,
-    ...resInfo
   } = info;
 
   data = { x: data.x, y: data.y };

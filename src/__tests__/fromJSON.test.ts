@@ -33,7 +33,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'PAC', 'SQZ', 'DIF', 'DIFDUP'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, {
         xyEncoding,
       });
@@ -50,7 +50,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'PAC', 'SQZ', 'DIF', 'DIFDUP'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, { xyEncoding });
       const spectrumReaded = convert(jcamp);
       const spectrumData = spectrumReaded.flatten[0].spectra[0].data;
@@ -98,7 +98,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'PAC', 'SQZ', 'DIF', 'DIFDUP'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, { xyEncoding });
       const spectrumReaded = convert(jcamp);
       const spectrumData = spectrumReaded.flatten[0].spectra[0].data;
@@ -114,7 +114,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'DIF', 'DIFDUP', 'SQZ', 'PAC'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, { xyEncoding, info: { yFactor: 0.1 } });
       const spectrumReaded = convert(jcamp);
       const spectrumData = spectrumReaded.flatten[0].spectra[0].data;
@@ -130,7 +130,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'DIF', 'DIFDUP', 'SQZ', 'PAC'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, { xyEncoding });
       const spectrumReaded = convert(jcamp);
       const spectrumData = spectrumReaded.flatten[0].spectra[0].data;
@@ -146,7 +146,7 @@ describe('fromJSON', () => {
     };
 
     const encodingList: XYEncoding[] = ['FIX', 'DIF', 'DIFDUP', 'SQZ', 'PAC'];
-    for (let xyEncoding of encodingList) {
+    for (const xyEncoding of encodingList) {
       const jcamp = fromJSON(spectrum, { xyEncoding });
       const spectrumReaded = convert(jcamp);
       const spectrumData = spectrumReaded.flatten[0].spectra[0].data;

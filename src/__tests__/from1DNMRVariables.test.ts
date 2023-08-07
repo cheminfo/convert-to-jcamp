@@ -86,7 +86,7 @@ describe('convert bruker to jcamp', () => {
     const matchResult = jcamp
       .slice(400, 650)
       .match(/##DELTAX=(?<delta>[+-]?\d+(\.\d+)?)\s*.*/);
-    const deltaXInJcamp = matchResult && matchResult.groups?.delta;
+    const deltaXInJcamp = matchResult?.groups?.delta;
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
     const { lastX, firstX, deltaX } = converted.spectra[0];
     expect(Number(deltaXInJcamp) < 0).toBe(lastX - firstX < 0);

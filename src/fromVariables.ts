@@ -15,15 +15,15 @@ export function fromVariables(
 ): string {
   const { info = {}, meta = {}, forceNtuples = false } = options;
 
-  let jcampOptions = {
+  const jcampOptions = {
     info,
     meta,
   };
 
-  let keys = Object.keys(variables).map((key) => key.toLowerCase());
+  const keys = Object.keys(variables).map((key) => key.toLowerCase());
   if (!forceNtuples && keys.length === 2) {
-    let x = variables.x;
-    let xLabel = x.label || 'x';
+    const x = variables.x;
+    const xLabel = x.label || 'x';
 
     if (variables.x.units) {
       if (xLabel.includes(variables.x.units)) {
@@ -35,8 +35,8 @@ export function fromVariables(
       jcampOptions.info.xUnits = xLabel;
     }
 
-    let y = variables.y;
-    let yLabel = y.label || 'y';
+    const y = variables.y;
+    const yLabel = y.label || 'y';
 
     if (variables.y.units) {
       if (yLabel.includes(variables.y.units)) {

@@ -38,11 +38,11 @@ export default function creatorNtuples(
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    let variable = variables[key];
+    const variable = variables[key];
     if (!variable) continue;
 
-    let name = variable?.label.replace(/ *\[.*/, '');
-    let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
+    const name = variable?.label.replace(/ *\[.*/, '');
+    const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
 
@@ -93,9 +93,9 @@ export default function creatorNtuples(
 
   header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;
   for (let i = 0; i < variables.x.data.length; i++) {
-    let point = [];
-    for (let key of keys) {
-      let variable = variables[key];
+    const point = [];
+    for (const key of keys) {
+      const variable = variables[key];
       if (!variable) continue;
       point.push(variable.data[i]);
     }

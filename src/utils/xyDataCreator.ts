@@ -8,13 +8,13 @@ import { vectorEncoder } from './vectorEncoder';
 export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
   const { xyEncoding = 'DIF' } = options;
   const { xFactor = 1, yFactor = 1 } = options.info || {};
-  let firstX = data.x[0];
-  let lastX = data.x[data.x.length - 1];
-  let firstY = data.y[0];
-  let lastY = data.y[data.y.length - 1];
-  let nbPoints = data.x.length;
-  let deltaX = (lastX - firstX) / (nbPoints - 1);
-  let lines = [];
+  const firstX = data.x[0];
+  const lastX = data.x[data.x.length - 1];
+  const firstY = data.y[0];
+  const lastY = data.y[data.y.length - 1];
+  const nbPoints = data.x.length;
+  const deltaX = (lastX - firstX) / (nbPoints - 1);
+  const lines = [];
 
   lines.push(`##FIRSTX=${firstX}`);
   lines.push(`##LASTX=${lastX}`);
@@ -25,7 +25,7 @@ export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
   lines.push(`##YFACTOR=${yFactor}`);
   lines.push('##XYDATA=(X++(Y..Y))');
 
-  let line = vectorEncoder(
+  const line = vectorEncoder(
     rescaleAndEnsureInteger(data.y, yFactor),
     firstX / xFactor,
     deltaX / xFactor,

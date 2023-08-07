@@ -24,8 +24,8 @@ export function getBestFactorMatrix(
 
   // is there non integer number ?
   let onlyInteger = true;
-  for (let row of matrix) {
-    for (let y of row) {
+  for (const row of matrix) {
+    for (const y of row) {
       if (Math.round(y) !== y) {
         onlyInteger = false;
         break;

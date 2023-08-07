@@ -72,7 +72,7 @@ export function from1DNMRVariables(
     );
   }
 
-  const xVariable = variables.x as MeasurementVariable<DoubleArray>;
+  const xVariable = variables.x as MeasurementVariable;
 
   const xData = xVariable.data.slice();
 
@@ -105,7 +105,7 @@ export function from1DNMRVariables(
   const min = [Math.min(lastPoint, firstPoint)];
 
   for (const key of ntuplesKeys) {
-    let variable = variables[key];
+    const variable = variables[key];
 
     if (!variable) {
       if (key !== 'i') {
@@ -114,8 +114,8 @@ export function from1DNMRVariables(
       continue;
     }
 
-    let name = variable?.label.replace(/ *\[.*/, '');
-    let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
+    const name = variable?.label.replace(/ *\[.*/, '');
+    const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
     factor[key] = getBestFactor(variable.data, {

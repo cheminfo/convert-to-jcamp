@@ -59,11 +59,11 @@ export function from2DNMRVariables(
 
   for (let i = 0; i < keys.length; i++) {
     const key = keys[i];
-    let variable = variables[key];
+    const variable = variables[key];
     if (!variable) throw new Error('variables x, y and z are mandatory');
 
-    let name = variable?.label.replace(/ *\[.*/, '');
-    let unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
+    const name = variable?.label.replace(/ *\[.*/, '');
+    const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
     if (!(key in factor)) factor[key] = calculateFactor(variable.data, minMax);
@@ -155,7 +155,7 @@ export function from2DNMRVariables(
   const deltaX = (lastX - firstX) / (xData.length - 1);
   const deltaY = (lastY - firstY) / (yData.length - 1);
 
-  let firstData = new Float64Array(3);
+  const firstData = new Float64Array(3);
   firstData[direct] = firstX * sfo1;
   firstData[indirect] = firstY;
 

@@ -23,7 +23,7 @@ export function getBestFactor(
 
   // is there non integer number ?
   let onlyInteger = true;
-  for (let y of array) {
+  for (const y of array) {
     if (Math.round(y) !== y) {
       onlyInteger = false;
       break;
