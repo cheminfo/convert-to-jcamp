@@ -25,10 +25,7 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
     ...resInfo
   } = info;
 
-  let {
-    xFactor,
-    yFactor,
-  } = info;
+  let { xFactor, yFactor } = info;
 
   data = { x: data.x, y: data.y };
 
