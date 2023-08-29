@@ -95,6 +95,7 @@ export function from1DNMRVariables(
   const varDim = [nbPoints];
   const units = [xVariable.units];
   const varType = ['INDEPENDENT'];
+  const varForm = ['AFFN'];
   const factorArray = [spectralWidth / (nbPoints - 1)];
   const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
 
@@ -128,6 +129,7 @@ export function from1DNMRVariables(
     symbol.push(variable.symbol || key);
     varName.push(name || key);
     varDim.push(variable.data.length);
+    varForm.push('ASDF');
     first.push(firstLast.first);
     last.push(firstLast.last);
     max.push(minMax.max);
@@ -145,6 +147,7 @@ export function from1DNMRVariables(
           symbol,
           varName,
           varDim,
+          varForm,
           first,
           last,
           min,
@@ -154,7 +157,7 @@ export function from1DNMRVariables(
           varType,
           factorArray,
         },
-        resInfo,
+        { dataType, ...resInfo },
       )
     : isRealData(variables)
     ? addRealData(header, {
@@ -197,6 +200,7 @@ function addNtuplesHeader(
     max,
     units,
     varType,
+    varForm,
     factorArray,
     xyEncoding,
     factor,
@@ -206,13 +210,14 @@ function addNtuplesHeader(
 ##VAR_NAME=  ${varName.join()}
 ##SYMBOL=    ${symbol.join()}
 ##VAR_TYPE=  ${varType.join()}
+##VAR_FORM=  ${varForm.join()}
 ##VAR_DIM=   ${varDim.join()}
 ##UNITS=     ${units.join()}
+##FACTOR=    ${factorArray.join()}
 ##FIRST=     ${first.join()}
 ##LAST=      ${last.join()}
-##MAX=       ${max.join()}
 ##MIN=       ${min.join()}
-##FACTOR=    ${factorArray.join()}\n`;
+##MAX=       ${max.join()}\n`;
 
   for (const key of ['r', 'i'] as const) {
     const variable = variables[key];
