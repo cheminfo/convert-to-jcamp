@@ -1,5 +1,14 @@
 # Changelog
 
+## [5.4.8](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.7...v5.4.8) (2023-08-29)
+
+
+### Bug Fixes
+
+* add VAR_FORM ntuples ([d64d110](https://github.com/cheminfo/convert-to-jcamp/commit/d64d110f2fe52feff4f31405522e7f26caec893b))
+* chemdraw nmr jcamp compatibility([#78](https://github.com/cheminfo/convert-to-jcamp/issues/78)) ([130f44f](https://github.com/cheminfo/convert-to-jcamp/commit/130f44ff6a7ba9eff0d49e26a08e10633ef4eb80))
+* ensure integer in rescaling ([a3fc4a5](https://github.com/cheminfo/convert-to-jcamp/commit/a3fc4a545a8a4aa93ea9e116559b09dfe2c744e3))
+
 ## [5.4.7](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.6...v5.4.7) (2023-06-22)
 
 
