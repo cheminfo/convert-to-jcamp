@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.9](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.8...v5.4.9) (2023-09-05)
+
+
+### Bug Fixes
+
+* update brukerconverter dev dependency ([3e91de5](https://github.com/cheminfo/convert-to-jcamp/commit/3e91de56331c494f4d6dd8cf0113e2dc0d7e5af4))
+
 ## [5.4.8](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.7...v5.4.8) (2023-08-29)
 
 
