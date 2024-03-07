@@ -1,5 +1,5 @@
 import { getCoffee } from 'bruker-data-test';
-import { convertFileCollection, SpectraData1D } from 'brukerconverter';
+import { convertFileCollection } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
@@ -28,8 +28,9 @@ describe('convert bruker to jcamp', () => {
     const spectra = await convertFileCollection(oneExpno, converterOptions);
     const spectrum = spectra.filter((spectrum) => {
       const {
+        // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
-      } = spectrum as SpectraData1D;
+      } = spectrum;
       return is1D && !isFID;
     });
     const jcamp = getJcamp(spectrum[0]) || '';
@@ -49,8 +50,9 @@ describe('convert bruker to jcamp', () => {
     const spectra = await convertFileCollection(oneExpno, converterOptions);
     const spectrum = spectra.filter((spectrum) => {
       const {
+        // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
-      } = spectrum as SpectraData1D;
+      } = spectrum;
       return is1D && !isFID;
     });
     const jcamp = getJcamp(spectrum[0], 'real') || '';
@@ -75,8 +77,9 @@ describe('convert bruker to jcamp', () => {
     const spectra = await convertFileCollection(oneExpno, converterOptions);
     const spectrum = spectra.filter((spectrum) => {
       const {
+        // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
-      } = spectrum as SpectraData1D;
+      } = spectrum;
       return is1D && !isFID;
     });
     spectrum[0].meta = {

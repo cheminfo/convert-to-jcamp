@@ -84,8 +84,8 @@ export function from2DNMRVariables(
         variable.isDependent !== undefined
           ? !variable.isDependent
           : i === 0
-          ? 'INDEPENDENT'
-          : 'DEPENDENT',
+            ? 'INDEPENDENT'
+            : 'DEPENDENT',
       );
     }
 

@@ -160,26 +160,26 @@ export function from1DNMRVariables(
         { dataType, ...resInfo },
       )
     : isRealData(variables)
-    ? addRealData(header, {
-        xData,
-        yData: variables.r.data,
-        xyEncoding,
-        info: {
-          XUNITS: 'HZ',
-          YUNITS: units[1],
-          XFACTOR: factorArray[0],
-          YFACTOR: factorArray[1],
-          DELTAX: xData[1] - xData[0],
-          FIRSTX: first[0],
-          FIRSTY: first[1],
-          LASTX: last[0],
-          MAXY: max[1],
-          MINY: min[1],
-          NPOINTS: xData.length,
-          XYDATA: '(X++(Y..Y))',
-        },
-      })
-    : header;
+      ? addRealData(header, {
+          xData,
+          yData: variables.r.data,
+          xyEncoding,
+          info: {
+            XUNITS: 'HZ',
+            YUNITS: units[1],
+            XFACTOR: factorArray[0],
+            YFACTOR: factorArray[1],
+            DELTAX: xData[1] - xData[0],
+            FIRSTX: first[0],
+            FIRSTY: first[1],
+            LASTX: last[0],
+            MAXY: max[1],
+            MINY: min[1],
+            NPOINTS: xData.length,
+            XYDATA: '(X++(Y..Y))',
+          },
+        })
+      : header;
 }
 
 function addNtuplesHeader(
