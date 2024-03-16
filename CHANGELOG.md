@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.4.10](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.9...v5.4.10) (2024-03-16)
+
+
+### Bug Fixes
+
+* update dependencies ([3327a64](https://github.com/cheminfo/convert-to-jcamp/commit/3327a6427477b355570065382af414e6545c549a))
+* update dependencies and allow DoubleArray ([52db01d](https://github.com/cheminfo/convert-to-jcamp/commit/52db01d1760417869f6101c117fa28cae4d530f5))
+
 ## [5.4.9](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.8...v5.4.9) (2023-09-05)
 
 
