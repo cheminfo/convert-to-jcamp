@@ -12,7 +12,7 @@
     "lib-esm"
   ],
   "scripts": {
-    "build": "npm run tsc-esm && npx cheminfo-build --entry lib-esm/index.js --root ConvertToJcamp",
+    "build": "npm run tsc-esm && cheminfo-build --entry lib-esm/index.js --root ConvertToJcamp",
     "clean": "rimraf lib lib-esm",
     "check-types": "tsc --noEmit",
     "eslint": "eslint src --cache",
@@ -42,6 +42,7 @@
     "@types/jest": "^29.5.12",
     "bruker-data-test": "^0.5.3",
     "brukerconverter": "^6.3.6",
+    "cheminfo-build": "^1.2.0",
     "eslint": "^8.57.0",
     "eslint-config-cheminfo-typescript": "^12.2.0",
     "esm": "^3.2.25",
