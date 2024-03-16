@@ -1,4 +1,4 @@
-import { DoubleArray } from 'cheminfo-types';
+import { NumberArray } from 'cheminfo-types';
 
 /**
  * class encodes a integer vector as a String in order to store it in a text file.
@@ -30,7 +30,7 @@ const maxLinelength = 100;
  * @return {string}
  */
 export function vectorEncoder(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
   xyEncoding?: string,
@@ -58,7 +58,7 @@ export function vectorEncoder(
  * No data compression used. The data is separated by a comma(',').
  */
 export function commaSeparatedValuesEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
 ) {
@@ -70,7 +70,7 @@ export function commaSeparatedValuesEncoding(
  * No data compression used. The data is separated by the specified separator.
  */
 export function fixEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
   separator = ' ',
@@ -100,7 +100,7 @@ export function fixEncoding(
  * No data compression used. The data is separated by the sign of the number.
  */
 export function packedEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
 ) {
@@ -132,7 +132,7 @@ export function packedEncoding(
  * represented as C0C2.
  */
 export function squeezedEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
 ) {
@@ -163,7 +163,7 @@ export function squeezedEncoding(
  * Duplicate suppression xyEncoding
  */
 export function differenceDuplicateEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
 ) {
@@ -237,7 +237,7 @@ export function differenceDuplicateEncoding(
  * Differential xyEncoding
  */
 export function differenceEncoding(
-  data: DoubleArray,
+  data: NumberArray,
   firstX: number,
   intervalX: number,
 ) {

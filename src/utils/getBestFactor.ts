@@ -1,11 +1,11 @@
-import { DoubleArray } from 'cheminfo-types';
+import { NumberArray } from 'cheminfo-types';
 import { xMinMaxValues } from 'ml-spectra-processing';
 
 import { getFactorNumber } from './getFactorNumber';
 import { MinMax } from './minMax';
 
 export function getBestFactor(
-  array: DoubleArray,
+  array: NumberArray,
   options: {
     factor?: number;
     /**
