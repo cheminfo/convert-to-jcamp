@@ -6,6 +6,7 @@ import type {
 } from 'cheminfo-types';
 
 import { JcampOptions } from './JcampOptions';
+import { getOneIfArray } from './getOneIfArray';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
@@ -50,7 +51,103 @@ export function from1DNMRVariables(
   variables: NMR1DVariables,
   options: JcampOptions,
 ): string {
-  const { meta = {}, info = {}, xyEncoding = '' } = options;
+  const {
+    onlyReal = false,
+    info: currentInfo,
+    meta: currentMeta,
+    xyEncoding,
+  } = options;
+  const { isFid, frequencyOffset, DECIM, DSPFVS } = currentInfo;
+  const nucleus = getOneIfArray(currentInfo.nucleus);
+  const baseFrequency = getOneIfArray(
+    currentInfo.baseFrequency || currentInfo.originFrequency,
+  );
+  const originFrequency = getOneIfArray(currentInfo.originFrequency);
+
+  const { x, re, im } = data;
+  const newRe = new Float64Array(re);
+
+  const newIm = !onlyReal && im ? new Float64Array(im) : undefined;
+  const newMeta: any = {
+    OFFSET: x[0],
+  };
+  maybeAdd(newMeta, 'SW', currentInfo.spectralWidth);
+  maybeAdd(newMeta, 'BF1', baseFrequency);
+
+  if (isFid) {
+    // const digitalFiltering = lookupForFilter(spectrum, 'digitalFilter');
+
+    // if (digitalFiltering) {
+    //   const {
+    //     value: { digitalFilterValue },
+    //     flag: digitalFilterIsApplied,
+    //   } = digitalFiltering;
+    //   if (digitalFilterIsApplied) {
+    //     const pointsToShift = Math.floor(digitalFilterValue);
+    //     newRe.set(re.slice(re.length - pointsToShift));
+    //     newRe.set(re.slice(0, re.length - pointsToShift), pointsToShift);
+    //     if (im && newIm) {
+    //       newIm.set(im.slice(im.length - pointsToShift));
+    //       newIm.set(im.slice(0, im.length - pointsToShift), pointsToShift);
+    //     }
+    //   }
+    // }
+
+    maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
+    maybeAdd(newMeta, 'DECIM', DECIM);
+    maybeAdd(newMeta, 'REVERSE', 'no');
+    maybeAdd(newMeta, 'DSPFVS', DSPFVS);
+  }
+  let shiftReference;
+  if (frequencyOffset && baseFrequency) {
+    const offset = frequencyOffset / baseFrequency;
+    shiftReference = offset + 0.5 * currentInfo.spectralWidth;
+  } else {
+    shiftReference = x[x.length - 1];
+  }
+
+  const isFT = lookupForFilter(spectrum, 'fft')?.flag;
+  maybeAdd(newMeta, 'SYMBOL', onlyReal ? '' : currentMeta.SYMBOL);
+  maybeAdd(
+    newMeta,
+    'DATATYPE',
+    !currentInfo.isFid || isFT ? 'NMR SPECTRUM' : 'NMR FID',
+  );
+
+  const newInfo = {
+    '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
+      currentInfo.isFid ? x.length : 1
+    }, ${shiftReference}`,
+    NPOINTS: x.length,
+    '.OBSERVE NUCLEUS': nucleus,
+    '.OBSERVE FREQUENCY': originFrequency,
+    dataType: currentInfo.isFid ? `NMR FID` : `NMR SPECTRUM`,
+    dataClass: !onlyReal && im ? 'NTUPLES' : 'XYDATA',
+  };
+
+  maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
+  maybeAdd(newInfo, 'owner', currentInfo.owner);
+
+  //@ts-expect-error will be include in next version of nmr-processing
+  // const factor = 1 / (info.scaleFactor ?? 1);
+  // if (factor) {
+  //   maybeAdd(newMeta, 'NC_proc', -Math.log2(factor));
+  // }
+
+  // ------- end of new code ----------
+  // ------- start the adaptation -------
+
+  const scaleFactor = 1 / (currentInfo.scaleFactor ?? 1);
+  if (scaleFactor) {
+    maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
+  }
+
+  const meta = { ...currentMeta, ...newMeta };
+  const info = { ...currentInfo, ...newInfo };
+
+  // ----- end of adaptations -------------
+
+  // const { meta = {}, info = {}, xyEncoding = '' } = options;
 
   const factor =
     'factor' in options
@@ -251,4 +348,13 @@ function addRealData(header: string, options: any) {
     xyEncoding,
   )}
 ##END=`;
+}
+
+function maybeAdd(
+  obj: any,
+  name: string,
+  value?: string | number | Array<string | number>,
+) {
+  if (typeof value === 'undefined') return;
+  obj[name] = getOneIfArray(value);
 }
