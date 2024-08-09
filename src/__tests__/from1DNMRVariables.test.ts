@@ -87,7 +87,7 @@ describe('convert bruker to jcamp', () => {
     };
     const jcamp = getJcamp(spectrum[0], 'real') || '';
     const matchResult = jcamp
-      .slice(400, 650)
+      .slice(400, 1000)
       .match(/##DELTAX=(?<delta>[+-]?\d+(\.\d+)?)\s*.*/);
     const deltaXInJcamp = matchResult?.groups?.delta;
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
@@ -120,8 +120,8 @@ function getJcamp(spectrum: any, selection = 'complex') {
         dataType: meta.DATATYPE,
         dataClass: meta.DATACLASS,
         NPOINTS: data.x.length,
-        '.OBSERVE FREQUENCY': observeFrequency,
-        '.OBSERVE NUCLEUS': nucleus[0],
+        originFrequency: observeFrequency,
+        nucleus: nucleus[0],
       },
       meta,
     } as JcampOptions;

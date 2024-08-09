@@ -37,9 +37,8 @@ function isRealData(
   return 'r' in variables && !('i' in variables);
 }
 
-export type NMR1DVariables = Partial<
-  Pick<MeasurementXYVariables, 'x' | 'r' | 'i'>
->;
+export type NMR1DVariables = Pick<MeasurementXYVariables, 'x' | 'r'> &
+  Partial<Pick<MeasurementXYVariables, 'i'>>;
 
 /**
  * Create a jcamp of 1D NMR data by variables x and y or x, r, i
@@ -52,9 +51,8 @@ export function from1DNMRVariables(
   options: JcampOptions,
 ): string {
   const {
-    onlyReal = false,
-    info: currentInfo,
-    meta: currentMeta,
+    info: currentInfo = {},
+    meta: currentMeta = {},
     xyEncoding,
   } = options;
   const { isFid, frequencyOffset, DECIM, DSPFVS } = currentInfo;
@@ -62,37 +60,24 @@ export function from1DNMRVariables(
   const baseFrequency = getOneIfArray(
     currentInfo.baseFrequency || currentInfo.originFrequency,
   );
+
   const originFrequency = getOneIfArray(currentInfo.originFrequency);
 
-  const { x, re, im } = data;
-  const newRe = new Float64Array(re);
+  if (!originFrequency) {
+    throw new Error(
+      'originFrequency is mandatory into the info object for nmr data',
+    );
+  }
 
-  const newIm = !onlyReal && im ? new Float64Array(im) : undefined;
+  const xVariable = variables.x;
+  const xData = xVariable.data.slice();
   const newMeta: any = {
-    OFFSET: x[0],
+    OFFSET: xData[0] / originFrequency,
   };
   maybeAdd(newMeta, 'SW', currentInfo.spectralWidth);
   maybeAdd(newMeta, 'BF1', baseFrequency);
 
   if (isFid) {
-    // const digitalFiltering = lookupForFilter(spectrum, 'digitalFilter');
-
-    // if (digitalFiltering) {
-    //   const {
-    //     value: { digitalFilterValue },
-    //     flag: digitalFilterIsApplied,
-    //   } = digitalFiltering;
-    //   if (digitalFilterIsApplied) {
-    //     const pointsToShift = Math.floor(digitalFilterValue);
-    //     newRe.set(re.slice(re.length - pointsToShift));
-    //     newRe.set(re.slice(0, re.length - pointsToShift), pointsToShift);
-    //     if (im && newIm) {
-    //       newIm.set(im.slice(im.length - pointsToShift));
-    //       newIm.set(im.slice(0, im.length - pointsToShift), pointsToShift);
-    //     }
-    //   }
-    // }
-
     maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
     maybeAdd(newMeta, 'DECIM', DECIM);
     maybeAdd(newMeta, 'REVERSE', 'no');
@@ -103,42 +88,30 @@ export function from1DNMRVariables(
     const offset = frequencyOffset / baseFrequency;
     shiftReference = offset + 0.5 * currentInfo.spectralWidth;
   } else {
-    shiftReference = x[x.length - 1];
+    shiftReference = xData[xData.length - 1];
   }
 
-  const isFT = lookupForFilter(spectrum, 'fft')?.flag;
-  maybeAdd(newMeta, 'SYMBOL', onlyReal ? '' : currentMeta.SYMBOL);
-  maybeAdd(
-    newMeta,
-    'DATATYPE',
-    !currentInfo.isFid || isFT ? 'NMR SPECTRUM' : 'NMR FID',
-  );
+  maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
 
   const newInfo = {
     '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
-      currentInfo.isFid ? x.length : 1
+      currentInfo.isFid ? xData.length : 1
     }, ${shiftReference}`,
-    NPOINTS: x.length,
+    NPOINTS: xData.length,
     '.OBSERVE NUCLEUS': nucleus,
     '.OBSERVE FREQUENCY': originFrequency,
-    dataType: currentInfo.isFid ? `NMR FID` : `NMR SPECTRUM`,
-    dataClass: !onlyReal && im ? 'NTUPLES' : 'XYDATA',
+    dataType: currentInfo?.dataType,
+    dataClass: currentInfo?.dataClass,
   };
 
   maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
   maybeAdd(newInfo, 'owner', currentInfo.owner);
 
-  //@ts-expect-error will be include in next version of nmr-processing
-  // const factor = 1 / (info.scaleFactor ?? 1);
-  // if (factor) {
-  //   maybeAdd(newMeta, 'NC_proc', -Math.log2(factor));
-  // }
-
   // ------- end of new code ----------
   // ------- start the adaptation -------
 
   const scaleFactor = 1 / (currentInfo.scaleFactor ?? 1);
-  if (scaleFactor) {
+  if (scaleFactor !== 1) {
     maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
   }
 
@@ -146,8 +119,6 @@ export function from1DNMRVariables(
   const info = { ...currentInfo, ...newInfo };
 
   // ----- end of adaptations -------------
-
-  // const { meta = {}, info = {}, xyEncoding = '' } = options;
 
   const factor =
     'factor' in options
@@ -162,16 +133,6 @@ export function from1DNMRVariables(
     dataClass = '',
     ...resInfo
   } = info;
-
-  if (!('.OBSERVE FREQUENCY' in info)) {
-    throw new Error(
-      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
-    );
-  }
-
-  const xVariable = variables.x as MeasurementVariable;
-
-  const xData = xVariable.data.slice();
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
