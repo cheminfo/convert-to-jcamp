@@ -4,6 +4,7 @@ import type {
   MeasurementXYVariables,
   OneLowerCase,
 } from 'cheminfo-types';
+import { xMultiply } from 'ml-spectra-processing';
 
 import { JcampOptions } from './JcampOptions';
 import { getOneIfArray } from './getOneIfArray';
@@ -50,18 +51,22 @@ export function from1DNMRVariables(
   variables: NMR1DVariables,
   options: JcampOptions,
 ): string {
+  const { info: infoInput = {}, meta: currentMeta = {}, xyEncoding } = options;
   const {
-    info: currentInfo = {},
-    meta: currentMeta = {},
-    xyEncoding,
-  } = options;
-  const { isFid, frequencyOffset, DECIM, DSPFVS } = currentInfo;
-  const nucleus = getOneIfArray(currentInfo.nucleus);
-  const baseFrequency = getOneIfArray(
-    currentInfo.baseFrequency || currentInfo.originFrequency,
-  );
+    isFid,
+    frequencyOffset,
+    DECIM,
+    DSPFVS,
+    nucleus,
+    originFrequency: originFreq,
+    baseFrequency: baseFreq,
+    ...currentInfo
+  } = infoInput;
+  const baseFrequency = getOneIfArray(baseFreq || originFreq);
 
-  const originFrequency = getOneIfArray(currentInfo.originFrequency);
+  const originFrequency = getOneIfArray(
+    originFreq || currentInfo['.OBSERVE FREQUENCY'],
+  );
 
   if (!originFrequency) {
     throw new Error(
@@ -70,7 +75,8 @@ export function from1DNMRVariables(
   }
 
   const xVariable = variables.x;
-  const xData = xVariable.data.slice();
+  const x = xVariable.data.slice();
+  const xData = isFid ? x : xMultiply(x, originFrequency);
   const newMeta: any = {
     OFFSET: xData[0] / originFrequency,
   };
@@ -93,15 +99,14 @@ export function from1DNMRVariables(
 
   maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
 
-  const newInfo = {
+  const newInfo: Record<string, any> = {
     '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
       currentInfo.isFid ? xData.length : 1
     }, ${shiftReference}`,
     NPOINTS: xData.length,
-    '.OBSERVE NUCLEUS': nucleus,
+    '.OBSERVE NUCLEUS': getOneIfArray(nucleus),
     '.OBSERVE FREQUENCY': originFrequency,
     dataType: currentInfo?.dataType,
-    dataClass: currentInfo?.dataClass,
   };
 
   maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
@@ -115,6 +120,16 @@ export function from1DNMRVariables(
     maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
   }
 
+  if (scaleFactor !== 1) {
+    xMultiply(variables.r?.data || [], scaleFactor, {
+      output: variables.r?.data,
+    });
+    if (variables.i) {
+      xMultiply(variables.i?.data || [], scaleFactor, {
+        output: variables.i?.data,
+      });
+    }
+  }
   const meta = { ...currentMeta, ...newMeta };
   const info = { ...currentInfo, ...newInfo };
 
@@ -130,7 +145,7 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
-    dataClass = '',
+    dataClass = variables.i ? 'NTUPLES' : 'XYDATA',
     ...resInfo
   } = info;
 

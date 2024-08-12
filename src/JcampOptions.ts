@@ -43,6 +43,10 @@ export interface JcampInfo extends Record<string, any> {
    * @default 1
    */
   yFactor?: number;
+  /**
+   * used internally to scale the x axis
+   */
+  isFid?: boolean;
 }
 
 export interface JcampOptions {

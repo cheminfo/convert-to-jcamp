@@ -1,9 +1,11 @@
+import { writeFileSync } from 'fs';
+
 import { getCoffee } from 'bruker-data-test';
 import { convertFileCollection } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { xMultiply } from 'ml-spectra-processing';
+import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
 
 import { JcampOptions } from '..';
 import { from1DNMRVariables } from '../from1DNMRVariables';
@@ -106,6 +108,54 @@ describe('convert bruker to jcamp', () => {
   });
 });
 
+describe('generate a jcamp from simulated spectrum', () => {
+  it('from signals to xy', async () => {
+    const frequency = 600;
+    const signals = [
+      {
+        atoms: [1],
+        nbAtoms: 1,
+        delta: 2,
+        js: [{ coupling: 7.758, multiplicity: 't' }],
+      },
+    ];
+
+    const xy = rangesToXY([{ from: 0.5, to: 2.5, signals }], { frequency });
+    const peaks = xyAutoPeaksPicking(xy, { frequency });
+    expect(peaks).toHaveLength(3);
+    expect(peaks[1].x).toBeCloseTo(2, 1);
+    const data = {
+      x: {
+        data: xy.x,
+        frequency,
+        label: 'Chemical Shift (ppm)',
+      },
+      r: {
+        data: xy.y,
+        label: 'Real data',
+      },
+    };
+    const jcamp = from1DNMRVariables(data, {
+      xyEncoding: 'DIFDUP',
+      info: {
+        nucleus: '1H',
+        title: '1H NMR',
+        dataType: 'NMR Spectrum',
+        '.OBSERVE FREQUENCY': frequency,
+      },
+    });
+
+    const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
+    writeFileSync('jcamp.dx', jcamp);
+    const newPeaks = xyAutoPeaksPicking(converted.spectra[0].data, {
+      frequency,
+    });
+    expect(newPeaks).toHaveLength(3);
+    expect(newPeaks[1].x).toBeCloseTo(2, 1);
+    expect(newPeaks[1].y).toBeCloseTo(peaks[1].y, 2);
+  });
+});
+
 function getJcamp(spectrum: any, selection = 'complex') {
   const { source } = spectrum;
   if (source.is1D && !source.isFID) {
@@ -114,6 +164,7 @@ function getJcamp(spectrum: any, selection = 'complex') {
     const options = {
       xyEncoding: 'DIFDUP',
       info: {
+        isFid: info.isFid,
         title: info.TITLE,
         owner: info.OWNER,
         origin: info.ORIGIN,
@@ -129,7 +180,7 @@ function getJcamp(spectrum: any, selection = 'complex') {
     // the order of variables in the object is important
     const variables = {
       x: {
-        data: xMultiply(data.x, observeFrequency),
+        data: data.x,
         label: 'Frequencies',
         units: 'Hz',
         symbol: 'X',
