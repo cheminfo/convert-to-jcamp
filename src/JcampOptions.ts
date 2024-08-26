@@ -46,7 +46,23 @@ export interface JcampInfo extends Record<string, any> {
   /**
    * used internally to scale the x axis
    */
-  isFid?: boolean;
+  isFid: boolean;
+  /**
+   * the number of points to be shifted at the moment to apply FFT, only needed for RAW data
+   */
+  digitalFilter?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  decim?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  dspfvs?: number;
+  /**
+   * origin frequency of the spectrum acquired
+   */
+  originFrequency: number;
 }
 
 export interface JcampOptions {
