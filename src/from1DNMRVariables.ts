@@ -55,8 +55,8 @@ export function from1DNMRVariables(
   const {
     isFid,
     frequencyOffset,
-    DECIM,
-    DSPFVS,
+    decim,
+    dspfvs,
     nucleus,
     originFrequency: originFreq,
     baseFrequency: baseFreq,
@@ -85,9 +85,9 @@ export function from1DNMRVariables(
 
   if (isFid) {
     maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
-    maybeAdd(newMeta, 'DECIM', DECIM);
+    maybeAdd(newMeta, 'DECIM', decim);
     maybeAdd(newMeta, 'REVERSE', 'no');
-    maybeAdd(newMeta, 'DSPFVS', DSPFVS);
+    maybeAdd(newMeta, 'DSPFVS', dspfvs);
   }
   let shiftReference;
   if (frequencyOffset && baseFrequency) {
