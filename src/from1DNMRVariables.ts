@@ -130,6 +130,7 @@ export function from1DNMRVariables(
       });
     }
   }
+
   const meta = { ...currentMeta, ...newMeta };
   const info = { ...currentInfo, ...newInfo };
 
@@ -166,7 +167,7 @@ export function from1DNMRVariables(
 
   const symbol = ['X'];
   const varDim = [nbPoints];
-  const units = [xVariable.units];
+  const units = [xVariable.units ?? (isFid ? 'Time' : 'Hz')];
   const varType = ['INDEPENDENT'];
   const varForm = ['AFFN'];
   const factorArray = [spectralWidth / (nbPoints - 1)];
@@ -189,8 +190,6 @@ export function from1DNMRVariables(
     }
 
     const name = variable?.label.replace(/ *\[.*/, '');
-    const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
-
     const { firstLast, minMax } = getExtremeValues(variable.data);
     factor[key] = getBestFactor(variable.data, {
       factor: factor[key],
@@ -199,7 +198,7 @@ export function from1DNMRVariables(
 
     const currentFactor = factor[key];
     factorArray.push(currentFactor || 1);
-    symbol.push(variable.symbol || key);
+    symbol.push(variable.symbol || (key === 'r' ? 'R' : 'I'));
     varName.push(name || key);
     varDim.push(variable.data.length);
     varForm.push('ASDF');
@@ -208,8 +207,7 @@ export function from1DNMRVariables(
     max.push(minMax.max);
     min.push(minMax.min);
     varType.push('DEPENDENT');
-
-    units.push(variable.units || unit || '');
+    units.push(variable.units ?? 'Arbitrary');
   }
 
   return isNTuplesData(variables)

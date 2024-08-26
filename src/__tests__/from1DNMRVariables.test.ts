@@ -42,6 +42,10 @@ describe('convert bruker to jcamp', () => {
       spectrum[0].spectra[0].data.re[0],
       3,
     );
+    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
+      spectrum[0].spectra[0].data.x[0],
+      3,
+    );
     expect(converted.spectra).toHaveLength(2);
   });
   it('FFT bruker expno only real', async () => {
@@ -108,7 +112,7 @@ describe('convert bruker to jcamp', () => {
   });
 });
 
-describe.only('generate a jcamp from simulated spectrum', () => {
+describe('generate a jcamp from simulated spectrum', () => {
   it('from signals to xy', async () => {
     const frequency = 600;
     const signals = [
@@ -134,24 +138,31 @@ describe.only('generate a jcamp from simulated spectrum', () => {
         data: xy.y,
         label: 'Real data',
       },
+      i: {
+        data: xy.y,
+        label: 'Imaginary data',
+      },
     };
+
     const jcamp = from1DNMRVariables(data, {
       xyEncoding: 'DIFDUP',
       info: {
+        isFid: false,
         nucleus: '1H',
-        title: '1H NMR',
-        dataType: 'NMR Spectrum',
-        '.OBSERVE FREQUENCY': frequency,
+        dataType: 'NMR SPECTRUM',
+        originFrequency: frequency,
+        baseFrequency: frequency - 0.001,
+        dataClass: 'NTUPLES',
       },
     });
 
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    writeFileSync('jcamp.dx', jcamp);
+    writeFileSync('jcamp_im2.dx', jcamp);
     const newPeaks = xyAutoPeaksPicking(converted.spectra[0].data, {
       frequency,
     });
     expect(newPeaks).toHaveLength(3);
-    // expect(newPeaks[1].x).toBeCloseTo(2, 1);
+    expect(newPeaks[1].x).toBeCloseTo(2, 1);
     expect(newPeaks[1].y).toBeCloseTo(peaks[1].y, 2);
   });
 });
