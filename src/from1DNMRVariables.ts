@@ -6,7 +6,7 @@ import type {
 } from 'cheminfo-types';
 import { xMultiply } from 'ml-spectra-processing';
 
-import { JcampOptions } from './JcampOptions';
+import { JcampInfo, JcampOptions } from './JcampOptions';
 import { getOneIfArray } from './getOneIfArray';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
@@ -25,6 +25,42 @@ type RealData<DataType extends DoubleArray = DoubleArray> = Record<
 >;
 
 const ntuplesKeys = ['r', 'i'] as Array<keyof NtuplesData>;
+
+export interface NmrJcampInfo extends JcampInfo {
+  /**
+   * used internally to scale the x axis
+   */
+  isFid: boolean;
+  /**
+   * the number of points to be shifted at the moment to apply FFT, only needed for RAW data
+   */
+  digitalFilter?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  decim?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  dspfvs?: number;
+  /**
+   * origin frequency of the spectrum
+   */
+  originFrequency: number;
+}
+
+export interface NmrJcampOptions
+  extends Pick<JcampOptions, 'meta' | 'xyEncoding'> {
+  /**
+   * standardize meta data defined in a nmr jcamp like `title` or `dataType`
+   * @default {}
+   */
+  info: NmrJcampInfo;
+  /**
+   * factor to scale the variables data
+   */
+  factor?: Record<OneLowerCase, number>;
+}
 
 function isNTuplesData(
   variables: Partial<MeasurementXYVariables>,
@@ -49,9 +85,9 @@ export type NMR1DVariables = Pick<MeasurementXYVariables, 'x' | 'r'> &
  */
 export function from1DNMRVariables(
   variables: NMR1DVariables,
-  options: JcampOptions,
+  options: NmrJcampOptions,
 ): string {
-  const { info: infoInput = {}, meta: currentMeta = {}, xyEncoding } = options;
+  const { info: infoInput, meta: currentMeta = {}, xyEncoding } = options;
   const {
     isFid,
     frequencyOffset,

@@ -1,5 +1,3 @@
-import { OneLowerCase } from 'cheminfo-types';
-
 export type XYEncoding = '' | 'FIX' | 'SQZ' | 'DIF' | 'DIFDUP' | 'PAC' | 'CSV';
 
 export interface JcampInfo extends Record<string, any> {
@@ -43,26 +41,6 @@ export interface JcampInfo extends Record<string, any> {
    * @default 1
    */
   yFactor?: number;
-  /**
-   * used internally to scale the x axis
-   */
-  isFid: boolean;
-  /**
-   * the number of points to be shifted at the moment to apply FFT, only needed for RAW data
-   */
-  digitalFilter?: number;
-  /**
-   * metadata to calculate the digitalFilter value
-   */
-  decim?: number;
-  /**
-   * metadata to calculate the digitalFilter value
-   */
-  dspfvs?: number;
-  /**
-   * origin frequency of the spectrum acquired
-   */
-  originFrequency: number;
 }
 
 export interface JcampOptions {
@@ -86,6 +64,4 @@ export interface JcampOptions {
    * @default ''
    */
   xyEncoding?: XYEncoding;
-
-  factor?: Record<OneLowerCase, number>;
 }

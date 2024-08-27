@@ -7,8 +7,7 @@ import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
 
-import { JcampOptions } from '..';
-import { from1DNMRVariables } from '../from1DNMRVariables';
+import { from1DNMRVariables, NmrJcampOptions } from '../from1DNMRVariables';
 
 const converterOptions = {
   converter: { xy: true },
@@ -186,7 +185,7 @@ function getJcamp(spectrum: any, selection = 'complex') {
         nucleus: nucleus[0],
       },
       meta,
-    } as JcampOptions;
+    } as NmrJcampOptions;
 
     // the order of variables in the object is important
     const variables = {
