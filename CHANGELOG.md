@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.4.11](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.10...v5.4.11) (2024-08-27)
+
+
+### Bug Fixes
+
+* simple input for nmr jcamp generation ([a364432](https://github.com/cheminfo/convert-to-jcamp/commit/a36443287caefb60080334d0b865a3b33b59c179))
+
 ## [5.4.10](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.9...v5.4.10) (2024-03-16)
 
 
