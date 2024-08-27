@@ -79,7 +79,7 @@ export function fixEncoding(
   let j = 0;
   const dataLength = data.length;
   while (j < dataLength - 7) {
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = 0; i < 8; i++) {
       outputData += `${separator}${data[j++]}`;
     }
@@ -87,7 +87,7 @@ export function fixEncoding(
   }
   if (j < dataLength) {
     // We add last numbers
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = j; i < dataLength; i++) {
       outputData += `${separator}${data[i]}`;
     }
@@ -109,17 +109,17 @@ export function packedEncoding(
   const dataLength = data.length;
 
   while (j < dataLength - 7) {
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = 0; i < 8; i++) {
-      outputData += data[j] < 0 ? data[j++] : `+${data[j++]}`;
+      outputData += data[j] < 0 ? String(data[j++]) : `+${data[j++]}`;
     }
     outputData += newLine;
   }
   if (j < dataLength) {
     // We add last numbers
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = j; i < dataLength; i++) {
-      outputData += data[i] < 0 ? data[i] : `+${data[i]}`;
+      outputData += data[i] < 0 ? String(data[i]) : `+${data[i]}`;
     }
   }
   return outputData;
@@ -141,7 +141,7 @@ export function squeezedEncoding(
   let j = 0;
   const dataLength = data.length;
   while (j < dataLength - 10) {
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = 0; i < 10; i++) {
       outputData += squeezedDigit(data[j++].toString());
     }
@@ -149,7 +149,7 @@ export function squeezedEncoding(
   }
   if (j < dataLength) {
     // We add last numbers
-    outputData += Math.ceil(firstX + j * intervalX);
+    outputData += String(Math.ceil(firstX + j * intervalX));
     for (let i = j; i < dataLength; i++) {
       outputData += squeezedDigit(data[i].toString());
     }

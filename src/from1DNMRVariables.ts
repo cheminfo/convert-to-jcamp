@@ -4,8 +4,10 @@ import type {
   MeasurementXYVariables,
   OneLowerCase,
 } from 'cheminfo-types';
+import { xMultiply } from 'ml-spectra-processing';
 
-import { JcampOptions } from './JcampOptions';
+import { JcampInfo, JcampOptions } from './JcampOptions';
+import { getOneIfArray } from './getOneIfArray';
 import { addInfoData } from './utils/addInfoData';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
 import { getBestFactor } from './utils/getBestFactor';
@@ -24,6 +26,42 @@ type RealData<DataType extends DoubleArray = DoubleArray> = Record<
 
 const ntuplesKeys = ['r', 'i'] as Array<keyof NtuplesData>;
 
+export interface NmrJcampInfo extends JcampInfo {
+  /**
+   * used internally to scale the x axis
+   */
+  isFid: boolean;
+  /**
+   * the number of points to be shifted at the moment to apply FFT, only needed for RAW data
+   */
+  digitalFilter?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  decim?: number;
+  /**
+   * metadata to calculate the digitalFilter value
+   */
+  dspfvs?: number;
+  /**
+   * origin frequency of the spectrum
+   */
+  originFrequency: number;
+}
+
+export interface NmrJcampOptions
+  extends Pick<JcampOptions, 'meta' | 'xyEncoding'> {
+  /**
+   * standardize meta data defined in a nmr jcamp like `title` or `dataType`
+   * @default {}
+   */
+  info: NmrJcampInfo;
+  /**
+   * factor to scale the variables data
+   */
+  factor?: Record<OneLowerCase, number>;
+}
+
 function isNTuplesData(
   variables: Partial<MeasurementXYVariables>,
 ): variables is NtuplesData {
@@ -36,9 +74,8 @@ function isRealData(
   return 'r' in variables && !('i' in variables);
 }
 
-export type NMR1DVariables = Partial<
-  Pick<MeasurementXYVariables, 'x' | 'r' | 'i'>
->;
+export type NMR1DVariables = Pick<MeasurementXYVariables, 'x' | 'r'> &
+  Partial<Pick<MeasurementXYVariables, 'i'>>;
 
 /**
  * Create a jcamp of 1D NMR data by variables x and y or x, r, i
@@ -48,9 +85,92 @@ export type NMR1DVariables = Partial<
  */
 export function from1DNMRVariables(
   variables: NMR1DVariables,
-  options: JcampOptions,
+  options: NmrJcampOptions,
 ): string {
-  const { meta = {}, info = {}, xyEncoding = '' } = options;
+  const { info: infoInput, meta: currentMeta = {}, xyEncoding } = options;
+  const {
+    isFid,
+    frequencyOffset,
+    decim,
+    dspfvs,
+    nucleus,
+    originFrequency: originFreq,
+    baseFrequency: baseFreq,
+    ...currentInfo
+  } = infoInput;
+  const baseFrequency = getOneIfArray(baseFreq || originFreq);
+
+  const originFrequency = getOneIfArray(
+    originFreq || currentInfo['.OBSERVE FREQUENCY'],
+  );
+
+  if (!originFrequency) {
+    throw new Error(
+      'originFrequency is mandatory into the info object for nmr data',
+    );
+  }
+
+  const xVariable = variables.x;
+  const x = xVariable.data.slice();
+  const xData = isFid ? x : xMultiply(x, originFrequency);
+  const newMeta: any = {
+    OFFSET: xData[0] / originFrequency,
+  };
+  maybeAdd(newMeta, 'SW', currentInfo.spectralWidth);
+  maybeAdd(newMeta, 'BF1', baseFrequency);
+
+  if (isFid) {
+    maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
+    maybeAdd(newMeta, 'DECIM', decim);
+    maybeAdd(newMeta, 'REVERSE', 'no');
+    maybeAdd(newMeta, 'DSPFVS', dspfvs);
+  }
+  let shiftReference;
+  if (frequencyOffset && baseFrequency) {
+    const offset = frequencyOffset / baseFrequency;
+    shiftReference = offset + 0.5 * currentInfo.spectralWidth;
+  } else {
+    shiftReference = xData[xData.length - 1];
+  }
+
+  maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
+
+  const newInfo: Record<string, any> = {
+    '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
+      currentInfo.isFid ? xData.length : 1
+    }, ${shiftReference}`,
+    NPOINTS: xData.length,
+    '.OBSERVE NUCLEUS': getOneIfArray(nucleus),
+    '.OBSERVE FREQUENCY': originFrequency,
+    dataType: currentInfo?.dataType,
+  };
+
+  maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
+  maybeAdd(newInfo, 'owner', currentInfo.owner);
+
+  // ------- end of new code ----------
+  // ------- start the adaptation -------
+
+  const scaleFactor = 1 / (currentInfo.scaleFactor ?? 1);
+  if (scaleFactor !== 1) {
+    maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
+  }
+
+  if (scaleFactor !== 1) {
+    xMultiply(variables.r?.data || [], scaleFactor, {
+      output: variables.r?.data,
+    });
+    if (variables.i) {
+      xMultiply(variables.i?.data || [], scaleFactor, {
+        output: variables.i?.data,
+      });
+    }
+  }
+
+  const meta = { ...currentMeta, ...newMeta };
+  const info = { ...currentInfo, ...newInfo };
+
+  // ----- end of adaptations -------------
 
   const factor =
     'factor' in options
@@ -62,19 +182,9 @@ export function from1DNMRVariables(
     owner = '',
     origin = '',
     dataType = '',
-    dataClass = '',
+    dataClass = variables.i ? 'NTUPLES' : 'XYDATA',
     ...resInfo
   } = info;
-
-  if (!('.OBSERVE FREQUENCY' in info)) {
-    throw new Error(
-      '.OBSERVE FREQUENCY is mandatory into the info object for nmr data',
-    );
-  }
-
-  const xVariable = variables.x as MeasurementVariable;
-
-  const xData = xVariable.data.slice();
 
   let header = `##TITLE=${title}
 ##JCAMP-DX=6.00
@@ -93,7 +203,7 @@ export function from1DNMRVariables(
 
   const symbol = ['X'];
   const varDim = [nbPoints];
-  const units = [xVariable.units];
+  const units = [xVariable.units ?? (isFid ? 'Time' : 'Hz')];
   const varType = ['INDEPENDENT'];
   const varForm = ['AFFN'];
   const factorArray = [spectralWidth / (nbPoints - 1)];
@@ -116,8 +226,6 @@ export function from1DNMRVariables(
     }
 
     const name = variable?.label.replace(/ *\[.*/, '');
-    const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
-
     const { firstLast, minMax } = getExtremeValues(variable.data);
     factor[key] = getBestFactor(variable.data, {
       factor: factor[key],
@@ -126,7 +234,7 @@ export function from1DNMRVariables(
 
     const currentFactor = factor[key];
     factorArray.push(currentFactor || 1);
-    symbol.push(variable.symbol || key);
+    symbol.push(variable.symbol || (key === 'r' ? 'R' : 'I'));
     varName.push(name || key);
     varDim.push(variable.data.length);
     varForm.push('ASDF');
@@ -135,8 +243,7 @@ export function from1DNMRVariables(
     max.push(minMax.max);
     min.push(minMax.min);
     varType.push('DEPENDENT');
-
-    units.push(variable.units || unit || '');
+    units.push(variable.units ?? 'Arbitrary');
   }
 
   return isNTuplesData(variables)
@@ -251,4 +358,13 @@ function addRealData(header: string, options: any) {
     xyEncoding,
   )}
 ##END=`;
+}
+
+function maybeAdd(
+  obj: any,
+  name: string,
+  value?: string | number | Array<string | number>,
+) {
+  if (typeof value === 'undefined') return;
+  obj[name] = getOneIfArray(value);
 }

@@ -1,5 +1,3 @@
-import { OneLowerCase } from 'cheminfo-types';
-
 export type XYEncoding = '' | 'FIX' | 'SQZ' | 'DIF' | 'DIFDUP' | 'PAC' | 'CSV';
 
 export interface JcampInfo extends Record<string, any> {
@@ -66,6 +64,4 @@ export interface JcampOptions {
    * @default ''
    */
   xyEncoding?: XYEncoding;
-
-  factor?: Record<OneLowerCase, number>;
 }

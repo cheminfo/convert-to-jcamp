@@ -6,7 +6,7 @@ import type {
 import { isAnyArray } from 'is-any-array';
 import { DoubleMatrix } from 'ml-spectra-processing';
 
-import { JcampOptions } from './JcampOptions';
+import { NmrJcampOptions } from './from1DNMRVariables';
 import { addInfoData } from './utils/addInfoData';
 import { checkMatrix } from './utils/checkMatrix';
 import { checkNumberOrArray } from './utils/checkNumberOrArray';
@@ -27,9 +27,9 @@ export type NMR2DVariables = Required<
  */
 export function from2DNMRVariables(
   variables: NMR2DVariables,
-  options: JcampOptions = {},
+  options: NmrJcampOptions,
 ): string {
-  const { info = {}, meta = {}, xyEncoding = 'DIFDUP' } = options;
+  const { info, meta = {}, xyEncoding = 'DIFDUP' } = options;
 
   const factor =
     'factor' in options
