@@ -1,5 +1,6 @@
-import { vectorEncoder } from '../vectorEncoder';
 import { describe, it, expect } from 'vitest';
+
+import { vectorEncoder } from '../vectorEncoder';
 
 describe('encoding', () => {
   const y = [5, 4, 3, 2, 1, 5, 5, 5, 10, -102, 0];

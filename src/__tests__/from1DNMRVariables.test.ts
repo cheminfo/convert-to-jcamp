@@ -5,6 +5,7 @@ import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
 import { describe, it, expect } from 'vitest';
+
 import { from1DNMRVariables, NmrJcampOptions } from '../from1DNMRVariables';
 
 const converterOptions = {

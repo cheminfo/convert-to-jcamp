@@ -1,5 +1,6 @@
-import { getBestFactor } from '../getBestFactor';
 import { describe, it, expect } from 'vitest';
+
+import { getBestFactor } from '../getBestFactor';
 
 describe('getBestFactor', () => {
   it('integer', () => {

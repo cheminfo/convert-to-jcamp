@@ -1,5 +1,6 @@
 import { convert } from 'jcampconverter';
 import { describe, it, expect } from 'vitest';
+
 import { from2DNMRVariables } from '..';
 
 describe('from2DNMRVariables', () => {
