@@ -112,6 +112,7 @@ export function from1DNMRVariables(
   } = options;
   const {
     isFid,
+    title,
     frequencyOffset,
     decim,
     dspfvs,
@@ -122,6 +123,7 @@ export function from1DNMRVariables(
     solvent,
     owner: nmrOwner,
     dataType: nmrDataType,
+    dataClass,
     scaleFactor,
     digitalFilter,
     ...currentInfo
@@ -163,18 +165,20 @@ export function from1DNMRVariables(
 
   maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
 
-  const newInfo: Record<string, any> = {
-    '.SHIFT REFERENCE': `INTERNAL, ${String(solvent)}, ${
-      isFid ? xData.length : 1
-    }, ${shiftReference}`,
-    NPOINTS: xData.length,
-    '.OBSERVE NUCLEUS': getOneIfArray(nucleus),
-    '.OBSERVE FREQUENCY': originFrequency,
-    dataType: nmrDataType,
-  };
-
+  const newInfo: Record<string, any> = {};
+  maybeAdd(
+    newInfo,
+    '.SHIFT REFERENCE',
+    `INTERNAL, ${String(solvent)}, ${isFid ? xData.length : 1}, ${shiftReference}`,
+  );
+  maybeAdd(newInfo, 'TITLE', title);
+  maybeAdd(newInfo, 'NPOINTS', xData.length);
+  maybeAdd(newInfo, '.OBSERVE FREQUENCY', originFrequency);
+  maybeAdd(newInfo, '.OBSERVE NUCLEUS', getOneIfArray(nucleus));
+  maybeAdd(newInfo, 'DATATYPE', nmrDataType);
+  maybeAdd(newInfo, 'DATACLASS', dataClass);
   maybeAdd(newInfo, '.SOLVENT', solvent);
-  maybeAdd(newInfo, 'owner', nmrOwner);
+  maybeAdd(newInfo, 'OWNER', nmrOwner);
 
   // ------- end of new code ----------
   // ------- start the adaptation -------
@@ -206,20 +210,20 @@ export function from1DNMRVariables(
       : ({} as Record<OneLowerCase, number>);
 
   const {
-    title = '',
-    owner = '',
-    origin = '',
-    dataType = '',
-    dataClass = variables.i ? 'NTUPLES' : 'XYDATA',
+    TITLE = '',
+    OWNER = '',
+    ORIGIN = '',
+    DATATYPE = '',
+    DATACLASS = variables.i ? 'NTUPLES' : 'XYDATA',
     ...resInfo
   } = info;
 
-  let header = `##TITLE=${title}
+  let header = `##TITLE=${TITLE}
 ##JCAMP-DX=6.00
-##DATA TYPE= ${dataType}
-##DATA CLASS= ${dataClass}
-##ORIGIN=${origin}
-##OWNER=${owner}\n`;
+##DATA TYPE= ${DATATYPE}
+##DATA CLASS= ${DATACLASS}
+##ORIGIN=${ORIGIN}
+##OWNER=${OWNER}\n`;
 
   header += addInfoData(resInfo, { prefix: '##' });
   header += addInfoData(meta);
