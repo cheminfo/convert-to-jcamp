@@ -1,5 +1,3 @@
-import { writeFileSync } from 'fs';
-
 import { getCoffee } from 'bruker-data-test';
 import { convertFileCollection } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
@@ -156,7 +154,6 @@ describe('generate a jcamp from simulated spectrum', () => {
     });
 
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    writeFileSync('jcamp_im2.dx', jcamp);
     const newPeaks = xyAutoPeaksPicking(converted.spectra[0].data, {
       frequency,
     });

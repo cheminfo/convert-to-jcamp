@@ -54,7 +54,7 @@ const jcamp = fromVariables(variables, {
 ```
 
 There are two functions for NMR. `from1DNMRVariables`
-and `from2DNMRVariables` generates a nmr jcamp file from variables.
+and `from2DNMRVariables` generate a NMR JCAMP file from variables.
 
 ```js
 const { from2DNMRVariables } = require('convert-to-jcamp');
@@ -85,20 +85,27 @@ const variables = {
     isDependent: true,
   },
 };
+
 const jcamp = from2DNMRVariables(variables, {
   xyEncoding: 'DIFDUP',
-  meta: { SFO2: 100, SFO1: 400, NUC1: '1H', NUC2: '13C' },
-  info: {
+  nmrInfo: {
+    title: '2D NMR',
+    owner: 'cheminfo',
     dataType: 'nD NMR SPECTRUM',
-    '.OBSERVE NUCLEUS': '1H',
-    '.OBSERVER FREQUENCY': 400,
+    origin: 'lab',
   },
+  meta: {
+    NUC1: '1H',
+    NUC2: '13C',
+    SFO1: 400, // Spectrometer frequency for F2 (MHz)
+    SFO2: 100, // Spectrometer frequency for F1 (MHz)
+  }, // Optional: additional metadata
+  info: { '.OBSERVE NUCLEUS': '1H', '.OBSERVER FREQUENCY': 400 }, // Optional: additional JCAMP info fields
 });
 ```
 
 ```js
 const { from1DNMRVariables } = require('convert-to-jcamp');
-
 const variables = {
   x: {
     data: xMultiply(data.x, observeFrequency),
@@ -125,18 +132,29 @@ const variables = {
 
 const jcamp = from1DNMRVariables(variables, {
   xyEncoding: 'DIFDUP',
-  info: {
+  nmrInfo: {
     title: 'jcamp 1D',
     owner: 'cheminfo',
     dataType: 'NMR Spectrum',
-    '.OBSERVE FREQUENCY': 600,
-    '.OBSERVE NUCLEUS': '1H',
+    origin: 'lab',
+    isFid: false, // true for FID, false for spectrum
+    baseFrequency: 600, // MHz
+    originFrequency: 600, // MHz
+    nucleus: '1H',
+    // Optional fields:
+    // digitalFilter, decim, dspfvs, frequencyOffset, baseFrequency, spectralWidth, solvent, scaleFactor
   },
-  meta: { SFO1: 400, NUC1: '1H' },
+  meta: { SFO1: 400, NUC1: '1H' }, // Optional: additional metadata would be with ##$ prefix
+  // info: { ... }, // Optional: additional JCAMP info fields would be with ## prefix
 });
 ```
 
 An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo/bruker-to-jcamp.ts) conversion is in the [demo folder](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo)
+
+```bash
+npm install;
+npx ts-node demo/bruker-to-jcamp.ts
+```
 
 ## [API Documentation](https://cheminfo.github.io/convert-to-jcamp/)
 
