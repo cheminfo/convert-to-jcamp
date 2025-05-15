@@ -1,6 +1,6 @@
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
-
+import { describe, it, expect } from 'vitest';
 import { fromVariables } from '..';
 
 describe('fromVariables', () => {

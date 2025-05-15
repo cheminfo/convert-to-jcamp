@@ -1,11 +1,11 @@
 import { readFileSync } from 'fs';
-import { join } from 'path';
-
+import { describe, it, expect } from 'vitest';
 import { convert } from 'jcampconverter';
 import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
 
 import { XYEncoding } from '../JcampOptions';
 import { fromJSON } from '../fromJSON';
+import { join } from 'path';
 
 expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
 
