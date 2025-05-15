@@ -52,10 +52,27 @@ export interface NmrJcampInfo extends JcampInfo {
 export interface NmrJcampOptions
   extends Pick<JcampOptions, 'meta' | 'xyEncoding'> {
   /**
-   * standardize meta data defined in a nmr jcamp like `title` or `dataType`
+   * NMR-specific metadata and parameters used for JCAMP generation.
+   * - isFid: Whether the data is a free induction decay (FID) or spectrum.
+   * - digitalFilter: Number of points to shift for FFT (raw data only).
+   * - decim: Decimation factor for digital filter calculation.
+   * - dspfvs: DSP firmware version for digital filter calculation.
+   * - originFrequency: Origin frequency of the spectrum (MHz).
+   * - frequencyOffset: Frequency offset for referencing (optional).
+   * - nucleus: Observed nucleus (e.g., '1H', '13C').
+   * - baseFrequency: Base frequency for referencing (optional).
+   * - spectralWidth: Spectral width of the experiment (Hz).
+   * - solvent: Solvent used in the experiment (optional).
+   * - owner: Owner of the data (optional).
+   * - dataType: Type of data (optional).
+   * - scaleFactor: Scaling factor applied to the data (optional).
+   */
+  nmrInfo: NmrJcampInfo;
+  /**
+   * standardize meta data defined in a nmr jcamp like
    * @default {}
    */
-  info: NmrJcampInfo;
+  info?: Record<string, any>;
   /**
    * factor to scale the variables data
    */
@@ -87,7 +104,12 @@ export function from1DNMRVariables(
   variables: NMR1DVariables,
   options: NmrJcampOptions,
 ): string {
-  const { info: infoInput, meta: currentMeta = {}, xyEncoding } = options;
+  const {
+    info: infoInput = {},
+    meta: currentMeta = {},
+    xyEncoding,
+    nmrInfo,
+  } = options;
   const {
     isFid,
     frequencyOffset,
@@ -96,12 +118,18 @@ export function from1DNMRVariables(
     nucleus,
     originFrequency: originFreq,
     baseFrequency: baseFreq,
+    spectralWidth: nmrSpectralWidth,
+    solvent,
+    owner: nmrOwner,
+    dataType: nmrDataType,
+    scaleFactor,
+    digitalFilter,
     ...currentInfo
-  } = infoInput;
+  } = nmrInfo;
   const baseFrequency = getOneIfArray(baseFreq || originFreq);
 
   const originFrequency = getOneIfArray(
-    originFreq || currentInfo['.OBSERVE FREQUENCY'],
+    originFreq || infoInput['.OBSERVE FREQUENCY'],
   );
 
   if (!originFrequency) {
@@ -116,11 +144,11 @@ export function from1DNMRVariables(
   const newMeta: any = {
     OFFSET: xData[0] / originFrequency,
   };
-  maybeAdd(newMeta, 'SW', currentInfo.spectralWidth);
+  maybeAdd(newMeta, 'SW', nmrSpectralWidth);
   maybeAdd(newMeta, 'BF1', baseFrequency);
 
   if (isFid) {
-    maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
+    maybeAdd(newMeta, 'GRPDLY', digitalFilter);
     maybeAdd(newMeta, 'DECIM', decim);
     maybeAdd(newMeta, 'REVERSE', 'no');
     maybeAdd(newMeta, 'DSPFVS', dspfvs);
@@ -128,7 +156,7 @@ export function from1DNMRVariables(
   let shiftReference;
   if (frequencyOffset && baseFrequency) {
     const offset = frequencyOffset / baseFrequency;
-    shiftReference = offset + 0.5 * currentInfo.spectralWidth;
+    shiftReference = offset + 0.5 * nmrSpectralWidth;
   } else {
     shiftReference = xData[xData.length - 1];
   }
@@ -136,32 +164,32 @@ export function from1DNMRVariables(
   maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
 
   const newInfo: Record<string, any> = {
-    '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
-      currentInfo.isFid ? xData.length : 1
+    '.SHIFT REFERENCE': `INTERNAL, ${String(solvent)}, ${
+      isFid ? xData.length : 1
     }, ${shiftReference}`,
     NPOINTS: xData.length,
     '.OBSERVE NUCLEUS': getOneIfArray(nucleus),
     '.OBSERVE FREQUENCY': originFrequency,
-    dataType: currentInfo?.dataType,
+    dataType: nmrDataType,
   };
 
-  maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
-  maybeAdd(newInfo, 'owner', currentInfo.owner);
+  maybeAdd(newInfo, '.SOLVENT', solvent);
+  maybeAdd(newInfo, 'owner', nmrOwner);
 
   // ------- end of new code ----------
   // ------- start the adaptation -------
 
-  const scaleFactor = 1 / (currentInfo.scaleFactor ?? 1);
-  if (scaleFactor !== 1) {
-    maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
+  const scale = 1 / (scaleFactor ?? 1);
+  if (scale !== 1) {
+    maybeAdd(newMeta, 'NC_proc', -Math.log2(scale));
   }
 
-  if (scaleFactor !== 1) {
-    xMultiply(variables.r?.data || [], scaleFactor, {
+  if (scale !== 1) {
+    xMultiply(variables.r?.data || [], scale, {
       output: variables.r?.data,
     });
     if (variables.i) {
-      xMultiply(variables.i?.data || [], scaleFactor, {
+      xMultiply(variables.i?.data || [], scale, {
         output: variables.i?.data,
       });
     }
@@ -264,7 +292,7 @@ export function from1DNMRVariables(
           varType,
           factorArray,
         },
-        { dataType, ...resInfo },
+        { dataType: nmrDataType, ...resInfo },
       )
     : isRealData(variables)
       ? addRealData(header, {

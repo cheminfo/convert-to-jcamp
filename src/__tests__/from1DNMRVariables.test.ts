@@ -145,7 +145,7 @@ describe('generate a jcamp from simulated spectrum', () => {
 
     const jcamp = from1DNMRVariables(data, {
       xyEncoding: 'DIFDUP',
-      info: {
+      nmrInfo: {
         isFid: false,
         nucleus: '1H',
         dataType: 'NMR SPECTRUM',
@@ -173,7 +173,7 @@ function getJcamp(spectrum: any, selection = 'complex') {
     const { observeFrequency, nucleus, data } = spectra[0];
     const options = {
       xyEncoding: 'DIFDUP',
-      info: {
+      nmrInfo: {
         isFid: info.isFid,
         title: info.TITLE,
         owner: info.OWNER,
