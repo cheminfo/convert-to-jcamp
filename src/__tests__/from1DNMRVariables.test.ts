@@ -1,11 +1,10 @@
-import { writeFileSync } from 'fs';
-
 import { getCoffee } from 'bruker-data-test';
 import { convertFileCollection } from 'brukerconverter';
 import { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
+import { describe, it, expect } from 'vitest';
 
 import { from1DNMRVariables, NmrJcampOptions } from '../from1DNMRVariables';
 
@@ -145,7 +144,7 @@ describe('generate a jcamp from simulated spectrum', () => {
 
     const jcamp = from1DNMRVariables(data, {
       xyEncoding: 'DIFDUP',
-      info: {
+      nmrInfo: {
         isFid: false,
         nucleus: '1H',
         dataType: 'NMR SPECTRUM',
@@ -156,13 +155,130 @@ describe('generate a jcamp from simulated spectrum', () => {
     });
 
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    writeFileSync('jcamp_im2.dx', jcamp);
     const newPeaks = xyAutoPeaksPicking(converted.spectra[0].data, {
       frequency,
     });
     expect(newPeaks).toHaveLength(3);
     expect(newPeaks[1].x).toBeCloseTo(2, 1);
     expect(newPeaks[1].y).toBeCloseTo(peaks[1].y, 2);
+  });
+});
+
+describe('from1DNMRVariables edge and error cases', () => {
+  it('throws if originFrequency is missing', () => {
+    const data = {
+      x: { data: [1, 2, 3], label: 'x' },
+      r: { data: [4, 5, 6], label: 'r' },
+    };
+    expect(() =>
+      from1DNMRVariables(data, {
+        nmrInfo: {
+          isFid: false,
+          nucleus: '1H',
+          dataType: 'NMR SPECTRUM',
+          // originFrequency missing
+        },
+      } as any),
+    ).toThrow(/originFrequency is mandatory/);
+  });
+
+  it('handles isFid true (FID data)', () => {
+    const data = {
+      x: { data: [0, 1, 2], label: 'Time', units: 's' },
+      r: { data: [10, 20, 30], label: 'FID real' },
+      i: { data: [5, 15, 25], label: 'FID imag' },
+    };
+    const jcamp = from1DNMRVariables(data, {
+      nmrInfo: {
+        isFid: true,
+        originFrequency: 400,
+        nucleus: '1H',
+        dataType: 'NMR FID',
+        dataClass: 'NTUPLES',
+        decim: 2,
+        dspfvs: 10,
+        digitalFilter: 1,
+      },
+    });
+    expect(jcamp).toContain('##$GRPDLY=1');
+    expect(jcamp).toContain('##$DECIM=2');
+    expect(jcamp).toContain('##$DSPFVS=10');
+    expect(jcamp).toContain('##DATA TYPE= NMR FID');
+  });
+
+  it('handles only x and r (no i)', () => {
+    const data = {
+      x: { data: [1, 2, 3], label: 'x', units: 'Hz' },
+      r: { data: [4, 5, 6], label: 'r', units: 'a.u.' },
+    };
+    const jcamp = from1DNMRVariables(data, {
+      nmrInfo: {
+        isFid: false,
+        originFrequency: 500,
+        nucleus: '1H',
+        dataType: 'NMR SPECTRUM',
+        dataClass: 'XYDATA',
+      },
+    });
+    expect(jcamp).toContain('##DATA CLASS= XYDATA');
+    expect(jcamp).toContain('##XYDATA=');
+    expect(jcamp).not.toContain('##DATA TABLE=');
+  });
+
+  it('applies custom scaleFactor', () => {
+    const data = {
+      x: { data: [1, 2, 3], label: 'x' },
+      r: { data: [10, 20, 30], label: 'r' },
+      i: { data: [5, 15, 25], label: 'i' },
+    };
+    const jcamp = from1DNMRVariables(data, {
+      nmrInfo: {
+        isFid: false,
+        originFrequency: 400,
+        nucleus: '1H',
+        dataType: 'NMR SPECTRUM',
+        dataClass: 'NTUPLES',
+        scaleFactor: 2,
+      },
+    });
+    expect(jcamp).toContain('NC_proc');
+  });
+
+  it('applies custom factor in options', () => {
+    const data = {
+      x: { data: [1, 2, 3], label: 'x' },
+      r: { data: [10, 20, 30], label: 'r' },
+      i: { data: [5, 15, 25], label: 'i' },
+    };
+    const jcamp = from1DNMRVariables(data, {
+      nmrInfo: {
+        isFid: false,
+        originFrequency: 400,
+        nucleus: '1H',
+        dataType: 'NMR SPECTRUM',
+        dataClass: 'NTUPLES',
+      },
+      factor: { r: 100, i: 100 } as any, // Cast to any to satisfy type
+    });
+    expect(jcamp).toContain('##FACTOR=');
+  });
+
+  it('throws if r is missing in real/imaginary data', () => {
+    const data = {
+      x: { data: [1, 2, 3], label: 'x' },
+      i: { data: [4, 5, 6], label: 'i' },
+    };
+    expect(() =>
+      from1DNMRVariables(data as any, {
+        nmrInfo: {
+          isFid: false,
+          originFrequency: 400,
+          nucleus: '1H',
+          dataType: 'NMR SPECTRUM',
+          dataClass: 'NTUPLES',
+        },
+      }),
+    ).toThrow(/variable r is mandatory/);
   });
 });
 
@@ -173,7 +289,7 @@ function getJcamp(spectrum: any, selection = 'complex') {
     const { observeFrequency, nucleus, data } = spectra[0];
     const options = {
       xyEncoding: 'DIFDUP',
-      info: {
+      nmrInfo: {
         isFid: info.isFid,
         title: info.TITLE,
         owner: info.OWNER,

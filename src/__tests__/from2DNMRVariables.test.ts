@@ -1,4 +1,5 @@
 import { convert } from 'jcampconverter';
+import { describe, it, expect } from 'vitest';
 
 import { from2DNMRVariables } from '..';
 
@@ -35,9 +36,11 @@ describe('from2DNMRVariables', () => {
       xyEncoding: 'DIFDUP',
       meta: { SFO2: 100, SFO1: 400, NUC1: '1H', NUC2: '13C' },
       info: {
-        dataType: 'nD NMR SPECTRUM',
         '.OBSERVE NUCLEUS': '1H',
         '.OBSERVER FREQUENCY': 400,
+      },
+      nmrInfo: {
+        dataType: 'nD NMR SPECTRUM',
       },
     });
 

@@ -9,7 +9,7 @@ type PosibleInput = string | number | boolean;
  * @returns
  */
 export function getOneIfArray<T extends PosibleInput>(
-  data: T | T[],
+  data?: T | T[],
   index = 0,
 ) {
   if (isAnyArray(data)) {

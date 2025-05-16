@@ -2,6 +2,7 @@ import type {
   DoubleArray,
   MeasurementVariable,
   MeasurementXYVariables,
+  NumberArray,
   OneLowerCase,
 } from 'cheminfo-types';
 import { xMultiply } from 'ml-spectra-processing';
@@ -52,10 +53,27 @@ export interface NmrJcampInfo extends JcampInfo {
 export interface NmrJcampOptions
   extends Pick<JcampOptions, 'meta' | 'xyEncoding'> {
   /**
-   * standardize meta data defined in a nmr jcamp like `title` or `dataType`
+   * NMR-specific metadata and parameters used for JCAMP generation.
+   * - isFid: Whether the data is a free induction decay (FID) or spectrum.
+   * - digitalFilter: Number of points to shift for FFT (raw data only).
+   * - decim: Decimation factor for digital filter calculation.
+   * - dspfvs: DSP firmware version for digital filter calculation.
+   * - originFrequency: Origin frequency of the spectrum (MHz).
+   * - frequencyOffset: Frequency offset for referencing (optional).
+   * - nucleus: Observed nucleus (e.g., '1H', '13C').
+   * - baseFrequency: Base frequency for referencing (optional).
+   * - spectralWidth: Spectral width of the experiment (Hz).
+   * - solvent: Solvent used in the experiment (optional).
+   * - owner: Owner of the data (optional).
+   * - dataType: Type of data (optional).
+   * - scaleFactor: Scaling factor applied to the data (optional).
+   */
+  nmrInfo: NmrJcampInfo;
+  /**
+   * standardize meta data defined in a nmr jcamp like
    * @default {}
    */
-  info: NmrJcampInfo;
+  info?: Record<string, any>;
   /**
    * factor to scale the variables data
    */
@@ -87,21 +105,34 @@ export function from1DNMRVariables(
   variables: NMR1DVariables,
   options: NmrJcampOptions,
 ): string {
-  const { info: infoInput, meta: currentMeta = {}, xyEncoding } = options;
+  const {
+    info: infoInput = {},
+    meta: currentMeta = {},
+    xyEncoding,
+    nmrInfo,
+  } = options;
   const {
     isFid,
+    title,
     frequencyOffset,
     decim,
     dspfvs,
     nucleus,
     originFrequency: originFreq,
     baseFrequency: baseFreq,
+    spectralWidth: nmrSpectralWidth,
+    solvent,
+    owner: nmrOwner,
+    dataType: nmrDataType,
+    dataClass = variables.i ? 'NTUPLES' : 'XYDATA',
+    scaleFactor,
+    digitalFilter,
     ...currentInfo
-  } = infoInput;
+  } = nmrInfo;
   const baseFrequency = getOneIfArray(baseFreq || originFreq);
 
   const originFrequency = getOneIfArray(
-    originFreq || currentInfo['.OBSERVE FREQUENCY'],
+    originFreq || infoInput['.OBSERVE FREQUENCY'],
   );
 
   if (!originFrequency) {
@@ -113,88 +144,45 @@ export function from1DNMRVariables(
   const xVariable = variables.x;
   const x = xVariable.data.slice();
   const xData = isFid ? x : xMultiply(x, originFrequency);
-  const newMeta: any = {
-    OFFSET: xData[0] / originFrequency,
-  };
-  maybeAdd(newMeta, 'SW', currentInfo.spectralWidth);
-  maybeAdd(newMeta, 'BF1', baseFrequency);
 
-  if (isFid) {
-    maybeAdd(newMeta, 'GRPDLY', currentInfo.digitalFilter);
-    maybeAdd(newMeta, 'DECIM', decim);
-    maybeAdd(newMeta, 'REVERSE', 'no');
-    maybeAdd(newMeta, 'DSPFVS', dspfvs);
-  }
-  let shiftReference;
-  if (frequencyOffset && baseFrequency) {
-    const offset = frequencyOffset / baseFrequency;
-    shiftReference = offset + 0.5 * currentInfo.spectralWidth;
-  } else {
-    shiftReference = xData[xData.length - 1];
-  }
+  // --- Extracted: Metadata construction ---
+  const newMeta = constructMeta(
+    xData,
+    isFid,
+    nmrSpectralWidth,
+    baseFrequency,
+    originFrequency,
+    digitalFilter,
+    decim,
+    dspfvs,
+    currentMeta,
+    variables,
+  );
+  const meta = { ...currentInfo, ...currentMeta, ...newMeta };
 
-  maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
+  // --- Extracted: Scaling logic ---
+  applyScaling(variables, scaleFactor, meta);
 
-  const newInfo: Record<string, any> = {
-    '.SHIFT REFERENCE': `INTERNAL, ${String(currentInfo.solvent)}, ${
-      currentInfo.isFid ? xData.length : 1
-    }, ${shiftReference}`,
-    NPOINTS: xData.length,
-    '.OBSERVE NUCLEUS': getOneIfArray(nucleus),
-    '.OBSERVE FREQUENCY': originFrequency,
-    dataType: currentInfo?.dataType,
-  };
+  // --- Extracted: Info construction ---
+  const newInfo = constructInfo(
+    isFid,
+    xData,
+    dataClass,
+    solvent,
+    nmrSpectralWidth,
+    frequencyOffset,
+    baseFrequency,
+    title,
+    originFrequency,
+    nucleus,
+    nmrDataType,
+    nmrOwner,
+  );
+  const info = { ...infoInput, ...newInfo };
 
-  maybeAdd(newInfo, '.SOLVENT', currentInfo.solvent);
-  maybeAdd(newInfo, 'owner', currentInfo.owner);
+  // --- Extracted: Header construction ---
 
-  // ------- end of new code ----------
-  // ------- start the adaptation -------
-
-  const scaleFactor = 1 / (currentInfo.scaleFactor ?? 1);
-  if (scaleFactor !== 1) {
-    maybeAdd(newMeta, 'NC_proc', -Math.log2(scaleFactor));
-  }
-
-  if (scaleFactor !== 1) {
-    xMultiply(variables.r?.data || [], scaleFactor, {
-      output: variables.r?.data,
-    });
-    if (variables.i) {
-      xMultiply(variables.i?.data || [], scaleFactor, {
-        output: variables.i?.data,
-      });
-    }
-  }
-
-  const meta = { ...currentMeta, ...newMeta };
-  const info = { ...currentInfo, ...newInfo };
-
-  // ----- end of adaptations -------------
-
-  const factor =
-    'factor' in options
-      ? { ...options.factor }
-      : ({} as Record<OneLowerCase, number>);
-
-  const {
-    title = '',
-    owner = '',
-    origin = '',
-    dataType = '',
-    dataClass = variables.i ? 'NTUPLES' : 'XYDATA',
-    ...resInfo
-  } = info;
-
-  let header = `##TITLE=${title}
-##JCAMP-DX=6.00
-##DATA TYPE= ${dataType}
-##DATA CLASS= ${dataClass}
-##ORIGIN=${origin}
-##OWNER=${owner}\n`;
-
-  header += addInfoData(resInfo, { prefix: '##' });
-  header += addInfoData(meta);
+  const header = constructHeader(info, meta);
 
   const nbPoints = xData.length;
   const spectralWidth = Math.abs(xData[nbPoints - 1] - xData[0]);
@@ -206,6 +194,10 @@ export function from1DNMRVariables(
   const units = [xVariable.units ?? (isFid ? 'Time' : 'Hz')];
   const varType = ['INDEPENDENT'];
   const varForm = ['AFFN'];
+  const factor =
+    'factor' in options
+      ? { ...options.factor }
+      : ({} as Record<OneLowerCase, number>);
   const factorArray = [spectralWidth / (nbPoints - 1)];
   const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
 
@@ -264,7 +256,7 @@ export function from1DNMRVariables(
           varType,
           factorArray,
         },
-        { dataType, ...resInfo },
+        nmrDataType,
       )
     : isRealData(variables)
       ? addRealData(header, {
@@ -293,10 +285,8 @@ function addNtuplesHeader(
   header: string,
   variables: NMR1DVariables,
   inputs: Record<string, any>,
-  info: Record<string, any>,
+  dataType = '',
 ) {
-  const { dataType = '' } = info;
-
   const {
     symbol,
     varName,
@@ -360,10 +350,118 @@ function addRealData(header: string, options: any) {
 ##END=`;
 }
 
+function constructMeta(
+  xData: NumberArray,
+  isFid: boolean,
+  nmrSpectralWidth: number | undefined,
+  baseFrequency: number,
+  originFrequency: number,
+  digitalFilter: number | undefined,
+  decim: number | undefined,
+  dspfvs: number | undefined,
+  currentMeta: Record<string, any>,
+  variables: NMR1DVariables,
+) {
+  const newMeta: any = {
+    OFFSET: xData[0] / originFrequency,
+  };
+  maybeAdd(newMeta, 'SW', nmrSpectralWidth);
+  maybeAdd(newMeta, 'BF1', baseFrequency);
+
+  if (isFid) {
+    maybeAdd(newMeta, 'GRPDLY', digitalFilter);
+    maybeAdd(newMeta, 'DECIM', decim);
+    maybeAdd(newMeta, 'REVERSE', 'no');
+    maybeAdd(newMeta, 'DSPFVS', dspfvs);
+  }
+  maybeAdd(newMeta, 'SYMBOL', variables.i ? '' : currentMeta.SYMBOL);
+  return newMeta;
+}
+
+function constructInfo(
+  isFid: boolean,
+  xData: NumberArray,
+  dataClass: string,
+  solvent: string | undefined,
+  nmrSpectralWidth: number | undefined,
+  frequencyOffset: number | undefined,
+  baseFrequency: number | undefined,
+  title: string | undefined,
+  originFrequency: number,
+  nucleus: string | undefined,
+  nmrDataType: string | undefined,
+  nmrOwner: string | undefined,
+) {
+  let shiftReference;
+  if (frequencyOffset && baseFrequency) {
+    const offset = frequencyOffset / baseFrequency;
+    shiftReference = offset + 0.5 * (nmrSpectralWidth ?? 0);
+  } else {
+    shiftReference = xData[xData.length - 1];
+  }
+
+  const newInfo: Record<string, any> = {};
+  maybeAdd(
+    newInfo,
+    '.SHIFT REFERENCE',
+    `INTERNAL, ${String(solvent)}, ${isFid ? xData.length : 1}, ${shiftReference}`,
+  );
+  maybeAdd(newInfo, 'TITLE', title);
+  maybeAdd(newInfo, 'NPOINTS', xData.length);
+  maybeAdd(newInfo, '.OBSERVE FREQUENCY', originFrequency);
+  maybeAdd(newInfo, '.OBSERVE NUCLEUS', getOneIfArray(nucleus));
+  maybeAdd(newInfo, 'DATATYPE', nmrDataType);
+  maybeAdd(newInfo, 'DATACLASS', dataClass);
+  maybeAdd(newInfo, '.SOLVENT', solvent);
+  maybeAdd(newInfo, 'OWNER', nmrOwner);
+
+  return newInfo;
+}
+
+function applyScaling(
+  variables: NMR1DVariables,
+  scaleFactor: number | undefined,
+  newMeta: Record<string, any>,
+) {
+  const scale = 1 / (scaleFactor ?? 1);
+  if (scale !== 1) {
+    maybeAdd(newMeta, 'NC_proc', -Math.log2(scale));
+    xMultiply(variables.r?.data || [], scale, {
+      output: variables.r?.data,
+    });
+    if (variables.i) {
+      xMultiply(variables.i?.data || [], scale, {
+        output: variables.i?.data,
+      });
+    }
+  }
+}
+
+function constructHeader(info: Record<string, any>, meta: Record<string, any>) {
+  const {
+    TITLE = '',
+    OWNER = '',
+    ORIGIN = '',
+    DATATYPE = '',
+    DATACLASS,
+    ...resInfo
+  } = info;
+  let header = `##TITLE=${TITLE}
+##JCAMP-DX=6.00
+##DATA TYPE= ${DATATYPE}
+##DATA CLASS= ${DATACLASS}
+##ORIGIN=${ORIGIN}
+##OWNER=${OWNER}\n`;
+
+  header += addInfoData(resInfo, { prefix: '##' });
+  header += addInfoData(meta);
+  return header;
+}
+
 function maybeAdd(
   obj: any,
   name: string,
-  value?: string | number | Array<string | number>,
+  value?: string | number | boolean | string[] | number[] | boolean[],
 ) {
   if (typeof value === 'undefined') return;
   obj[name] = getOneIfArray(value);

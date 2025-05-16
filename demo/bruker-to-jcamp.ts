@@ -42,17 +42,18 @@ function writeJcamps(spectra) {
       const { observeFrequency, nucleus, data } = spectra[0];
       const options = {
         xyEncoding: 'DIFDUP',
-        info: {
+        nmrInfo: {
           title: info.TITLE,
           owner: info.OWNER,
           origin: info.ORIGIN,
           dataType: meta.DATATYPE,
-          '.OBSERVE FREQUENCY': observeFrequency,
-          '.OBSERVE NUCLEUS': nucleus[0],
+          isFid: false, // or true if FID
+          originFrequency: observeFrequency,
+          nucleus: nucleus[0],
+          // Add other NMR-specific fields if needed
         },
-        meta,
-        isXYData: true,
-        isNMR: true,
+        meta, // additional metadata if needed
+        // info: { ... }, // optional: additional JCAMP info fields
       };
 
       const variables = {

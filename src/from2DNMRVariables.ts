@@ -29,7 +29,7 @@ export function from2DNMRVariables(
   variables: NMR2DVariables,
   options: NmrJcampOptions,
 ): string {
-  const { info, meta = {}, xyEncoding = 'DIFDUP' } = options;
+  const { nmrInfo, info = {}, meta = {}, xyEncoding = 'DIFDUP' } = options;
 
   const factor =
     'factor' in options
@@ -41,8 +41,8 @@ export function from2DNMRVariables(
     owner = '',
     origin = '',
     dataType = 'NMR SPECTRUM',
-    ...resInfo
-  } = info;
+    ...otherInfo
+  } = nmrInfo;
 
   const symbol = [];
   const varName = [];
@@ -99,8 +99,8 @@ export function from2DNMRVariables(
 ##ORIGIN=${origin}
 ##OWNER=${owner}\n`;
 
-  header += addInfoData(resInfo, { prefix: '##' });
-  header += addInfoData(meta);
+  header += addInfoData(info, { prefix: '##' });
+  header += addInfoData({ ...otherInfo, ...meta });
 
   let xData = variables.x.data;
   let yData = variables.y.data;
