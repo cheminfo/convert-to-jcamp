@@ -1,5 +1,21 @@
 # Changelog
 
+## [6.0.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.11...v6.0.0) (2025-05-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85))
+
+### Features
+
+* camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85)) ([e8ee669](https://github.com/cheminfo/convert-to-jcamp/commit/e8ee669a96d83027bf2c7bc9f517cfa431a1787c))
+
+
+### Bug Fixes
+
+* NPOINTS only on XYDATA ([ba45432](https://github.com/cheminfo/convert-to-jcamp/commit/ba454327d8637ad2abf474b0a0c59116e829fc8f))
+
 ## [5.4.11](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.10...v5.4.11) (2024-08-27)
 
 
