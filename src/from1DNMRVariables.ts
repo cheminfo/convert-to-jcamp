@@ -407,7 +407,6 @@ function constructInfo(
     `INTERNAL, ${String(solvent)}, ${isFid ? xData.length : 1}, ${shiftReference}`,
   );
   maybeAdd(newInfo, 'TITLE', title);
-  maybeAdd(newInfo, 'NPOINTS', xData.length);
   maybeAdd(newInfo, '.OBSERVE FREQUENCY', originFrequency);
   maybeAdd(newInfo, '.OBSERVE NUCLEUS', getOneIfArray(nucleus));
   maybeAdd(newInfo, 'DATATYPE', nmrDataType);
