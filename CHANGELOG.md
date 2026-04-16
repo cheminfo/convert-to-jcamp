@@ -1,5 +1,16 @@
 # Changelog
 
+## [7.0.0](https://github.com/cheminfo/convert-to-jcamp/compare/v6.0.0...v7.0.0) (2026-04-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* migrate to ESM-only ([#88](https://github.com/cheminfo/convert-to-jcamp/issues/88))
+
+### Features
+
+* migrate to ESM-only ([#88](https://github.com/cheminfo/convert-to-jcamp/issues/88)) ([59dd916](https://github.com/cheminfo/convert-to-jcamp/commit/59dd9167bb800f7784577190675774c765638d90))
+
 ## [6.0.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.11...v6.0.0) (2025-05-16)
 
 
