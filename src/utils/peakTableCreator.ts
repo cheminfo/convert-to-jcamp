@@ -1,8 +1,8 @@
-import { DataXY } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 
-import { JcampOptions } from '../JcampOptions';
+import type { JcampOptions } from '../JcampOptions.ts';
 
-import { getNumber } from './getNumber';
+import { getNumber } from './getNumber.ts';
 
 export function peakTableCreator(data: DataXY, options: JcampOptions = {}) {
   const { xFactor = 1, yFactor = 1 } = options.info || {};

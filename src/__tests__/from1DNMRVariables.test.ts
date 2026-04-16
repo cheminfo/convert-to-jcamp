@@ -1,12 +1,12 @@
 import { getCoffee } from 'bruker-data-test';
 import { convertFileCollection } from 'brukerconverter';
-import { MeasurementXYVariables } from 'cheminfo-types';
+import type { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
-import { toMatchCloseTo } from 'jest-matcher-deep-close-to';
 import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { from1DNMRVariables, NmrJcampOptions } from '../from1DNMRVariables';
+import type { NmrJcampOptions } from '../from1DNMRVariables.ts';
+import { from1DNMRVariables } from '../from1DNMRVariables.ts';
 
 const converterOptions = {
   converter: { xy: true },
@@ -16,8 +16,6 @@ const converterOptions = {
     ignore2D: true,
   },
 };
-
-expect.extend({ toMatchCloseTo });
 
 describe('convert bruker to jcamp', () => {
   it('FFT bruker expno', async () => {
@@ -283,54 +281,51 @@ describe('from1DNMRVariables edge and error cases', () => {
 });
 
 function getJcamp(spectrum: any, selection = 'complex') {
-  const { source } = spectrum;
-  if (source.is1D && !source.isFID) {
-    const { info, meta, spectra } = spectrum;
-    const { observeFrequency, nucleus, data } = spectra[0];
-    const options = {
-      xyEncoding: 'DIFDUP',
-      nmrInfo: {
-        isFid: info.isFid,
-        title: info.TITLE,
-        owner: info.OWNER,
-        origin: info.ORIGIN,
-        dataType: meta.DATATYPE,
-        dataClass: meta.DATACLASS,
-        NPOINTS: data.x.length,
-        originFrequency: observeFrequency,
-        nucleus: nucleus[0],
-      },
-      meta,
-    } as NmrJcampOptions;
+  const { info, meta, spectra } = spectrum;
+  const { observeFrequency, nucleus, data } = spectra[0];
+  const options = {
+    xyEncoding: 'DIFDUP',
+    nmrInfo: {
+      isFid: info.isFid,
+      title: info.TITLE,
+      owner: info.OWNER,
+      origin: info.ORIGIN,
+      dataType: meta.DATATYPE,
+      dataClass: meta.DATACLASS,
+      NPOINTS: data.x.length,
+      originFrequency: observeFrequency,
+      nucleus: nucleus[0],
+    },
+    meta,
+  } as NmrJcampOptions;
 
-    // the order of variables in the object is important
-    const variables = {
-      x: {
-        data: data.x,
-        label: 'Frequencies',
-        units: 'Hz',
-        symbol: 'X',
-        isDependent: false,
-      },
-      r: {
-        data: data.re,
-        label: 'real data',
-        units: 'arbitratry units',
-        symbol: 'R',
-        isDependent: true,
-      },
-    } as MeasurementXYVariables;
+  // the order of variables in the object is important
+  const variables = {
+    x: {
+      data: data.x,
+      label: 'Frequencies',
+      units: 'Hz',
+      symbol: 'X',
+      isDependent: false,
+    },
+    r: {
+      data: data.re,
+      label: 'real data',
+      units: 'arbitratry units',
+      symbol: 'R',
+      isDependent: true,
+    },
+  } as MeasurementXYVariables;
 
-    if (selection === 'complex') {
-      variables.i = {
-        data: data.im,
-        label: 'imaginary data',
-        units: 'arbitratry units',
-        symbol: 'I',
-        isDependent: true,
-      };
-    }
-
-    return from1DNMRVariables(variables, options);
+  if (selection === 'complex') {
+    variables.i = {
+      data: data.im,
+      label: 'imaginary data',
+      units: 'arbitratry units',
+      symbol: 'I',
+      isDependent: true,
+    };
   }
+
+  return from1DNMRVariables(variables, options);
 }

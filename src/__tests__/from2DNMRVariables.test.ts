@@ -1,7 +1,7 @@
 import { convert } from 'jcampconverter';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { from2DNMRVariables } from '..';
+import { from2DNMRVariables } from '../index.ts';
 
 describe('from2DNMRVariables', () => {
   it('from Z matrix', () => {

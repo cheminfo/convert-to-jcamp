@@ -1,10 +1,10 @@
-export * from './fromVariables';
-export * from './from1DNMRVariables';
-export * from './from2DNMRVariables';
-export * from './fromJSON';
-export * from './JcampOptions';
-export {
+export * from './fromVariables.ts';
+export * from './from1DNMRVariables.ts';
+export * from './from2DNMRVariables.ts';
+export * from './fromJSON.ts';
+export * from './JcampOptions.ts';
+export type {
+  DoubleArray,
   MeasurementVariable,
   MeasurementXYVariables,
-  DoubleArray,
 } from 'cheminfo-types';

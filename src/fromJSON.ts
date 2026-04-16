@@ -1,10 +1,10 @@
-import { DataXY } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 
-import { JcampOptions } from './JcampOptions';
-import { addInfoData } from './utils/addInfoData';
-import { getBestFactor } from './utils/getBestFactor';
-import { peakTableCreator } from './utils/peakTableCreator';
-import { xyDataCreator } from './utils/xyDataCreator';
+import type { JcampOptions } from './JcampOptions.ts';
+import { addInfoData } from './utils/addInfoData.ts';
+import { getBestFactor } from './utils/getBestFactor.ts';
+import { peakTableCreator } from './utils/peakTableCreator.ts';
+import { xyDataCreator } from './utils/xyDataCreator.ts';
 
 /**
  * Create a jcamp

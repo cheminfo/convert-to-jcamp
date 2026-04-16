@@ -1,8 +1,8 @@
-import { MeasurementXYVariables } from 'cheminfo-types';
+import type { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { fromVariables } from '..';
+import { fromVariables } from '../index.ts';
 
 describe('fromVariables', () => {
   it('3 variables', () => {

@@ -1,8 +1,8 @@
-import { NumberArray } from 'cheminfo-types';
+import type { NumberArray } from 'cheminfo-types';
 import { xMinMaxValues } from 'ml-spectra-processing';
 
-import { getFactorNumber } from './getFactorNumber';
-import { MinMax } from './minMax';
+import { getFactorNumber } from './getFactorNumber.ts';
+import type { MinMax } from './minMax.ts';
 
 export function getBestFactor(
   array: NumberArray,

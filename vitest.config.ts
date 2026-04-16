@@ -2,9 +2,9 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    setupFiles: ['vitest.setup.ts'],
     coverage: {
-      exclude: ['demo/**'],
+      include: ['src/**.*.ts'],
     },
+    setupFiles: ['vitest.setup.ts'],
   },
 });

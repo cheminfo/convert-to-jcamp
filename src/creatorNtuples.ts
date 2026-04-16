@@ -1,8 +1,8 @@
 import type { MeasurementXYVariables, OneLowerCase } from 'cheminfo-types';
 
-import { JcampOptions } from './JcampOptions';
-import { addInfoData } from './utils/addInfoData';
-import { getExtremeValues } from './utils/getExtremeValues';
+import type { JcampOptions } from './JcampOptions.ts';
+import { addInfoData } from './utils/addInfoData.ts';
+import { getExtremeValues } from './utils/getExtremeValues.ts';
 
 /**
  * Parse from a xyxy data array
