@@ -2,207 +2,181 @@
 
 ## [6.0.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.11...v6.0.0) (2025-05-16)
 
-
 ### ⚠ BREAKING CHANGES
 
-* camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85))
+- camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85))
 
 ### Features
 
-* camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85)) ([e8ee669](https://github.com/cheminfo/convert-to-jcamp/commit/e8ee669a96d83027bf2c7bc9f517cfa431a1787c))
-
+- camelCase property would be in nmrInfo and would be processed ([#85](https://github.com/cheminfo/convert-to-jcamp/issues/85)) ([e8ee669](https://github.com/cheminfo/convert-to-jcamp/commit/e8ee669a96d83027bf2c7bc9f517cfa431a1787c))
 
 ### Bug Fixes
 
-* NPOINTS only on XYDATA ([ba45432](https://github.com/cheminfo/convert-to-jcamp/commit/ba454327d8637ad2abf474b0a0c59116e829fc8f))
+- NPOINTS only on XYDATA ([ba45432](https://github.com/cheminfo/convert-to-jcamp/commit/ba454327d8637ad2abf474b0a0c59116e829fc8f))
 
 ## [5.4.11](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.10...v5.4.11) (2024-08-27)
 
-
 ### Bug Fixes
 
-* simple input for nmr jcamp generation ([a364432](https://github.com/cheminfo/convert-to-jcamp/commit/a36443287caefb60080334d0b865a3b33b59c179))
+- simple input for nmr jcamp generation ([a364432](https://github.com/cheminfo/convert-to-jcamp/commit/a36443287caefb60080334d0b865a3b33b59c179))
 
 ## [5.4.10](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.9...v5.4.10) (2024-03-16)
 
-
 ### Bug Fixes
 
-* update dependencies ([3327a64](https://github.com/cheminfo/convert-to-jcamp/commit/3327a6427477b355570065382af414e6545c549a))
-* update dependencies and allow DoubleArray ([52db01d](https://github.com/cheminfo/convert-to-jcamp/commit/52db01d1760417869f6101c117fa28cae4d530f5))
+- update dependencies ([3327a64](https://github.com/cheminfo/convert-to-jcamp/commit/3327a6427477b355570065382af414e6545c549a))
+- update dependencies and allow DoubleArray ([52db01d](https://github.com/cheminfo/convert-to-jcamp/commit/52db01d1760417869f6101c117fa28cae4d530f5))
 
 ## [5.4.9](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.8...v5.4.9) (2023-09-05)
 
-
 ### Bug Fixes
 
-* update brukerconverter dev dependency ([3e91de5](https://github.com/cheminfo/convert-to-jcamp/commit/3e91de56331c494f4d6dd8cf0113e2dc0d7e5af4))
+- update brukerconverter dev dependency ([3e91de5](https://github.com/cheminfo/convert-to-jcamp/commit/3e91de56331c494f4d6dd8cf0113e2dc0d7e5af4))
 
 ## [5.4.8](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.7...v5.4.8) (2023-08-29)
 
-
 ### Bug Fixes
 
-* add VAR_FORM ntuples ([d64d110](https://github.com/cheminfo/convert-to-jcamp/commit/d64d110f2fe52feff4f31405522e7f26caec893b))
-* chemdraw nmr jcamp compatibility([#78](https://github.com/cheminfo/convert-to-jcamp/issues/78)) ([130f44f](https://github.com/cheminfo/convert-to-jcamp/commit/130f44ff6a7ba9eff0d49e26a08e10633ef4eb80))
-* ensure integer in rescaling ([a3fc4a5](https://github.com/cheminfo/convert-to-jcamp/commit/a3fc4a545a8a4aa93ea9e116559b09dfe2c744e3))
+- add VAR_FORM ntuples ([d64d110](https://github.com/cheminfo/convert-to-jcamp/commit/d64d110f2fe52feff4f31405522e7f26caec893b))
+- chemdraw nmr jcamp compatibility([#78](https://github.com/cheminfo/convert-to-jcamp/issues/78)) ([130f44f](https://github.com/cheminfo/convert-to-jcamp/commit/130f44ff6a7ba9eff0d49e26a08e10633ef4eb80))
+- ensure integer in rescaling ([a3fc4a5](https://github.com/cheminfo/convert-to-jcamp/commit/a3fc4a545a8a4aa93ea9e116559b09dfe2c744e3))
 
 ## [5.4.7](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.6...v5.4.7) (2023-06-22)
 
-
 ### Bug Fixes
 
-* deltax for only real nmr data ([#75](https://github.com/cheminfo/convert-to-jcamp/issues/75)) ([4e74e1a](https://github.com/cheminfo/convert-to-jcamp/commit/4e74e1a34b4c8acd1f18045009f5c26b53bedd28))
+- deltax for only real nmr data ([#75](https://github.com/cheminfo/convert-to-jcamp/issues/75)) ([4e74e1a](https://github.com/cheminfo/convert-to-jcamp/commit/4e74e1a34b4c8acd1f18045009f5c26b53bedd28))
 
 ## [5.4.6](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.5...v5.4.6) (2023-04-30)
 
-
 ### Bug Fixes
 
-* do not filter info nor meta ([#72](https://github.com/cheminfo/convert-to-jcamp/issues/72)) ([40f7ca0](https://github.com/cheminfo/convert-to-jcamp/commit/40f7ca0cada6b12c9a7f539410834ff60d5a5f0b))
+- do not filter info nor meta ([#72](https://github.com/cheminfo/convert-to-jcamp/issues/72)) ([40f7ca0](https://github.com/cheminfo/convert-to-jcamp/commit/40f7ca0cada6b12c9a7f539410834ff60d5a5f0b))
 
 ## [5.4.5](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.4...v5.4.5) (2023-04-25)
 
-
 ### Bug Fixes
 
-* jcamp generation of a FID ([#70](https://github.com/cheminfo/convert-to-jcamp/issues/70)) ([7083505](https://github.com/cheminfo/convert-to-jcamp/commit/70835057a1f06019c0025e55920c7b0c5d13889c))
+- jcamp generation of a FID ([#70](https://github.com/cheminfo/convert-to-jcamp/issues/70)) ([7083505](https://github.com/cheminfo/convert-to-jcamp/commit/70835057a1f06019c0025e55920c7b0c5d13889c))
 
 ## [5.4.4](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.3...v5.4.4) (2023-04-20)
 
-
 ### Bug Fixes
 
-* **from1DNMR:** do not modify meta object ([6ea1338](https://github.com/cheminfo/convert-to-jcamp/commit/6ea1338a9f160745b91828cadde6a0506261687e))
+- **from1DNMR:** do not modify meta object ([6ea1338](https://github.com/cheminfo/convert-to-jcamp/commit/6ea1338a9f160745b91828cadde6a0506261687e))
 
 ## [5.4.3](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.2...v5.4.3) (2023-04-10)
 
-
 ### Bug Fixes
 
-* use spectral width for x data in nmr jcamp generation ([#65](https://github.com/cheminfo/convert-to-jcamp/issues/65)) ([4f7aa10](https://github.com/cheminfo/convert-to-jcamp/commit/4f7aa10541eb237b38aec85fbca28c8c2769473a))
+- use spectral width for x data in nmr jcamp generation ([#65](https://github.com/cheminfo/convert-to-jcamp/issues/65)) ([4f7aa10](https://github.com/cheminfo/convert-to-jcamp/commit/4f7aa10541eb237b38aec85fbca28c8c2769473a))
 
 ## [5.4.2](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.1...v5.4.2) (2023-04-03)
 
-
 ### Bug Fixes
 
-* default dataType for nmr jcamp ([#62](https://github.com/cheminfo/convert-to-jcamp/issues/62)) ([9f0dbba](https://github.com/cheminfo/convert-to-jcamp/commit/9f0dbbafafe77c9fe63e82ea8072735505ffc9b5))
+- default dataType for nmr jcamp ([#62](https://github.com/cheminfo/convert-to-jcamp/issues/62)) ([9f0dbba](https://github.com/cheminfo/convert-to-jcamp/commit/9f0dbbafafe77c9fe63e82ea8072735505ffc9b5))
 
 ## [5.4.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.4.0...v5.4.1) (2022-08-18)
 
-
 ### Bug Fixes
 
-* small refactor to nmr related function. ([#55](https://github.com/cheminfo/convert-to-jcamp/issues/55)) ([af7a7af](https://github.com/cheminfo/convert-to-jcamp/commit/af7a7afbdb07748cee56b53b9659a52a8a007e6c))
+- small refactor to nmr related function. ([#55](https://github.com/cheminfo/convert-to-jcamp/issues/55)) ([af7a7af](https://github.com/cheminfo/convert-to-jcamp/commit/af7a7afbdb07748cee56b53b9659a52a8a007e6c))
 
 ## [5.4.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.1...v5.4.0) (2022-08-18)
 
-
 ### Features
 
-* add from1DNMRVariables function ([#53](https://github.com/cheminfo/convert-to-jcamp/issues/53)) ([d72f34f](https://github.com/cheminfo/convert-to-jcamp/commit/d72f34f230819510ca7b26c2f5e86997a2ee4907))
+- add from1DNMRVariables function ([#53](https://github.com/cheminfo/convert-to-jcamp/issues/53)) ([d72f34f](https://github.com/cheminfo/convert-to-jcamp/commit/d72f34f230819510ca7b26c2f5e86997a2ee4907))
 
 ## [5.3.1](https://github.com/cheminfo/convert-to-jcamp/compare/v5.3.0...v5.3.1) (2022-08-02)
 
-
 ### Bug Fixes
 
-* **ntuples:** x data from 0 - nbPoints ([#49](https://github.com/cheminfo/convert-to-jcamp/issues/49)) ([31213b0](https://github.com/cheminfo/convert-to-jcamp/commit/31213b02be924111d36d7a19a89f2540c8f718be))
+- **ntuples:** x data from 0 - nbPoints ([#49](https://github.com/cheminfo/convert-to-jcamp/issues/49)) ([31213b0](https://github.com/cheminfo/convert-to-jcamp/commit/31213b02be924111d36d7a19a89f2540c8f718be))
 
 ## [5.3.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.2.0...v5.3.0) (2022-07-26)
 
-
 ### Features
 
-* **creatorNtuples:** use factors from options ([#45](https://github.com/cheminfo/convert-to-jcamp/issues/45)) ([64e07dd](https://github.com/cheminfo/convert-to-jcamp/commit/64e07dd54dd68e28698850f67d459dbd6e22d614))
+- **creatorNtuples:** use factors from options ([#45](https://github.com/cheminfo/convert-to-jcamp/issues/45)) ([64e07dd](https://github.com/cheminfo/convert-to-jcamp/commit/64e07dd54dd68e28698850f67d459dbd6e22d614))
 
 ## [5.2.0](https://github.com/cheminfo/convert-to-jcamp/compare/v5.1.1...v5.2.0) (2022-03-04)
 
-
 ### Features
 
-* add from2DNMRVariables ([9711cd7](https://github.com/cheminfo/convert-to-jcamp/commit/9711cd7c3267f9af98e80b1282171ed5e86ecca6))
+- add from2DNMRVariables ([9711cd7](https://github.com/cheminfo/convert-to-jcamp/commit/9711cd7c3267f9af98e80b1282171ed5e86ecca6))
 
 ### [5.1.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.1.0...v5.1.1) (2021-12-15)
 
-
 ### Bug Fixes
 
-* update dependencies to use typescript definition from jcampconverter ([94eaa54](https://www.github.com/cheminfo/convert-to-jcamp/commit/94eaa543e8654d158caca5e8de5256d03d808a0c))
+- update dependencies to use typescript definition from jcampconverter ([94eaa54](https://www.github.com/cheminfo/convert-to-jcamp/commit/94eaa543e8654d158caca5e8de5256d03d808a0c))
 
 ## [5.1.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.1...v5.1.0) (2021-11-30)
 
-
 ### Features
 
-* add ensureInteger ([080b236](https://www.github.com/cheminfo/convert-to-jcamp/commit/080b236a9d1de6f8fba39fad0da0298dc9a967d2))
-* ensure xyData are integers ([1565927](https://www.github.com/cheminfo/convert-to-jcamp/commit/15659277c2cab5748fee43fa913df9c27487d325))
-
+- add ensureInteger ([080b236](https://www.github.com/cheminfo/convert-to-jcamp/commit/080b236a9d1de6f8fba39fad0da0298dc9a967d2))
+- ensure xyData are integers ([1565927](https://www.github.com/cheminfo/convert-to-jcamp/commit/15659277c2cab5748fee43fa913df9c27487d325))
 
 ### Bug Fixes
 
-* present issues after refactor ([#38](https://www.github.com/cheminfo/convert-to-jcamp/issues/38)) ([a876e08](https://www.github.com/cheminfo/convert-to-jcamp/commit/a876e080bd3c580d8a8c5685fe360dc040c925bc)), closes [#33](https://www.github.com/cheminfo/convert-to-jcamp/issues/33) [#34](https://www.github.com/cheminfo/convert-to-jcamp/issues/34)
+- present issues after refactor ([#38](https://www.github.com/cheminfo/convert-to-jcamp/issues/38)) ([a876e08](https://www.github.com/cheminfo/convert-to-jcamp/commit/a876e080bd3c580d8a8c5685fe360dc040c925bc)), closes [#33](https://www.github.com/cheminfo/convert-to-jcamp/issues/33) [#34](https://www.github.com/cheminfo/convert-to-jcamp/issues/34)
 
 ### [5.0.1](https://www.github.com/cheminfo/convert-to-jcamp/compare/v5.0.0...v5.0.1) (2021-11-28)
 
-
 ### Bug Fixes
 
-* compression algorithm was ignored ([9d2ff74](https://www.github.com/cheminfo/convert-to-jcamp/commit/9d2ff74dc582135cee226bce49f52ec52700217c))
+- compression algorithm was ignored ([9d2ff74](https://www.github.com/cheminfo/convert-to-jcamp/commit/9d2ff74dc582135cee226bce49f52ec52700217c))
 
 ## [5.0.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.8.0...v5.0.0) (2021-11-26)
 
-
 ### ⚠ BREAKING CHANGES
 
-* delete fromJson and fromText
+- delete fromJson and fromText
 
 ### Features
 
-* add data encoder ([#29](https://www.github.com/cheminfo/convert-to-jcamp/issues/29)) ([c389c68](https://www.github.com/cheminfo/convert-to-jcamp/commit/c389c68b8958f0ca9cb377c3aafbafd9e0747cd8))
-* add type for XYEncoding ([664801d](https://www.github.com/cheminfo/convert-to-jcamp/commit/664801ddaa0445c40f10932683292bfc02b300c7))
-* delete fromJson and fromText ([db87364](https://www.github.com/cheminfo/convert-to-jcamp/commit/db873644d1a56395e9e59cb5f038015d414b67a2))
-
+- add data encoder ([#29](https://www.github.com/cheminfo/convert-to-jcamp/issues/29)) ([c389c68](https://www.github.com/cheminfo/convert-to-jcamp/commit/c389c68b8958f0ca9cb377c3aafbafd9e0747cd8))
+- add type for XYEncoding ([664801d](https://www.github.com/cheminfo/convert-to-jcamp/commit/664801ddaa0445c40f10932683292bfc02b300c7))
+- delete fromJson and fromText ([db87364](https://www.github.com/cheminfo/convert-to-jcamp/commit/db873644d1a56395e9e59cb5f038015d414b67a2))
 
 ### Bug Fixes
 
-* adapt demo to ts ([26fe5c0](https://www.github.com/cheminfo/convert-to-jcamp/commit/26fe5c04b07dea83b85f90336a2be5b88092d5a8))
-* adapt getNumber to ts ([f45ecea](https://www.github.com/cheminfo/convert-to-jcamp/commit/f45ecea493b83becd42b11ddfdfc2b89c2b51360))
-* adapt test to ts ([09b50aa](https://www.github.com/cheminfo/convert-to-jcamp/commit/09b50aa0eb326bd1380523959294eeb921985a61))
-* add fromJSON from branch master ([dc08099](https://www.github.com/cheminfo/convert-to-jcamp/commit/dc08099d61b99bee0843768aa8186c110e39926f))
-* add interfaces ([4100ed4](https://www.github.com/cheminfo/convert-to-jcamp/commit/4100ed479b26815bb0407b10fd7c81b6eb9eadc9))
-* data types ([4124114](https://www.github.com/cheminfo/convert-to-jcamp/commit/4124114c3b186ed534012a9a267af4b927d590a5))
-* data types ([8adfefb](https://www.github.com/cheminfo/convert-to-jcamp/commit/8adfefb14bc7e78aa2258807b820b2514298f26e))
-* fix some eslint errors ([266245f](https://www.github.com/cheminfo/convert-to-jcamp/commit/266245f1c5fd93bd4c9a73c3857982577dfc7526))
-* remove fromJSON and fromText ([49846a9](https://www.github.com/cheminfo/convert-to-jcamp/commit/49846a929433c64e2fab4404fbbc1d4f7bf62a0d))
-* remove useless interfaces ([1eef7ca](https://www.github.com/cheminfo/convert-to-jcamp/commit/1eef7ca170ca62534052780acfc416514081cd5e))
-* rename interface SpectrumInfo to JcampInfo ([dfa5dc0](https://www.github.com/cheminfo/convert-to-jcamp/commit/dfa5dc0853907a1d6aa830db1984d5fbe4c72276))
-* start adding interface ([f2e96ff](https://www.github.com/cheminfo/convert-to-jcamp/commit/f2e96ffaa0e89b3b3bcb659ecaa85e61cfda9633))
-* type issues ([2dba24f](https://www.github.com/cheminfo/convert-to-jcamp/commit/2dba24fa02390bffa0649981ab29b77e160120fc))
-* xyDataCreator ([#27](https://www.github.com/cheminfo/convert-to-jcamp/issues/27)) ([b9f0627](https://www.github.com/cheminfo/convert-to-jcamp/commit/b9f0627a53bf5d437322814f9b1975cdd8d7263c))
+- adapt demo to ts ([26fe5c0](https://www.github.com/cheminfo/convert-to-jcamp/commit/26fe5c04b07dea83b85f90336a2be5b88092d5a8))
+- adapt getNumber to ts ([f45ecea](https://www.github.com/cheminfo/convert-to-jcamp/commit/f45ecea493b83becd42b11ddfdfc2b89c2b51360))
+- adapt test to ts ([09b50aa](https://www.github.com/cheminfo/convert-to-jcamp/commit/09b50aa0eb326bd1380523959294eeb921985a61))
+- add fromJSON from branch master ([dc08099](https://www.github.com/cheminfo/convert-to-jcamp/commit/dc08099d61b99bee0843768aa8186c110e39926f))
+- add interfaces ([4100ed4](https://www.github.com/cheminfo/convert-to-jcamp/commit/4100ed479b26815bb0407b10fd7c81b6eb9eadc9))
+- data types ([4124114](https://www.github.com/cheminfo/convert-to-jcamp/commit/4124114c3b186ed534012a9a267af4b927d590a5))
+- data types ([8adfefb](https://www.github.com/cheminfo/convert-to-jcamp/commit/8adfefb14bc7e78aa2258807b820b2514298f26e))
+- fix some eslint errors ([266245f](https://www.github.com/cheminfo/convert-to-jcamp/commit/266245f1c5fd93bd4c9a73c3857982577dfc7526))
+- remove fromJSON and fromText ([49846a9](https://www.github.com/cheminfo/convert-to-jcamp/commit/49846a929433c64e2fab4404fbbc1d4f7bf62a0d))
+- remove useless interfaces ([1eef7ca](https://www.github.com/cheminfo/convert-to-jcamp/commit/1eef7ca170ca62534052780acfc416514081cd5e))
+- rename interface SpectrumInfo to JcampInfo ([dfa5dc0](https://www.github.com/cheminfo/convert-to-jcamp/commit/dfa5dc0853907a1d6aa830db1984d5fbe4c72276))
+- start adding interface ([f2e96ff](https://www.github.com/cheminfo/convert-to-jcamp/commit/f2e96ffaa0e89b3b3bcb659ecaa85e61cfda9633))
+- type issues ([2dba24f](https://www.github.com/cheminfo/convert-to-jcamp/commit/2dba24fa02390bffa0649981ab29b77e160120fc))
+- xyDataCreator ([#27](https://www.github.com/cheminfo/convert-to-jcamp/issues/27)) ([b9f0627](https://www.github.com/cheminfo/convert-to-jcamp/commit/b9f0627a53bf5d437322814f9b1975cdd8d7263c))
 
 ## [4.8.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.7.0...v4.8.0) (2021-09-17)
 
-
 ### Features
 
-* check variables.isDependent boolean for ntuples generation ([6003cd1](https://www.github.com/cheminfo/convert-to-jcamp/commit/6003cd1e2ee53fe81511187f506f404a824dc477))
+- check variables.isDependent boolean for ntuples generation ([6003cd1](https://www.github.com/cheminfo/convert-to-jcamp/commit/6003cd1e2ee53fe81511187f506f404a824dc477))
 
 ## [4.7.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.6.0...v4.7.0) (2021-07-25)
 
-
 ### Features
 
-* add xFactor and yFactor ([de58759](https://www.github.com/cheminfo/convert-to-jcamp/commit/de58759cb1b8436a22fa2251a5369779aef58415))
+- add xFactor and yFactor ([de58759](https://www.github.com/cheminfo/convert-to-jcamp/commit/de58759cb1b8436a22fa2251a5369779aef58415))
 
 ## [4.6.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.5.0...v4.6.0) (2021-07-24)
 
-
 ### Features
 
-* add option to have dataxy encoding ([529e761](https://www.github.com/cheminfo/convert-to-jcamp/commit/529e76188cf53a84b9637a6aa6b2ddadd9885d99))
-* update dependencies ([4ba14ce](https://www.github.com/cheminfo/convert-to-jcamp/commit/4ba14ce4f86f1b50e60570ca2690a64fd95c8258))
+- add option to have dataxy encoding ([529e761](https://www.github.com/cheminfo/convert-to-jcamp/commit/529e76188cf53a84b9637a6aa6b2ddadd9885d99))
+- update dependencies ([4ba14ce](https://www.github.com/cheminfo/convert-to-jcamp/commit/4ba14ce4f86f1b50e60570ca2690a64fd95c8258))
 
 ## [4.5.0](https://www.github.com/cheminfo/convert-to-jcamp/compare/v4.4.0...v4.5.0) (2021-05-05)
 

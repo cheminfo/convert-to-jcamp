@@ -1,4 +1,4 @@
-import { MinMax } from './minMax';
+import type { MinMax } from './minMax.ts';
 
 export function getFactorNumber(minMax: MinMax, maxValue = 2 ** 31 - 1) {
   let factor: number;

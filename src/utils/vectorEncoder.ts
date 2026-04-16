@@ -1,4 +1,4 @@
-import { NumberArray } from 'cheminfo-types';
+import type { NumberArray } from 'cheminfo-types';
 
 /**
  * class encodes a integer vector as a String in order to store it in a text file.
@@ -48,6 +48,7 @@ export function vectorEncoder(
       return commaSeparatedValuesEncoding(data, firstX, intervalX);
     case 'PAC':
       return packedEncoding(data, firstX, intervalX);
+    case undefined:
     default:
       return differenceEncoding(data, firstX, intervalX);
   }

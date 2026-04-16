@@ -1,21 +1,21 @@
 import type {
   DoubleArray,
-  OneLowerCase,
+  DoubleMatrix,
   MeasurementXYVariables,
+  OneLowerCase,
 } from 'cheminfo-types';
 import { isAnyArray } from 'is-any-array';
-import { DoubleMatrix } from 'ml-spectra-processing';
 
-import { NmrJcampOptions } from './from1DNMRVariables';
-import { addInfoData } from './utils/addInfoData';
-import { checkMatrix } from './utils/checkMatrix';
-import { checkNumberOrArray } from './utils/checkNumberOrArray';
-import { getBestFactor } from './utils/getBestFactor';
-import { getBestFactorMatrix } from './utils/getBestFactorMatrix';
-import { getExtremeValues } from './utils/getExtremeValues';
-import { MinMax } from './utils/minMax';
-import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
-import { vectorEncoder } from './utils/vectorEncoder';
+import type { NmrJcampOptions } from './from1DNMRVariables.ts';
+import { addInfoData } from './utils/addInfoData.ts';
+import { checkMatrix } from './utils/checkMatrix.ts';
+import { checkNumberOrArray } from './utils/checkNumberOrArray.ts';
+import { getBestFactor } from './utils/getBestFactor.ts';
+import { getBestFactorMatrix } from './utils/getBestFactorMatrix.ts';
+import { getExtremeValues } from './utils/getExtremeValues.ts';
+import type { MinMax } from './utils/minMax.ts';
+import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger.ts';
+import { vectorEncoder } from './utils/vectorEncoder.ts';
 
 export type NMR2DVariables = Required<
   Pick<MeasurementXYVariables, 'x' | 'y' | 'z'>

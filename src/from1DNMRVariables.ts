@@ -7,14 +7,14 @@ import type {
 } from 'cheminfo-types';
 import { xMultiply } from 'ml-spectra-processing';
 
-import { JcampInfo, JcampOptions } from './JcampOptions';
-import { getOneIfArray } from './getOneIfArray';
-import { addInfoData } from './utils/addInfoData';
-import { checkNumberOrArray } from './utils/checkNumberOrArray';
-import { getBestFactor } from './utils/getBestFactor';
-import { getExtremeValues } from './utils/getExtremeValues';
-import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger';
-import { vectorEncoder } from './utils/vectorEncoder';
+import type { JcampInfo, JcampOptions } from './JcampOptions.ts';
+import { getOneIfArray } from './getOneIfArray.ts';
+import { addInfoData } from './utils/addInfoData.ts';
+import { checkNumberOrArray } from './utils/checkNumberOrArray.ts';
+import { getBestFactor } from './utils/getBestFactor.ts';
+import { getExtremeValues } from './utils/getExtremeValues.ts';
+import { rescaleAndEnsureInteger } from './utils/rescaleAndEnsureInteger.ts';
+import { vectorEncoder } from './utils/vectorEncoder.ts';
 
 type NtuplesData<DataType extends DoubleArray = DoubleArray> = Record<
   'x' | 'r' | 'i',
@@ -50,8 +50,10 @@ export interface NmrJcampInfo extends JcampInfo {
   originFrequency: number;
 }
 
-export interface NmrJcampOptions
-  extends Pick<JcampOptions, 'meta' | 'xyEncoding'> {
+export interface NmrJcampOptions extends Pick<
+  JcampOptions,
+  'meta' | 'xyEncoding'
+> {
   /**
    * NMR-specific metadata and parameters used for JCAMP generation.
    * - isFid: Whether the data is a free induction decay (FID) or spectrum.

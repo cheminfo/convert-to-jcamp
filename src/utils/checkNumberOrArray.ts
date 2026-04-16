@@ -1,4 +1,4 @@
-import { DoubleArray } from 'cheminfo-types';
+import type { DoubleArray } from 'cheminfo-types';
 import { isAnyArray } from 'is-any-array';
 
 export function checkNumberOrArray(

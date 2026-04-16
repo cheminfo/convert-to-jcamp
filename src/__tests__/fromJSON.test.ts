@@ -2,13 +2,10 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 import { convert } from 'jcampconverter';
-import { toBeDeepCloseTo, toMatchCloseTo } from 'jest-matcher-deep-close-to';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { XYEncoding } from '../JcampOptions';
-import { fromJSON } from '../fromJSON';
-
-expect.extend({ toBeDeepCloseTo, toMatchCloseTo });
+import type { XYEncoding } from '../JcampOptions.ts';
+import { fromJSON } from '../fromJSON.ts';
 
 const createData = (firstX: number, lastX: number, nbPoints: number) => {
   const x = new Array(nbPoints);

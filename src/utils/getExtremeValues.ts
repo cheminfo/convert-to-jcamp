@@ -1,13 +1,9 @@
-import { DoubleArray } from 'cheminfo-types';
+import type { DoubleArray, DoubleMatrix } from 'cheminfo-types';
 import { isAnyArray } from 'is-any-array';
-import {
-  DoubleMatrix,
-  matrixMinMaxZ,
-  xMinMaxValues,
-} from 'ml-spectra-processing';
+import { matrixMinMaxZ, xMinMaxValues } from 'ml-spectra-processing';
 
-import { checkMatrix } from './checkMatrix';
-import { checkNumberOrArray } from './checkNumberOrArray';
+import { checkMatrix } from './checkMatrix.ts';
+import { checkNumberOrArray } from './checkNumberOrArray.ts';
 
 export function getExtremeValues(data: DoubleArray | DoubleMatrix) {
   if (isAnyArray(data[0])) {

@@ -1,6 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { getBestFactor } from '../getBestFactor';
+import { getBestFactor } from '../getBestFactor.ts';
 
 describe('getBestFactor', () => {
   it('integer', () => {

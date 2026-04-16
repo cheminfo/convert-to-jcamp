@@ -1,9 +1,9 @@
-import { DataXY } from 'cheminfo-types';
+import type { DataXY } from 'cheminfo-types';
 
-import { JcampOptions } from '../JcampOptions';
+import type { JcampOptions } from '../JcampOptions.ts';
 
-import { rescaleAndEnsureInteger } from './rescaleAndEnsureInteger';
-import { vectorEncoder } from './vectorEncoder';
+import { rescaleAndEnsureInteger } from './rescaleAndEnsureInteger.ts';
+import { vectorEncoder } from './vectorEncoder.ts';
 
 export function xyDataCreator(data: DataXY, options: JcampOptions = {}) {
   const { xyEncoding = 'DIF' } = options;

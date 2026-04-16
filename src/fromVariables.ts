@@ -1,9 +1,9 @@
-import { MeasurementXYVariables } from 'cheminfo-types';
+import type { MeasurementXYVariables } from 'cheminfo-types';
 
-import { JcampOptions } from './JcampOptions';
-import creatorNtuples from './creatorNtuples';
-import { fromJSON } from './fromJSON';
-import { checkNumberOrArray } from './utils/checkNumberOrArray';
+import type { JcampOptions } from './JcampOptions.ts';
+import creatorNtuples from './creatorNtuples.ts';
+import { fromJSON } from './fromJSON.ts';
+import { checkNumberOrArray } from './utils/checkNumberOrArray.ts';
 
 /**
  * Create a jcamp from variables
