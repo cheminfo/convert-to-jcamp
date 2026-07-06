@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/cheminfo/convert-to-jcamp/compare/v7.0.0...v7.0.1) (2026-07-06)
+
+
+### Bug Fixes
+
+* simplify dependencies ([68ad6f7](https://github.com/cheminfo/convert-to-jcamp/commit/68ad6f7790de6ebce72a948d025aed32e80364ae))
+
 ## [7.0.0](https://github.com/cheminfo/convert-to-jcamp/compare/v6.0.0...v7.0.0) (2026-04-16)
 
 
