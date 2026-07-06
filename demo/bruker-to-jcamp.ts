@@ -3,7 +3,7 @@ import { getCoffee } from 'bruker-data-test';
 import { join } from 'path';
 import { writeFileSync } from 'fs';
 import { from1DNMRVariables } from 'convert-to-jcamp';
-import { xMultiply } from 'ml-spectra-processing';
+import { xMultiply } from 'ml-spectra-processing/x';
 
 const pathToWrite = join(__dirname, 'jcampGenerated');
 const converterOptions = {

@@ -1,5 +1,5 @@
 import type { DoubleMatrix } from 'cheminfo-types';
-import { matrixMinMaxZ } from 'ml-spectra-processing';
+import { matrixMinMaxZ } from 'ml-spectra-processing/matrix';
 
 import { getFactorNumber } from './getFactorNumber.ts';
 

@@ -5,7 +5,7 @@ import type {
   NumberArray,
   OneLowerCase,
 } from 'cheminfo-types';
-import { xMultiply } from 'ml-spectra-processing';
+import { xMultiply } from 'ml-spectra-processing/x';
 
 import type { JcampInfo, JcampOptions } from './JcampOptions.ts';
 import { getOneIfArray } from './getOneIfArray.ts';

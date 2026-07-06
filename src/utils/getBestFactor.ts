@@ -1,5 +1,5 @@
 import type { NumberArray } from 'cheminfo-types';
-import { xMinMaxValues } from 'ml-spectra-processing';
+import { xMinMaxValues } from 'ml-spectra-processing/x';
 
 import { getFactorNumber } from './getFactorNumber.ts';
 import type { MinMax } from './minMax.ts';

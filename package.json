@@ -34,29 +34,28 @@
   },
   "homepage": "https://github.com/cheminfo/convert-to-jcamp#readme",
   "devDependencies": {
-    "@types/node": "^25.6.0",
-    "@vitest/coverage-v8": "^4.1.4",
+    "@types/node": "^26.1.0",
+    "@vitest/coverage-v8": "^4.1.10",
     "@zakodium/tsconfig": "^1.0.5",
     "bruker-data-test": "^0.5.4",
     "brukerconverter": "^6.3.9",
     "cheminfo-build": "^1.3.2",
+    "convert-to-jcamp": "^7.0.0",
     "eslint": "^9.39.4",
-    "eslint-config-cheminfo-typescript": "^22.0.0",
+    "eslint-config-cheminfo-typescript": "^22.1.0",
     "esm": "^3.2.25",
     "jcampconverter": "^9.6.4",
     "jest-matcher-deep-close-to": "^3.0.2",
-    "nmr-processing": "^22.8.2",
-    "prettier": "^3.8.3",
+    "nmr-processing": "^22.18.0",
+    "prettier": "^3.9.4",
     "rimraf": "^6.1.3",
-    "typescript": "6.0.2",
-    "vitest": "^4.1.4"
+    "typescript": "6.0.3",
+    "vitest": "^4.1.10"
   },
   "dependencies": {
     "cheminfo-types": "^1.15.0",
     "is-any-array": "^3.0.0",
-    "ml-array-max": "^2.0.0",
-    "ml-array-min": "^2.0.0",
-    "ml-matrix": "^6.12.2",
-    "ml-spectra-processing": "^14.28.1"
+    "ml-matrix": "^6.13.0",
+    "ml-spectra-processing": "^14.29.2"
   }
 }

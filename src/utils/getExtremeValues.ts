@@ -1,6 +1,7 @@
 import type { DoubleArray, DoubleMatrix } from 'cheminfo-types';
 import { isAnyArray } from 'is-any-array';
-import { matrixMinMaxZ, xMinMaxValues } from 'ml-spectra-processing';
+import { matrixMinMaxZ } from 'ml-spectra-processing/matrix';
+import { xMinMaxValues } from 'ml-spectra-processing/x';
 
 import { checkMatrix } from './checkMatrix.ts';
 import { checkNumberOrArray } from './checkNumberOrArray.ts';
