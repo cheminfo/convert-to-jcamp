@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.2](https://github.com/cheminfo/convert-to-jcamp/compare/v7.0.1...v7.0.2) (2026-09-18)
+
+
+### Bug Fixes
+
+* align project with current standards ([1640840](https://github.com/cheminfo/convert-to-jcamp/commit/1640840ce6be45a7ceb10c37da11aa24b7389d36))
+
 ## [7.0.1](https://github.com/cheminfo/convert-to-jcamp/compare/v7.0.0...v7.0.1) (2026-07-06)
 
 
