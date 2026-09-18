@@ -1,7 +1,7 @@
 /**
  * Reconvert number to original value
- * @param number Number used for computation
- * @param factor Multiplying factor
+ * @param number - Number used for computation
+ * @param factor - Multiplying factor
  * @returns Original value
  */
 export function getNumber(number: number, factor: number): number {

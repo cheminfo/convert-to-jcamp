@@ -12,8 +12,8 @@ export function getExtremeValues(data: DoubleArray | DoubleMatrix) {
     const firstRow = data[0];
     return {
       firstLast: {
-        first: firstRow[0],
-        last: data[data.length - 1][data[0].length - 1],
+        first: firstRow[0] as number,
+        last: (data.at(-1) as DoubleArray)[firstRow.length - 1] as number,
       },
       minMax: matrixMinMaxZ(data),
     };
@@ -23,8 +23,8 @@ export function getExtremeValues(data: DoubleArray | DoubleMatrix) {
 
   return {
     firstLast: {
-      first: data[0],
-      last: data[data.length - 1],
+      first: data[0] as number,
+      last: data.at(-1) as number,
     },
     minMax: xMinMaxValues(data),
   };

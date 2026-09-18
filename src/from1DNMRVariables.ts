@@ -101,7 +101,7 @@ export type NMR1DVariables = Pick<MeasurementXYVariables, 'x' | 'r'> &
  * Create a jcamp of 1D NMR data by variables x and y or x, r, i
  * @param variables - Variables to convert to jcamp
  * @param [options={}] - options that allows to add meta data in the jcamp
- * @return JCAMP-DX text file corresponding to the variables
+ * @returns JCAMP-DX text file corresponding to the variables
  */
 export function from1DNMRVariables(
   variables: NMR1DVariables,
@@ -187,21 +187,23 @@ export function from1DNMRVariables(
   const header = constructHeader(info, meta);
 
   const nbPoints = xData.length;
-  const spectralWidth = Math.abs(xData[nbPoints - 1] - xData[0]);
-  const firstPoint = xData[0] > xData[1] ? spectralWidth : 0;
-  const lastPoint = xData[0] > xData[1] ? 0 : spectralWidth;
+  const firstX = xData[0] as number;
+  const secondX = xData[1] as number;
+  const spectralWidth = Math.abs((xData[nbPoints - 1] as number) - firstX);
+  const firstPoint = firstX > secondX ? spectralWidth : 0;
+  const lastPoint = firstX > secondX ? 0 : spectralWidth;
 
   const symbol = ['X'];
-  const varDim = [nbPoints];
+  const variableDim = [nbPoints];
   const units = [xVariable.units ?? (isFid ? 'Time' : 'Hz')];
-  const varType = ['INDEPENDENT'];
-  const varForm = ['AFFN'];
+  const variableType = ['INDEPENDENT'];
+  const variableForm = ['AFFN'];
   const factor =
     'factor' in options
       ? { ...options.factor }
       : ({} as Record<OneLowerCase, number>);
   const factorArray = [spectralWidth / (nbPoints - 1)];
-  const varName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
+  const variableName = [xVariable.label.replace(/ *\[.*/, '') || 'X'];
 
   const first = [firstPoint];
   const last = [lastPoint];
@@ -229,14 +231,14 @@ export function from1DNMRVariables(
     const currentFactor = factor[key];
     factorArray.push(currentFactor || 1);
     symbol.push(variable.symbol || (key === 'r' ? 'R' : 'I'));
-    varName.push(name || key);
-    varDim.push(variable.data.length);
-    varForm.push('ASDF');
+    variableName.push(name || key);
+    variableDim.push(variable.data.length);
+    variableForm.push('ASDF');
     first.push(firstLast.first);
     last.push(firstLast.last);
     max.push(minMax.max);
     min.push(minMax.min);
-    varType.push('DEPENDENT');
+    variableType.push('DEPENDENT');
     units.push(variable.units ?? 'Arbitrary');
   }
 
@@ -246,16 +248,16 @@ export function from1DNMRVariables(
         variables,
         {
           symbol,
-          varName,
-          varDim,
-          varForm,
+          varName: variableName,
+          varDim: variableDim,
+          varForm: variableForm,
           first,
           last,
           min,
           max,
           units,
           factor,
-          varType,
+          varType: variableType,
           factorArray,
         },
         nmrDataType,
@@ -270,7 +272,7 @@ export function from1DNMRVariables(
             YUNITS: units[1],
             XFACTOR: factorArray[0],
             YFACTOR: factorArray[1],
-            DELTAX: xData[1] - xData[0],
+            DELTAX: (xData[1] as number) - (xData[0] as number),
             FIRSTX: first[0],
             FIRSTY: first[1],
             LASTX: last[0],
@@ -306,17 +308,17 @@ function addNtuplesHeader(
   } = inputs;
 
   header += `##NTUPLES= ${dataType}
-##VAR_NAME=  ${varName.join()}
-##SYMBOL=    ${symbol.join()}
-##VAR_TYPE=  ${varType.join()}
-##VAR_FORM=  ${varForm.join()}
-##VAR_DIM=   ${varDim.join()}
-##UNITS=     ${units.join()}
-##FACTOR=    ${factorArray.join()}
-##FIRST=     ${first.join()}
-##LAST=      ${last.join()}
-##MIN=       ${min.join()}
-##MAX=       ${max.join()}\n`;
+##VAR_NAME=  ${varName.join(',')}
+##SYMBOL=    ${symbol.join(',')}
+##VAR_TYPE=  ${varType.join(',')}
+##VAR_FORM=  ${varForm.join(',')}
+##VAR_DIM=   ${varDim.join(',')}
+##UNITS=     ${units.join(',')}
+##FACTOR=    ${factorArray.join(',')}
+##FIRST=     ${first.join(',')}
+##LAST=      ${last.join(',')}
+##MIN=       ${min.join(',')}
+##MAX=       ${max.join(',')}\n`;
 
   for (const key of ['r', 'i'] as const) {
     const variable = variables[key];
@@ -365,7 +367,7 @@ function constructMeta(
   variables: NMR1DVariables,
 ) {
   const newMeta: any = {
-    OFFSET: xData[0] / originFrequency,
+    OFFSET: (xData[0] as number) / originFrequency,
   };
   maybeAdd(newMeta, 'SW', nmrSpectralWidth);
   maybeAdd(newMeta, 'BF1', baseFrequency);
@@ -399,7 +401,7 @@ function constructInfo(
     const offset = frequencyOffset / baseFrequency;
     shiftReference = offset + 0.5 * (nmrSpectralWidth ?? 0);
   } else {
-    shiftReference = xData[xData.length - 1];
+    shiftReference = xData.at(-1);
   }
 
   const newInfo: Record<string, any> = {};
@@ -425,16 +427,18 @@ function applyScaling(
   newMeta: Record<string, any>,
 ) {
   const scale = 1 / (scaleFactor ?? 1);
-  if (scale !== 1) {
-    maybeAdd(newMeta, 'NC_proc', -Math.log2(scale));
-    xMultiply(variables.r?.data || [], scale, {
-      output: variables.r?.data,
+  if (scale === 1) {
+    return;
+  }
+
+  maybeAdd(newMeta, 'NC_proc', -Math.log2(scale));
+  xMultiply(variables.r?.data || [], scale, {
+    output: variables.r?.data,
+  });
+  if (variables.i) {
+    xMultiply(variables.i?.data || [], scale, {
+      output: variables.i?.data,
     });
-    if (variables.i) {
-      xMultiply(variables.i?.data || [], scale, {
-        output: variables.i?.data,
-      });
-    }
   }
 }
 
@@ -445,7 +449,7 @@ function constructHeader(info: Record<string, any>, meta: Record<string, any>) {
     ORIGIN = '',
     DATATYPE = '',
     DATACLASS,
-    ...resInfo
+    ...resultInfo
   } = info;
   let header = `##TITLE=${TITLE}
 ##JCAMP-DX=6.00
@@ -454,16 +458,16 @@ function constructHeader(info: Record<string, any>, meta: Record<string, any>) {
 ##ORIGIN=${ORIGIN}
 ##OWNER=${OWNER}\n`;
 
-  header += addInfoData(resInfo, { prefix: '##' });
+  header += addInfoData(resultInfo, { prefix: '##' });
   header += addInfoData(meta);
   return header;
 }
 
 function maybeAdd(
-  obj: any,
+  object: any,
   name: string,
   value?: string | number | boolean | string[] | number[] | boolean[],
 ) {
-  if (typeof value === 'undefined') return;
-  obj[name] = getOneIfArray(value);
+  if (value === undefined) return;
+  object[name] = getOneIfArray(value);
 }

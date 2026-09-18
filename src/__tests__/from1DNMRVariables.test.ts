@@ -3,7 +3,7 @@ import { convertFileCollection } from 'brukerconverter';
 import type { MeasurementXYVariables } from 'cheminfo-types';
 import { convert } from 'jcampconverter';
 import { rangesToXY, xyAutoPeaksPicking } from 'nmr-processing';
-import { describe, expect, it } from 'vitest';
+import { assert, describe, expect, it } from 'vitest';
 
 import type { NmrJcampOptions } from '../from1DNMRVariables.ts';
 import { from1DNMRVariables } from '../from1DNMRVariables.ts';
@@ -24,87 +24,96 @@ describe('convert bruker to jcamp', () => {
       file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileCollection(oneExpno, converterOptions);
-    const spectrum = spectra.filter((spectrum) => {
+    const spectrum = spectra.find((spectrum) => {
       const {
         // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
       } = spectrum;
       return is1D && !isFID;
     });
-    const jcamp = getJcamp(spectrum[0]) || '';
+    assert(spectrum);
+    const jcamp = getJcamp(spectrum) || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    expect(converted.meta).toMatchCloseTo(spectrum[0].meta, 5);
-    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.re[0],
+
+    expect(converted?.meta).toMatchCloseTo(spectrum.meta, 5);
+    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
-    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.x[0],
+    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x[0] as number,
       3,
     );
-    expect(converted.spectra).toHaveLength(2);
+    expect(converted?.spectra).toHaveLength(2);
   });
+
   it('FFT bruker expno only real', async () => {
     const fileCollection = await getCoffee();
     const oneExpno = fileCollection.filter((file) =>
       file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileCollection(oneExpno, converterOptions);
-    const spectrum = spectra.filter((spectrum) => {
+    const spectrum = spectra.find((spectrum) => {
       const {
         // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
       } = spectrum;
       return is1D && !isFID;
     });
-    const jcamp = getJcamp(spectrum[0], 'real') || '';
+    assert(spectrum);
+    const jcamp = getJcamp(spectrum, 'real') || '';
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
-    expect(converted.meta).toMatchCloseTo(spectrum[0].meta, 5);
-    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.x[0],
+    expect(converted?.meta).toMatchCloseTo(spectrum.meta, 5);
+    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x[0] as number,
       3,
     );
-    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.re[0],
+    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
-    expect(converted.spectra).toHaveLength(1);
+    expect(converted?.spectra).toHaveLength(1);
   });
+
   it('FFT bruker expno only real without customInfo', async () => {
     const fileCollection = await getCoffee();
     const oneExpno = fileCollection.filter((file) =>
       file.relativePath.includes('UV1009_M1-1003-1002_6268712_73uEjPg4XR/20'),
     );
     const spectra = await convertFileCollection(oneExpno, converterOptions);
-    const spectrum = spectra.filter((spectrum) => {
+    const spectrum = spectra.find((spectrum) => {
       const {
         // @ts-expect-error is1D is not defined on 2D but this is a test case
         source: { is1D, isFID },
       } = spectrum;
       return is1D && !isFID;
     });
-    spectrum[0].meta = {
-      OFFSET: spectrum[0].spectra[0].data.x[0],
+    assert(spectrum);
+    spectrum.meta = {
+      OFFSET: spectrum.spectra[0]?.data.x[0] as number,
     };
-    const jcamp = getJcamp(spectrum[0], 'real') || '';
+    const jcamp = getJcamp(spectrum, 'real') || '';
     const matchResult = jcamp
       .slice(400, 1000)
       .match(/##DELTAX=(?<delta>[+-]?\d+(\.\d+)?)\s*.*/);
     const deltaXInJcamp = matchResult?.groups?.delta;
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    const { lastX, firstX, deltaX } = converted.spectra[0];
-    expect(Number(deltaXInJcamp) < 0).toBe(lastX - firstX < 0);
-    expect(lastX - firstX < 0).toBe(deltaX < 0);
-    expect(converted.spectra[0].data.x[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.x[0],
+    const convertedSpectrum = converted?.spectra[0];
+    assert(convertedSpectrum);
+    const { lastX, firstX, deltaX } = convertedSpectrum;
+
+    expect(Number(deltaXInJcamp) < 0).toBe(lastX < firstX);
+    expect(lastX < firstX).toBe(deltaX < 0);
+    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x[0] as number,
       3,
     );
-    expect(converted.spectra[0].data.y[0]).toBeCloseTo(
-      spectrum[0].spectra[0].data.re[0],
+    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
-    expect(converted.spectra).toHaveLength(1);
+    expect(converted?.spectra).toHaveLength(1);
   });
 });
 
@@ -122,8 +131,10 @@ describe('generate a jcamp from simulated spectrum', () => {
 
     const xy = rangesToXY([{ from: 0.5, to: 2.5, signals }], { frequency });
     const peaks = xyAutoPeaksPicking(xy, { frequency });
+
     expect(peaks).toHaveLength(3);
     expect(peaks[1].x).toBeCloseTo(2, 1);
+
     const data = {
       x: {
         data: xy.x,
@@ -153,9 +164,10 @@ describe('generate a jcamp from simulated spectrum', () => {
     });
 
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    const newPeaks = xyAutoPeaksPicking(converted.spectra[0].data, {
+    const newPeaks = xyAutoPeaksPicking(converted?.spectra[0]?.data, {
       frequency,
     });
+
     expect(newPeaks).toHaveLength(3);
     expect(newPeaks[1].x).toBeCloseTo(2, 1);
     expect(newPeaks[1].y).toBeCloseTo(peaks[1].y, 2);
@@ -168,6 +180,7 @@ describe('from1DNMRVariables edge and error cases', () => {
       x: { data: [1, 2, 3], label: 'x' },
       r: { data: [4, 5, 6], label: 'r' },
     };
+
     expect(() =>
       from1DNMRVariables(data, {
         nmrInfo: {
@@ -198,6 +211,7 @@ describe('from1DNMRVariables edge and error cases', () => {
         digitalFilter: 1,
       },
     });
+
     expect(jcamp).toContain('##$GRPDLY=1');
     expect(jcamp).toContain('##$DECIM=2');
     expect(jcamp).toContain('##$DSPFVS=10');
@@ -218,6 +232,7 @@ describe('from1DNMRVariables edge and error cases', () => {
         dataClass: 'XYDATA',
       },
     });
+
     expect(jcamp).toContain('##DATA CLASS= XYDATA');
     expect(jcamp).toContain('##XYDATA=');
     expect(jcamp).not.toContain('##DATA TABLE=');
@@ -239,6 +254,7 @@ describe('from1DNMRVariables edge and error cases', () => {
         scaleFactor: 2,
       },
     });
+
     expect(jcamp).toContain('NC_proc');
   });
 
@@ -258,6 +274,7 @@ describe('from1DNMRVariables edge and error cases', () => {
       },
       factor: { r: 100, i: 100 } as any, // Cast to any to satisfy type
     });
+
     expect(jcamp).toContain('##FACTOR=');
   });
 
@@ -266,6 +283,7 @@ describe('from1DNMRVariables edge and error cases', () => {
       x: { data: [1, 2, 3], label: 'x' },
       i: { data: [4, 5, 6], label: 'i' },
     };
+
     expect(() =>
       from1DNMRVariables(data as any, {
         nmrInfo: {

@@ -24,16 +24,16 @@ export function getBestFactorMatrix(
   }
 
   // is there non integer number ?
-  let onlyInteger = true;
+  let isOnlyInteger = true;
   for (const row of matrix) {
     for (const y of row) {
       if (Math.round(y) !== y) {
-        onlyInteger = false;
+        isOnlyInteger = false;
         break;
       }
     }
   }
-  if (onlyInteger) {
+  if (isOnlyInteger) {
     return 1;
   }
   // we need to rescale the values

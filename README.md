@@ -13,7 +13,7 @@ Convert strings into JCAMP.
   </p>
 
 [![NPM version][npm-image]][npm-url]
-[![build status][travis-image]][travis-url]
+[![build status][ci-image]][ci-url]
 [![Test coverage][codecov-image]][codecov-url]
 [![npm download][download-image]][download-url]
 [![DOI](https://www.zenodo.org/badge/98869235.svg)](https://www.zenodo.org/badge/latestdoi/98869235)
@@ -29,7 +29,7 @@ Convert strings into JCAMP.
 ### From Variables
 
 ```js
-const { fromVariables } = require('convert-to-jcamp');
+import { fromVariables } from 'convert-to-jcamp';
 const variables = {
   x: {
     data: [1, 2, 3, 4],
@@ -57,7 +57,7 @@ There are two functions for NMR. `from1DNMRVariables`
 and `from2DNMRVariables` generate a NMR JCAMP file from variables.
 
 ```js
-const { from2DNMRVariables } = require('convert-to-jcamp');
+import { from2DNMRVariables } from 'convert-to-jcamp';
 
 const variables = {
   y: {
@@ -105,7 +105,7 @@ const jcamp = from2DNMRVariables(variables, {
 ```
 
 ```js
-const { from1DNMRVariables } = require('convert-to-jcamp');
+import { from1DNMRVariables } from 'convert-to-jcamp';
 const variables = {
   x: {
     data: xMultiply(data.x, observeFrequency),
@@ -152,8 +152,8 @@ const jcamp = from1DNMRVariables(variables, {
 An example for 1D NMR [bruker-to-jcamp](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo/bruker-to-jcamp.ts) conversion is in the [demo folder](https://github.com/cheminfo/convert-to-jcamp/tree/main/demo)
 
 ```bash
-npm install;
-npx ts-node demo/bruker-to-jcamp.ts
+npm install
+node demo/bruker-to-jcamp.ts
 ```
 
 ## [API Documentation](https://cheminfo.github.io/convert-to-jcamp/)
@@ -164,8 +164,8 @@ npx ts-node demo/bruker-to-jcamp.ts
 
 [npm-image]: https://img.shields.io/npm/v/convert-to-jcamp.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/convert-to-jcamp
-[travis-image]: https://img.shields.io/travis/cheminfo/convert-to-jcamp/main.svg?style=flat-square
-[travis-url]: https://travis-ci.org/cheminfo/convert-to-jcamp
+[ci-image]: https://github.com/cheminfo/convert-to-jcamp/actions/workflows/nodejs.yml/badge.svg
+[ci-url]: https://github.com/cheminfo/convert-to-jcamp/actions/workflows/nodejs.yml
 [codecov-image]: https://img.shields.io/codecov/c/github/cheminfo/convert-to-jcamp.svg?style=flat-square
 [codecov-url]: https://codecov.io/gh/cheminfo/convert-to-jcamp
 [download-image]: https://img.shields.io/npm/dm/convert-to-jcamp.svg?style=flat-square

@@ -24,6 +24,8 @@ export type NMR2DVariables = Required<
  * Create a jcamp of 2D NMR data by variables. Currently only the convertion of processed data
  * is supported. The variables x and y are the direct (F2 in Bruker) and indirect (F1 in bruker),
  * data should be in ppm scale, the z variable is the intensity (dependent)
+ * @param variables
+ * @param options
  */
 export function from2DNMRVariables(
   variables: NMR2DVariables,
@@ -45,9 +47,9 @@ export function from2DNMRVariables(
   } = nmrInfo;
 
   const symbol = [];
-  const varName = [];
-  const varType = [];
-  const varDim = [];
+  const variableName = [];
+  const variableType = [];
+  const variableDim = [];
   const units = [];
   const first = [];
   const last = [];
@@ -58,7 +60,7 @@ export function from2DNMRVariables(
   const keys = ['y', 'x', 'z'] as Array<keyof NMR2DVariables>;
 
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+    const key = keys[i] as keyof NMR2DVariables;
     const variable = variables[key];
     if (!variable) throw new Error('variables x, y and z are mandatory');
 
@@ -66,11 +68,13 @@ export function from2DNMRVariables(
     const unit = variable?.label.replace(/.*\[(?<units>.*)\].*/, '$<units>');
 
     const { firstLast, minMax } = getExtremeValues(variable.data);
-    if (!(key in factor)) factor[key] = calculateFactor(variable.data, minMax);
+    if (!Object.hasOwn(factor, key)) {
+      factor[key] = calculateFactor(variable.data, minMax);
+    }
 
     symbol.push(variable.symbol || key);
-    varName.push(name || key);
-    varDim.push(variable.data.length);
+    variableName.push(name || key);
+    variableDim.push(variable.data.length);
     first.push(firstLast.first);
     last.push(firstLast.last);
     max.push(minMax.max);
@@ -78,9 +82,9 @@ export function from2DNMRVariables(
     factors.push(factor[key]);
 
     if (variable.isDependent !== undefined) {
-      varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
+      variableType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
     } else {
-      varType.push(
+      variableType.push(
         variable.isDependent !== undefined
           ? !variable.isDependent
           : i === 0
@@ -128,13 +132,13 @@ export function from2DNMRVariables(
   };
 
   header += `##NTUPLES= ${dataType}
-##VAR_NAME=  ${varName.join()}
-##SYMBOL=    ${symbol.join()}
-##VAR_TYPE=  ${varType.join()}
-##VAR_DIM=   ${varDim.join()}
-##.NUCLEUS=  ${nucleus.join()}
-##UNITS=     ${units.join()}
-##FACTOR=    ${factors.join()}
+##VAR_NAME=  ${variableName.join(',')}
+##SYMBOL=    ${symbol.join(',')}
+##VAR_TYPE=  ${variableType.join(',')}
+##VAR_DIM=   ${variableDim.join(',')}
+##.NUCLEUS=  ${nucleus.join(',')}
+##UNITS=     ${units.join(',')}
+##FACTOR=    ${factors.join(',')}
 ##FIRST=     ${scaleAndJoin(first, optionsScaleAndJoin)}
 ##LAST=      ${scaleAndJoin(last, optionsScaleAndJoin)}
 ##MIN=       ${scaleAndJoin(min, optionsScaleAndJoin)}
@@ -145,13 +149,13 @@ export function from2DNMRVariables(
   if (keys[direct] !== 'x') {
     [yData, xData] = [xData, yData];
   }
-  const directSymbol = symbol[direct].toUpperCase();
-  const indirectSymbol = symbol[indirect].toUpperCase();
+  const directSymbol = (symbol[direct] as string).toUpperCase();
+  const indirectSymbol = (symbol[indirect] as string).toUpperCase();
 
-  const firstY = yData[0] * sfo2;
-  const lastY = yData[yData.length - 1] * sfo2;
-  const firstX = xData[0];
-  const lastX = xData[xData.length - 1];
+  const firstY = (yData[0] as number) * sfo2;
+  const lastY = (yData.at(-1) as number) * sfo2;
+  const firstX = xData[0] as number;
+  const lastX = xData.at(-1) as number;
   const deltaX = (lastX - firstX) / (xData.length - 1);
   const deltaY = (lastY - firstY) / (yData.length - 1);
 
@@ -164,14 +168,15 @@ export function from2DNMRVariables(
   const zFactor = factor.z || 1;
 
   for (let index = 0; index < zData.length; index++) {
-    firstData[dependent] = zData[index][0];
+    const row = zData[index] as DoubleArray;
+    firstData[dependent] = row[0] as number;
     header += `##PAGE= ${indirectSymbol}=${
       (firstY + deltaY * index) / yFactor
     }\n`;
-    header += `##FIRST=  ${firstData.join()}\n`;
+    header += `##FIRST=  ${firstData.join(',')}\n`;
     header += `##DATA TABLE= (${directSymbol}++(Y..Y)), PROFILE\n`;
     header += vectorEncoder(
-      rescaleAndEnsureInteger(zData[index], zFactor),
+      rescaleAndEnsureInteger(row, zFactor),
       firstX / xFactor,
       deltaX / xFactor,
       xyEncoding,
@@ -193,13 +198,13 @@ function scaleAndJoin(
   const { sfo1, sfo2 } = options;
   const { direct, indirect } = options.indices;
   const copy = variable.slice();
-  copy[direct] *= sfo1;
-  copy[indirect] *= sfo2;
-  return copy.join();
+  copy[direct] = (copy[direct] as number) * sfo1;
+  copy[indirect] = (copy[indirect] as number) * sfo2;
+  return copy.join(',');
 }
 
 function getDimensionIndices(entry: string[]) {
-  const symbol = entry.map((e) => e.toUpperCase());
+  const symbol = entry.map((item) => item.toUpperCase());
   const direct = symbol.includes('F2')
     ? symbol.indexOf('F2')
     : symbol.indexOf('T2');
@@ -218,7 +223,8 @@ function checkMandatoryParameters(meta: Record<string, any>) {
   const list = ['SFO1', 'SFO2', 'NUC1', 'NUC2'];
 
   for (const key of list) {
-    if (!meta[key]) {
+    const value = meta[key];
+    if (!value) {
       throw new Error(`${key} in options.meta should be defined`);
     }
   }

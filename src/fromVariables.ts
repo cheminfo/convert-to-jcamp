@@ -7,9 +7,13 @@ import { checkNumberOrArray } from './utils/checkNumberOrArray.ts';
 
 /**
  * Create a jcamp from variables
+ * @param variables
+ * @param options
  */
 export function fromVariables(
-  /** object of variables */
+  /**
+   * object of variables
+   */
   variables: MeasurementXYVariables,
   options: JcampOptions = {},
 ): string {
@@ -55,7 +59,6 @@ export function fromVariables(
     checkNumberOrArray(yData);
 
     return fromJSON({ x: xData, y: yData }, jcampOptions);
-  } else {
-    return creatorNtuples(variables, options);
   }
+  return creatorNtuples(variables, options);
 }

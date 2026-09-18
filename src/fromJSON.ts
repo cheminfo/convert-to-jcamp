@@ -8,8 +8,9 @@ import { xyDataCreator } from './utils/xyDataCreator.ts';
 
 /**
  * Create a jcamp
- * @param data object of array
- * @param [options={meta:{},info:{}} - metadata object
+ * @param data - object of array
+ * @param - - [options={meta:{},info:{}} - metadata object
+ * @param options
  * @returns JCAMP of the input
  */
 export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
@@ -22,7 +23,7 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
     dataType = '',
     xUnits = '',
     yUnits = '',
-    ...resInfo
+    ...resultInfo
   } = info;
 
   let { xFactor, yFactor } = info;
@@ -37,7 +38,7 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
 ##XUNITS=${xUnits}
 ##YUNITS=${yUnits}\n`;
 
-  header += addInfoData(resInfo, { prefix: '##' });
+  header += addInfoData(resultInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   // we leave the header and utf8 fonts ${header.replace(/[^\t\n\x20-\x7F]/g, '')
@@ -48,19 +49,16 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
     return `${header}##NPOINTS=${data.x.length}
 ${xyDataCreator(data, { info: { xFactor, yFactor }, xyEncoding }).join('\n')}
 ##END=`;
-  } else {
-    if (xFactor === undefined) xFactor = 1;
-    if (yFactor === undefined) yFactor = 1;
-    if (xFactor !== 1) {
-      //@ts-expect-error xFactor is always defined
-      data.x = data.x.map((value) => value / xFactor);
-    }
-    if (yFactor !== 1) {
-      //@ts-expect-error yFactor is always defined
-      data.y = data.y.map((value) => value / yFactor);
-    }
-    return `${header}##NPOINTS=${data.x.length}
+  }
+  if (xFactor === undefined) xFactor = 1;
+  if (yFactor === undefined) yFactor = 1;
+  if (xFactor !== 1) {
+    data.x = data.x.map((value) => value / xFactor);
+  }
+  if (yFactor !== 1) {
+    data.y = data.y.map((value) => value / yFactor);
+  }
+  return `${header}##NPOINTS=${data.x.length}
 ${peakTableCreator(data, { info: { xFactor, yFactor } }).join('\n')}
 ##END=`;
-  }
 }

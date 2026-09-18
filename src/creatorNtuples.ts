@@ -8,7 +8,7 @@ import { getExtremeValues } from './utils/getExtremeValues.ts';
  * Parse from a xyxy data array
  * @param variables - Variables to convert to jcamp
  * @param [options={}] - options that allows to add meta data in the jcamp
- * @return JCAMP-DX text file corresponding to the variables
+ * @returns JCAMP-DX text file corresponding to the variables
  */
 export default function creatorNtuples(
   variables: MeasurementXYVariables,
@@ -21,13 +21,13 @@ export default function creatorNtuples(
     owner = '',
     origin = '',
     dataType = '',
-    ...resInfo
+    ...resultInfo
   } = info;
 
   const symbol = [];
-  const varName = [];
-  const varType = [];
-  const varDim = [];
+  const variableName = [];
+  const variableType = [];
+  const variableDim = [];
   const units = [];
   const first = [];
   const last = [];
@@ -37,7 +37,7 @@ export default function creatorNtuples(
   const keys = Object.keys(variables) as OneLowerCase[];
 
   for (let i = 0; i < keys.length; i++) {
-    const key = keys[i];
+    const key = keys[i] as OneLowerCase;
     const variable = variables[key];
     if (!variable) continue;
 
@@ -47,17 +47,17 @@ export default function creatorNtuples(
     const { firstLast, minMax } = getExtremeValues(variable.data);
 
     symbol.push(variable.symbol || key);
-    varName.push(name || key);
-    varDim.push(variable.data.length);
+    variableName.push(name || key);
+    variableDim.push(variable.data.length);
     first.push(firstLast.first);
     last.push(firstLast.last);
     max.push(minMax.max);
     min.push(minMax.min);
 
     if (variable.isDependent !== undefined) {
-      varType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
+      variableType.push(variable.isDependent ? 'DEPENDENT' : 'INDEPENDENT');
     } else {
-      varType.push(
+      variableType.push(
         variable.isDependent !== undefined
           ? !variable.isDependent
           : i === 0
@@ -76,19 +76,19 @@ export default function creatorNtuples(
 ##ORIGIN=${origin}
 ##OWNER=${owner}\n`;
 
-  header += addInfoData(resInfo, { prefix: '##' });
+  header += addInfoData(resultInfo, { prefix: '##' });
   header += addInfoData(meta);
 
   header += `##NTUPLES= ${dataType}
-##VAR_NAME=  ${varName.join()}
-##SYMBOL=    ${symbol.join()}
-##VAR_TYPE=  ${varType.join()}
-##VAR_DIM=   ${varDim.join()}
-##UNITS=     ${units.join()}
-##FIRST=     ${first.join()}
-##LAST=      ${last.join()}
-##MIN=       ${min.join()}
-##MAX=       ${max.join()}
+##VAR_NAME=  ${variableName.join(',')}
+##SYMBOL=    ${symbol.join(',')}
+##VAR_TYPE=  ${variableType.join(',')}
+##VAR_DIM=   ${variableDim.join(',')}
+##UNITS=     ${units.join(',')}
+##FIRST=     ${first.join(',')}
+##LAST=      ${last.join(',')}
+##MIN=       ${min.join(',')}
+##MAX=       ${max.join(',')}
 ##PAGE= N=1\n`;
 
   header += `##DATA TABLE= (${symbol.join('')}..${symbol.join('')}), PEAKS\n`;

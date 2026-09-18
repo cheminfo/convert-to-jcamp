@@ -16,9 +16,8 @@ export function getOneIfArray<T extends PosibleInput>(
     const value = data.at(index);
     if (value !== undefined) {
       return value;
-    } else {
-      throw new RangeError('An array with a index out of boundaries');
     }
+    throw new RangeError('An array with a index out of boundaries');
   }
 
   return data;

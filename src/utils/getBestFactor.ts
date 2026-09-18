@@ -22,14 +22,14 @@ export function getBestFactor(
   }
 
   // is there non integer number ?
-  let onlyInteger = true;
+  let isOnlyInteger = true;
   for (const y of array) {
     if (Math.round(y) !== y) {
-      onlyInteger = false;
+      isOnlyInteger = false;
       break;
     }
   }
-  if (onlyInteger) {
+  if (isOnlyInteger) {
     return 1;
   }
   // we need to rescale the values
