@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.3](https://github.com/cheminfo/convert-to-jcamp/compare/v7.0.2...v7.0.3) (2026-11-11)
+
+
+### Bug Fixes
+
+* peak table creator was wrongly putting min and max values in firstX, lastX, firstY, lastY rather than in the correct corresponding min / max fields ([05ed16e](https://github.com/cheminfo/convert-to-jcamp/commit/05ed16ea828f5503cc5292e00858ce56e6dc432f))
+
 ## [7.0.2](https://github.com/cheminfo/convert-to-jcamp/compare/v7.0.1...v7.0.2) (2026-09-18)
 
 
