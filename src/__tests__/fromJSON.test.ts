@@ -37,8 +37,8 @@ test('create and read spectrum differents xyEncoding factor != 1', () => {
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toStrictEqual(spectrum.x);
-    expect(spectrumData.y).toStrictEqual(spectrum.y);
+    expect(spectrumData?.x).toStrictEqual(spectrum.x);
+    expect(spectrumData?.y).toStrictEqual(spectrum.y);
   }
 });
 
@@ -54,8 +54,8 @@ test('create and read spectrum differents xyEncoding', () => {
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toStrictEqual(spectrum.x);
-    expect(spectrumData.y).toStrictEqual(spectrum.y);
+    expect(spectrumData?.x).toStrictEqual(spectrum.x);
+    expect(spectrumData?.y).toStrictEqual(spectrum.y);
   }
 });
 
@@ -108,8 +108,8 @@ test('create and read spectrum y in zeros differents xyEncoding', () => {
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toStrictEqual(spectrum.x);
-    expect(spectrumData.y).toStrictEqual(spectrum.y);
+    expect(spectrumData?.x).toStrictEqual(spectrum.x);
+    expect(spectrumData?.y).toStrictEqual(spectrum.y);
   }
 });
 
@@ -125,8 +125,8 @@ test('create and read spectrum y decimal with yEncoding and specify yFactor', ()
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toBeDeepCloseTo(spectrum.x);
-    expect(spectrumData.y).toBeDeepCloseTo(spectrum.y);
+    expect(spectrumData?.x).toBeDeepCloseTo(spectrum.x);
+    expect(spectrumData?.y).toBeDeepCloseTo(spectrum.y);
   }
 });
 
@@ -142,8 +142,8 @@ test('create and read spectrum y decimal with yEncoding, no yFactor', () => {
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toBeDeepCloseTo(spectrum.x);
-    expect(spectrumData.y).toBeDeepCloseTo(spectrum.y);
+    expect(spectrumData?.x).toBeDeepCloseTo(spectrum.x);
+    expect(spectrumData?.y).toBeDeepCloseTo(spectrum.y);
   }
 });
 
@@ -159,8 +159,8 @@ test('create and read spectrum with yEncoding and x and y decimals', () => {
     const spectrumReaded = convert(jcamp);
     const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-    expect(spectrumData.x).toBeDeepCloseTo(spectrum.x);
-    expect(spectrumData.y).toBeDeepCloseTo(spectrum.y);
+    expect(spectrumData?.x).toBeDeepCloseTo(spectrum.x);
+    expect(spectrumData?.y).toBeDeepCloseTo(spectrum.y);
   }
 });
 
@@ -171,8 +171,8 @@ test('create and read spectrum DIFDUP xyEncoding negative values', () => {
   const spectrumReaded = convert(jcamp);
   const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-  expect(spectrumData.x).toStrictEqual(spectrum.x);
-  expect(spectrumData.y).toStrictEqual(spectrum.y);
+  expect(spectrumData?.x).toStrictEqual(spectrum.x);
+  expect(spectrumData?.y).toStrictEqual(spectrum.y);
 });
 
 test('create a NMR spectrum', () => {
@@ -196,6 +196,32 @@ test('create a NMR spectrum', () => {
   const spectrumReaded = convert(jcamp);
   const spectrumData = spectrumReaded.flatten[0]?.spectra[0]?.data;
 
-  expect(spectrumData.x).toBeDeepCloseTo(spectrum.x, 1);
-  expect(spectrumData.y).toBeDeepCloseTo(spectrum.y, 1);
+  expect(spectrumData?.x).toBeDeepCloseTo(spectrum.x, 1);
+  expect(spectrumData?.y).toBeDeepCloseTo(spectrum.y, 1);
+});
+
+test('a peak table keeps its points through its factors, and states its first, last and ranges', () => {
+  const jcamp = fromJSON(
+    { x: [3, 1, 2], y: [20, 10, 30] },
+    { info: { xFactor: 0.5, yFactor: 2 } },
+  );
+
+  expect(jcamp.split('\n').slice(7, 18)).toStrictEqual([
+    '##NPOINTS=3',
+    '##FIRSTX=3',
+    '##LASTX=2',
+    '##FIRSTY=20',
+    '##LASTY=30',
+    '##MINX=1',
+    '##MAXX=3',
+    '##MINY=10',
+    '##MAXY=30',
+    '##XFACTOR=0.5',
+    '##YFACTOR=2',
+  ]);
+  expect(jcamp).not.toMatch(/##xFactor|##yFactor/);
+  expect(convert(jcamp).flatten[0]?.spectra[0]?.data).toStrictEqual({
+    x: [3, 1, 2],
+    y: [20, 10, 30],
+  });
 });

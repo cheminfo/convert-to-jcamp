@@ -23,6 +23,10 @@ export function fromJSON(data: DataXY, options: JcampOptions = {}): string {
     dataType = '',
     xUnits = '',
     yUnits = '',
+    // Keep xFactor and yFactor out of resultInfo: the data section writes them
+    // as ##XFACTOR and ##YFACTOR.
+    xFactor: _xFactor,
+    yFactor: _yFactor,
     ...resultInfo
   } = info;
 
@@ -52,12 +56,6 @@ ${xyDataCreator(data, { info: { xFactor, yFactor }, xyEncoding }).join('\n')}
   }
   if (xFactor === undefined) xFactor = 1;
   if (yFactor === undefined) yFactor = 1;
-  if (xFactor !== 1) {
-    data.x = data.x.map((value) => value / xFactor);
-  }
-  if (yFactor !== 1) {
-    data.y = data.y.map((value) => value / yFactor);
-  }
   return `${header}##NPOINTS=${data.x.length}
 ${peakTableCreator(data, { info: { xFactor, yFactor } }).join('\n')}
 ##END=`;

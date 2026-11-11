@@ -319,11 +319,48 @@ test('x / y variables no force', () => {
     lastX: 4,
     firstY: 2,
     lastY: 5,
+    minX: 1,
+    maxX: 4,
+    minY: 2,
+    maxY: 5,
     nbPoints: 4,
     xFactor: 1,
     yFactor: 1,
     isPeaktable: true,
     data: { x: [1, 2, 3, 4], y: [2, 3, 4, 5] },
+  });
+});
+
+test('x / y variables no force, decreasing x', () => {
+  const variables: MeasurementXYVariables = {
+    x: { data: [5, 4, 3, 2, 1], label: 'x value', units: 'x unit' },
+    y: { data: [2, 1, 3, 1, 2], label: 'y value', units: 'y unit' },
+  };
+
+  const jcamp = fromVariables(variables);
+
+  expect(jcamp).toContain(
+    '##FIRSTX=5\n##LASTX=1\n##FIRSTY=2\n##LASTY=2\n##MINX=1\n##MAXX=5\n##MINY=1\n##MAXY=3\n',
+  );
+
+  const converted = convert(jcamp).flatten[0];
+
+  expect(converted?.spectra[0]).toStrictEqual({
+    xUnits: 'x value (x unit)',
+    yUnits: 'y value (y unit)',
+    firstX: 5,
+    lastX: 1,
+    firstY: 2,
+    lastY: 2,
+    minX: 1,
+    maxX: 5,
+    minY: 1,
+    maxY: 3,
+    nbPoints: 5,
+    xFactor: 1,
+    yFactor: 1,
+    isPeaktable: true,
+    data: { x: [5, 4, 3, 2, 1], y: [2, 1, 3, 1, 2] },
   });
 });
 

@@ -36,12 +36,12 @@ describe('convert bruker to jcamp', () => {
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted?.meta).toMatchCloseTo(spectrum.meta, 5);
-    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+    expect(converted?.spectra[0]?.data.y?.[0]).toBeCloseTo(
       spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
-    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
-      spectrum.spectra[0]?.data.x[0] as number,
+    expect(converted?.spectra[0]?.data.x?.[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x?.[0] as number,
       3,
     );
     expect(converted?.spectra).toHaveLength(2);
@@ -65,11 +65,11 @@ describe('convert bruker to jcamp', () => {
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
 
     expect(converted?.meta).toMatchCloseTo(spectrum.meta, 5);
-    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
-      spectrum.spectra[0]?.data.x[0] as number,
+    expect(converted?.spectra[0]?.data.x?.[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x?.[0] as number,
       3,
     );
-    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+    expect(converted?.spectra[0]?.data.y?.[0]).toBeCloseTo(
       spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
@@ -91,7 +91,7 @@ describe('convert bruker to jcamp', () => {
     });
     assert(spectrum);
     spectrum.meta = {
-      OFFSET: spectrum.spectra[0]?.data.x[0] as number,
+      OFFSET: spectrum.spectra[0]?.data.x?.[0] as number,
     };
     const jcamp = getJcamp(spectrum, 'real') || '';
     const matchResult = jcamp
@@ -102,14 +102,15 @@ describe('convert bruker to jcamp', () => {
     const convertedSpectrum = converted?.spectra[0];
     assert(convertedSpectrum);
     const { lastX, firstX, deltaX } = convertedSpectrum;
+    assert(lastX !== undefined && firstX !== undefined && deltaX !== undefined);
 
     expect(Number(deltaXInJcamp) < 0).toBe(lastX < firstX);
     expect(lastX < firstX).toBe(deltaX < 0);
-    expect(converted?.spectra[0]?.data.x[0]).toBeCloseTo(
-      spectrum.spectra[0]?.data.x[0] as number,
+    expect(converted?.spectra[0]?.data.x?.[0]).toBeCloseTo(
+      spectrum.spectra[0]?.data.x?.[0] as number,
       3,
     );
-    expect(converted?.spectra[0]?.data.y[0]).toBeCloseTo(
+    expect(converted?.spectra[0]?.data.y?.[0]).toBeCloseTo(
       spectrum.spectra[0]?.data.re[0] as number,
       3,
     );
@@ -164,9 +165,14 @@ describe('generate a jcamp from simulated spectrum', () => {
     });
 
     const converted = convert(jcamp, { keepRecordsRegExp: /^\$.*/ }).flatten[0];
-    const newPeaks = xyAutoPeaksPicking(converted?.spectra[0]?.data, {
-      frequency,
-    });
+    const { x, y } = converted?.spectra[0]?.data ?? {};
+    assert(x && y);
+    const newPeaks = xyAutoPeaksPicking(
+      { x: Float64Array.from(x), y: Float64Array.from(y) },
+      {
+        frequency,
+      },
+    );
 
     expect(newPeaks).toHaveLength(3);
     expect(newPeaks[1].x).toBeCloseTo(2, 1);

@@ -122,3 +122,5 @@ lib
 docs
 
 .claude
+
+.deploy
